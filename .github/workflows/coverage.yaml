@@ -1,0 +1,31 @@
+name: Coverage
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Scala
+        uses: olafurpg/setup-scala@v14
+        with:
+          java-version: openjdk@1.11.0-2
+
+      - name: Set up docker environment
+        run: docker compose up -d
+
+      - name: Clean and test
+        run: sbt clean coverage test coverageReport
+
+      - uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./target/scala-2.13/coverage-report/cobertura.xml
+          fail_ci_if_error: true
+
+      - name: Clean docker environment
+        run: docker compose down --rmi all -v --remove-orphans
