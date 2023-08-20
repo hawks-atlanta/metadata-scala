@@ -13,11 +13,11 @@ jobs:
       - name: Setup Scala
         uses: olafurpg/setup-scala@v14
         with:
-          java-version: openjdk@11.0.20
-          sbt-version: 2.13.11
+          java-version: openjdk@1.11.0-2
 
+      # Assemble the jar file without running tests
       - name: Clean and build
-        run: sbt clean assembly
+        run: sbt "set test in assembly := {}" clean assembly
 
   test:
     runs-on: ubuntu-22.04
@@ -28,7 +28,6 @@ jobs:
         uses: olafurpg/setup-scala@v14
         with:
           java-version: openjdk@1.11.0-2
-          sbt-version: 2.13.11
 
       - name: Clean and test
         run: sbt clean test
