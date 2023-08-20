@@ -5,3 +5,5 @@ object Main {
     println("Hello from Scala")
   }
 }
+
+// Comment to trigger the testing workflow
