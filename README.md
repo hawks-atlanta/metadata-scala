@@ -1,5 +1,10 @@
 # Metadata (Scala)
 
+[![Release](https://github.com/hawks-atlanta/metadata-scala/actions/workflows/release.yaml/badge.svg?branch=main)](https://github.com/hawks-atlanta/metadata-scala/actions/workflows/release.yaml)
+[![Tagging](https://github.com/hawks-atlanta/metadata-scala/actions/workflows/tagging.yaml/badge.svg?branch=dev)](https://github.com/hawks-atlanta/metadata-scala/actions/workflows/tagging.yaml)
+[![codecov](https://codecov.io/gh/hawks-atlanta/metadata-scala/graph/badge.svg?token=M9CJCEEIBK)](https://codecov.io/gh/hawks-atlanta/metadata-scala)
+
+
 ## Development
 
 ### Create packages
@@ -41,3 +46,8 @@ sbt clean coverage test coverageReport
 ```bash
 cd target/scala-2.13/scoverage-report
 ```
+
+## Coverage
+
+| [![circle](https://codecov.io/gh/hawks-atlanta/metadata-scala/graphs/sunburst.svg?token=M9CJCEEIBK)](https://app.codecov.io/gh/hawks-atlanta/metadata-scala) | [![square](https://codecov.io/gh/hawks-atlanta/metadata-scala/graphs/tree.svg?token=M9CJCEEIBK)](https://app.codecov.io/gh/hawks-atlanta/metadata-scala) |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
