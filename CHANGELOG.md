@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 0.0.7 (2023-08-20)
+
+
+### Bug Fixes
+
+* **ci:** Coverage pipeline ([#16](https://github.com-university/hawks-atlanta/metadata-scala/issues/16)) ([973e936](https://github.com-university/hawks-atlanta/metadata-scala/commit/973e936759affd769f80b900d02924422e2de698)), closes [#7](https://github.com-university/hawks-atlanta/metadata-scala/issues/7) [#9](https://github.com-university/hawks-atlanta/metadata-scala/issues/9) [#10](https://github.com-university/hawks-atlanta/metadata-scala/issues/10) [#11](https://github.com-university/hawks-atlanta/metadata-scala/issues/11) [#15](https://github.com-university/hawks-atlanta/metadata-scala/issues/15) [#8](https://github.com-university/hawks-atlanta/metadata-scala/issues/8) [#7](https://github.com-university/hawks-atlanta/metadata-scala/issues/7) [#9](https://github.com-university/hawks-atlanta/metadata-scala/issues/9) [#10](https://github.com-university/hawks-atlanta/metadata-scala/issues/10) [#11](https://github.com-university/hawks-atlanta/metadata-scala/issues/11)
+* **ci:** Fix coverage pipeline ([#14](https://github.com-university/hawks-atlanta/metadata-scala/issues/14)) ([013c956](https://github.com-university/hawks-atlanta/metadata-scala/commit/013c956ab386707a9db33f76a376dad6c1130cd2))
+* **ci:** Update test pipeline ([#8](https://github.com-university/hawks-atlanta/metadata-scala/issues/8)) ([1da251d](https://github.com-university/hawks-atlanta/metadata-scala/commit/1da251d344ba2f8af61efa8a339716672abec56f))
+* Trigger pipelines ([#13](https://github.com-university/hawks-atlanta/metadata-scala/issues/13)) ([791a672](https://github.com-university/hawks-atlanta/metadata-scala/commit/791a672b646753bb42a7aedaa20de30e44e05c1f))
+
 ### 0.0.6 (2023-08-20)
 
 ### 0.0.5 (2023-08-20)
