@@ -4,7 +4,6 @@
 [![Tagging](https://github.com/hawks-atlanta/metadata-scala/actions/workflows/tagging.yaml/badge.svg?branch=dev)](https://github.com/hawks-atlanta/metadata-scala/actions/workflows/tagging.yaml)
 [![codecov](https://codecov.io/gh/hawks-atlanta/metadata-scala/graph/badge.svg?token=M9CJCEEIBK)](https://codecov.io/gh/hawks-atlanta/metadata-scala)
 
-
 ## Development
 
 ### Create packages
