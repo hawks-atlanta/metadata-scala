@@ -29,4 +29,9 @@ class FruitTest extends JUnitSuite {
 
     assert(use_cases.get_fruits().length === 2)
   }
+
+  @Test
+  def bad_test(): Unit = {
+    assert(1 === 2)
+  }
 }
