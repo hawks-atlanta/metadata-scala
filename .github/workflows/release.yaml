@@ -1,0 +1,72 @@
+name: Release
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  versioning:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.latest_version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v3
+      - id: latest_version
+        name: Latest version
+        run: python version.py >> $GITHUB_OUTPUT
+
+  create-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    needs:
+      - versioning
+    outputs:
+      upload_url: ${{ steps.create-release.outputs.upload_url }}
+    steps:
+      - name: Create Release
+        id: create-release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ needs.versioning.outputs.version }}
+          release_name: Release ${{ needs.versioning.outputs.version }}
+          draft: false
+          prerelease: false
+  
+  build-docker:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    needs:
+      - versioning
+      - create-release
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Docker image
+        run: echo "v${{ needs.versioning.outputs.version }}"
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ghcr.io/${{ github.repository }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/${{ github.repository }}:latest,ghcr.io/${{ github.repository }}:${{ needs.versioning.outputs.version }}
+          labels: ${{ steps.meta.outputs.labels }}
