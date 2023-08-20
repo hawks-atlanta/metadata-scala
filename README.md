@@ -6,41 +6,55 @@
 
 ## Development
 
-### Create packages
+### Local database
 
-You can create new packages with default folders (`domain`, `application`, `infraestructure` and `test`) using the following command: 
+You can run a local postgres database and pgadmin using the following command:
 
 ```bash
-make create 
+docker-compose -f docker-compose.dev.yml up
+```
+
+After that, you can access the pgadmin using the following url: `http://localhost:5050/` and the credentials:
+
+| Email                 | Password |
+| --------------------- | -------- |
+| postgres@postgres.com | postgres |
+
+### Create packages
+
+You can create new packages with default folders (`domain`, `application`, `infraestructure` and `test`) using the following command:
+
+```bash
+make create
 ```
 
 After running the command you'll be prompted to enter the name of the package.
 
 ### Remove packages
 
-You can remove packages using the following command: 
+You can remove packages using the following command:
 
 ```bash
-make remove 
+make remove
 ```
 
 After running the command you'll be prompted to enter the name of the package.
 
 ## Tests
 
-1. Make sure you have `sbt` installed in your computer: 
+1. Make sure you have `sbt` installed in your computer:
 
 ```bash
 sbt --version
 ```
 
-2. Run the tests and generate the coverage report: 
+2. Run the tests and generate the coverage report:
 
 ```bash
 sbt clean coverage test coverageReport
 ```
 
-3. (Optional) Open the `html` coverage file located in: 
+3. (Optional) Open the `html` coverage file located in:
 
 ```bash
 cd target/scala-2.13/scoverage-report
@@ -49,4 +63,4 @@ cd target/scala-2.13/scoverage-report
 ## Coverage
 
 | [![circle](https://codecov.io/gh/hawks-atlanta/metadata-scala/graphs/sunburst.svg?token=M9CJCEEIBK)](https://app.codecov.io/gh/hawks-atlanta/metadata-scala) | [![square](https://codecov.io/gh/hawks-atlanta/metadata-scala/graphs/tree.svg?token=M9CJCEEIBK)](https://app.codecov.io/gh/hawks-atlanta/metadata-scala) |
-| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
