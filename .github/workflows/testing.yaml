@@ -15,8 +15,9 @@ jobs:
         with:
           java-version: openjdk@1.11.0-2
 
+      # Assemble the jar file without running tests
       - name: Clean and build
-        run: sbt clean assembly
+        run: sbt "set test in assembly := {}" clean assembly
 
   test:
     runs-on: ubuntu-22.04
