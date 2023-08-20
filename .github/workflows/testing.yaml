@@ -13,7 +13,7 @@ jobs:
       - name: Setup Scala
         uses: olafurpg/setup-scala@v14
         with:
-          java-version: openjdk@11.0.20
+          java-version: openjdk@1.11.0-2
 
       - name: Clean and build
         run: sbt clean assembly
