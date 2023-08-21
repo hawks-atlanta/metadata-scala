@@ -40,7 +40,7 @@ jobs:
         run: docker-compose -f docker-compose.testing.yaml up -d
 
       - name: Clean and test
-        run: sbt -DDATABASE_HOST=$DATABASE_HOST -DDATABASE_PORT=$DATABASE_PORT -DDATABASE_NAME=$DATABASE_NAME -DDATABASE_USER=$DATABASE_USER -DDATABASE_PASSWORD=$DATABASE_PASSWORD clean test
+        run: sbt clean test
 
       - name: Clean docker environment
         run: docker-compose -f docker-compose.testing.yaml down --rmi all -v --remove-orphans
