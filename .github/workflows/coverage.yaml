@@ -19,12 +19,7 @@ jobs:
         run: docker-compose -f docker-compose.testing.yaml up -d
 
       - name: Clean and test
-        run: echo "DATABASE_HOST=localhost" >> "$GITHUB_ENV"; \
-          echo "DATABASE_PORT=5432" >> "$GITHUB_ENV"; \
-          echo "DATABASE_NAME=metadata" >> "$GITHUB_ENV"; \
-          echo "DATABASE_USER=postgres" >> "$GITHUB_ENV"; \
-          echo "DATABASE_PASSWORD=postgres" >> "$GITHUB_ENV"; \
-          sbt -DDATABASE_HOST=$$DATABASE_HOST -DDATABASE_PORT=$$DATABASE_PORT -DDATABASE_NAME=$$DATABASE_NAME -DDATABASE_USER=$$DATABASE_USER -DDATABASE_PASSWORD=$$DATABASE_PASSWORD clean coverage test coverageReport
+        run: sbt -DDATABASE_HOST=$DATABASE_HOST -DDATABASE_PORT=$DATABASE_PORT -DDATABASE_NAME=$DATABASE_NAME -DDATABASE_USER=$DATABASE_USER -DDATABASE_PASSWORD=$DATABASE_PASSWORD clean coverage test coverageReport
 
       - uses: codecov/codecov-action@v3
         with:
