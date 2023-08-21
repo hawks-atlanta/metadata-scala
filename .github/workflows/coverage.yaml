@@ -19,7 +19,12 @@ jobs:
         run: docker-compose -f docker-compose.testing.yaml up -d
 
       - name: Clean and test
-        run: sbt clean coverage test coverageReport
+        run: export DATABASE_HOST=localhost; \
+          export DATABASE_PORT=5432; \
+          export DATABASE_NAME=metadata; \
+          export DATABASE_USER=postgres; \
+          export DATABASE_PASSWORD=postgres; \
+          sbt -DDATABASE_HOST=$$DATABASE_HOST -DDATABASE_PORT=$$DATABASE_PORT -DDATABASE_NAME=$$DATABASE_NAME -DDATABASE_USER=$$DATABASE_USER -DDATABASE_PASSWORD=$$DATABASE_PASSWORD clean coverage test coverageReport
 
       - uses: codecov/codecov-action@v3
         with:

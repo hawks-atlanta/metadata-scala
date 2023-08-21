@@ -79,7 +79,7 @@ sbt clean coverage test coverageReport
 Or: 
 
 ```bash
-make test
+make coverage
 ```
 
 4. (Optional) Open the `html` coverage file located in:

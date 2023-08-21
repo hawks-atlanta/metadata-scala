@@ -17,7 +17,7 @@ jobs:
 
       # Assemble the jar file without running tests
       - name: Clean and build
-        run: sbt "set test in assembly := {}" clean assembly
+        run: sbt "set assembly / test := {}" clean assembly
 
   test:
     runs-on: ubuntu-22.04
@@ -33,7 +33,12 @@ jobs:
         run: docker-compose -f docker-compose.testing.yaml up -d
 
       - name: Clean and test
-        run: sbt clean test
+        run: export DATABASE_HOST=localhost; \
+          export DATABASE_PORT=5432; \
+          export DATABASE_NAME=metadata; \
+          export DATABASE_USER=postgres; \
+          export DATABASE_PASSWORD=postgres; \
+          sbt -DDATABASE_HOST=$$DATABASE_HOST -DDATABASE_PORT=$$DATABASE_PORT -DDATABASE_NAME=$$DATABASE_NAME -DDATABASE_USER=$$DATABASE_USER -DDATABASE_PASSWORD=$$DATABASE_PASSWORD clean test
 
       - name: Clean docker environment
         run: docker-compose -f docker-compose.testing.yaml down --rmi all -v --remove-orphans

@@ -7,6 +7,12 @@ lazy val root = (project in file("."))
     idePackagePrefix := Some("org.hawksatlanta.metadata")
   )
 
+// Strategy to solve duplicate files in the assembly process
+assembly / assemblyMergeStrategy := {
+  case PathList("META-INF", _*) => MergeStrategy.discard
+  case _                        => MergeStrategy.first
+}
+
 // Testing dependencies
 libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "3.2.15" % Test,

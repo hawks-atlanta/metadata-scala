@@ -25,7 +25,7 @@ remove:
 	cd $(BASE_TEST_DIR); \
 	rm -rf $$package_name;
 
-test:
+coverage:
 	export DATABASE_HOST=localhost; \
   	export DATABASE_PORT=5432; \
   	export DATABASE_NAME=metadata; \
