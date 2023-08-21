@@ -24,3 +24,6 @@ remove:
 	cd $(WORKING_DIR); \
 	cd $(BASE_TEST_DIR); \
 	rm -rf $$package_name;
+
+coverage:
+	sbt clean coverage test coverageReport

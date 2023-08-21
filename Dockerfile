@@ -35,5 +35,10 @@ WORKDIR /app
 COPY --from=builder /app/target/scala-2.13/bundle.jar .
 
 # Run
-# EXPOSE 8080
+EXPOSE 8080
+ENV DATABASE_HOST "localhost"
+ENV DATABASE_PORT "5432"
+ENV DATABASE_NAME "metadata"
+ENV DATABASE_USER "postgres"
+ENV DATABASE_PASSWORD "postgres"
 CMD ["java", "-jar", "/app/bundle.jar"]

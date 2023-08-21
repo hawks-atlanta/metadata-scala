@@ -1,3 +1,9 @@
 # IntelliJ IDEA files
 ./.bsp
 ./.idea
+
+# github
+./.github
+
+# docker
+./volumes

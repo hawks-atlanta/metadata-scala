@@ -8,17 +8,29 @@
 
 ### Local database
 
-You can run a local postgres database and pgadmin using the following command:
+1. Run the `docker-compose` command: 
 
 ```bash
 docker-compose -f docker-compose.dev.yml up
 ```
 
-After that, you can access the pgadmin using the following url: `http://localhost:5050/` and the credentials:
+2. (Optional) Open the `pgadmin` page in `http://localhost:5050/` and login with the following credentials:
 
 | Email                 | Password |
 | --------------------- | -------- |
 | postgres@postgres.com | postgres |
+
+Note that sometimes the `pgadmin` container doesn't start properly, so you'll need to run the command again. This usually occurs the first time you run the command.
+
+3. (Optional) Create a new server in `pgadmin` with the following credentials:
+
+| Field                | Value       |
+|----------------------|-------------|
+| Host                 | postgres-db |
+| Port                 | 5432        |
+| Maintenance database | metadata    |
+| User                 | postgres    |
+| Password             | postgres    |
 
 ### Create packages
 
@@ -40,7 +52,7 @@ make remove
 
 After running the command you'll be prompted to enter the name of the package.
 
-## Tests
+## Local tests
 
 1. Make sure you have `sbt` installed in your computer:
 
@@ -48,13 +60,25 @@ After running the command you'll be prompted to enter the name of the package.
 sbt --version
 ```
 
-2. Run the tests and generate the coverage report:
+2. Setup the local database: 
+
+```bash
+docker-compose up
+```
+
+3. Run the tests and generate the coverage report:
 
 ```bash
 sbt clean coverage test coverageReport
 ```
 
-3. (Optional) Open the `html` coverage file located in:
+Or: 
+
+```bash
+make coverage
+```
+
+4. (Optional) Open the `html` coverage file located in:
 
 ```bash
 cd target/scala-2.13/scoverage-report
