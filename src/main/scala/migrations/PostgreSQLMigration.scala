@@ -4,7 +4,7 @@ package migrations
 import org.flywaydb.core.Flyway
 
 object PostgreSQLMigration {
-  def migrate() = {
+  def migrate(): Boolean = {
     val flyway = Flyway.configure()
       .dataSource(
         s"jdbc:postgresql://${System.getenv("DATABASE_HOST")}:${System.getenv("DATABASE_PORT")}/${System.getenv("DATABASE_NAME")}",
@@ -17,10 +17,12 @@ object PostgreSQLMigration {
     try {
       val migrationResult = flyway.migrate()
       print(s"${migrationResult.migrationsExecuted} migrations were successfully executed.")
+      migrationResult.success
     }catch {
       case e: Exception => {
         print(s"Migration failed: ${e.getMessage}")
       }
+      false
     }
   }
 }

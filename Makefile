@@ -24,3 +24,11 @@ remove:
 	cd $(WORKING_DIR); \
 	cd $(BASE_TEST_DIR); \
 	rm -rf $$package_name;
+
+test:
+	export DATABASE_HOST=localhost; \
+  	export DATABASE_PORT=5432; \
+  	export DATABASE_NAME=metadata; \
+  	export DATABASE_USER=postgres; \
+  	export DATABASE_PASSWORD=postgres; \
+	sbt -DDATABASE_HOST=$$DATABASE_HOST -DDATABASE_PORT=$$DATABASE_PORT -DDATABASE_NAME=$$DATABASE_NAME -DDATABASE_USER=$$DATABASE_USER -DDATABASE_PASSWORD=$$DATABASE_PASSWORD clean coverage test coverageReport

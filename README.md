@@ -52,7 +52,7 @@ make remove
 
 After running the command you'll be prompted to enter the name of the package.
 
-## Tests
+## Local tests
 
 1. Make sure you have `sbt` installed in your computer:
 
@@ -60,13 +60,29 @@ After running the command you'll be prompted to enter the name of the package.
 sbt --version
 ```
 
-2. Run the tests and generate the coverage report:
+2. Setup the local database: 
+
+```bash
+docker-compose -f docker-compose.testing.yaml down && \
+ docker-compose -f docker-compose.testing.yaml build --no-cache && \
+ docker-compose -f docker-compose.testing.yaml up
+```
+
+Note that we're using a different `docker-compose` file for testing purposes. The `testing.yaml` file doesn't include the `pgadmin` container and doesn't mount a volume for the database container.
+
+3. Run the tests and generate the coverage report:
 
 ```bash
 sbt clean coverage test coverageReport
 ```
 
-3. (Optional) Open the `html` coverage file located in:
+Or: 
+
+```bash
+make test
+```
+
+4. (Optional) Open the `html` coverage file located in:
 
 ```bash
 cd target/scala-2.13/scoverage-report
