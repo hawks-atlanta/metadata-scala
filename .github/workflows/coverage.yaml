@@ -19,7 +19,7 @@ jobs:
         run: docker-compose -f docker-compose.testing.yaml up -d
 
       - name: Clean and test
-        run: sbt -DDATABASE_HOST=$DATABASE_HOST -DDATABASE_PORT=$DATABASE_PORT -DDATABASE_NAME=$DATABASE_NAME -DDATABASE_USER=$DATABASE_USER -DDATABASE_PASSWORD=$DATABASE_PASSWORD clean coverage test coverageReport
+        run: sbt -DDATABASE_HOST=${{ vars.DATABASE_HOST }} -DDATABASE_PORT=${{ vars.DATABASE_PORT }} -DDATABASE_NAME=${{ vars.DATABASE_NAME }} -DDATABASE_USER=${{ vars.DATABASE_USER }} -DDATABASE_PASSWORD=${{ vars.DATABASE_PASSWORD }} clean coverage test coverageReport
 
       - uses: codecov/codecov-action@v3
         with:
