@@ -2,14 +2,15 @@ package org.hawksatlanta.metadata
 package migrations
 
 import org.flywaydb.core.Flyway
+import org.hawksatlanta.metadata.shared.infrastructure.Environment
 
 object PostgreSQLMigration {
   def migrate(): Boolean = {
     val flyway = Flyway.configure()
       .dataSource(
-        s"jdbc:postgresql://${System.getenv("DATABASE_HOST")}:${System.getenv("DATABASE_PORT")}/${System.getenv("DATABASE_NAME")}",
-        System.getenv("DATABASE_USER"),
-        System.getenv("DATABASE_PASSWORD")
+        s"jdbc:postgresql://${Environment.dbHost}:${Environment.dbPort}/${Environment.dbName}",
+        Environment.dbUser,
+        Environment.dbPassword
       )
       .locations("filesystem:db/migrations")
       .load()

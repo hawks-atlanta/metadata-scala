@@ -4,13 +4,6 @@ on:
   pull_request:
     branches: ["dev"]
 
-env:
-  DATABASE_HOST: ${{ vars.DATABASE_HOST }}
-  DATABASE_PORT: ${{ vars.DATABASE_PORT }}
-  DATABASE_NAME: ${{ vars.DATABASE_NAME }}
-  DATABASE_USER: ${{ vars.DATABASE_USER }}
-  DATABASE_PASSWORD: ${{ vars.DATABASE_PASSWORD }}
-
 jobs:
   build:
     runs-on: ubuntu-22.04
