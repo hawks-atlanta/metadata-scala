@@ -4,6 +4,13 @@ on:
   pull_request:
     branches: ["dev"]
 
+env:
+  DATABASE_HOST: ${{ vars.DATABASE_HOST }}
+  DATABASE_PORT: ${{ vars.DATABASE_PORT }}
+  DATABASE_NAME: ${{ vars.DATABASE_NAME }}
+  DATABASE_USER: ${{ vars.DATABASE_USER }}
+  DATABASE_PASSWORD: ${{ vars.DATABASE_PASSWORD }}
+
 jobs:
   build:
     runs-on: ubuntu-22.04
@@ -33,7 +40,7 @@ jobs:
         run: docker-compose -f docker-compose.testing.yaml up -d
 
       - name: Clean and test
-        run: sbt -DDATABASE_HOST=${{ vars.DATABASE_HOST }} -DDATABASE_PORT=${{ vars.DATABASE_PORT }} -DDATABASE_NAME=${{ vars.DATABASE_NAME }} -DDATABASE_USER=${{ vars.DATABASE_USER }} -DDATABASE_PASSWORD=${{ vars.DATABASE_PASSWORD }} clean test
+        run: sbt -DDATABASE_HOST=$DATABASE_HOST -DDATABASE_PORT=$DATABASE_PORT -DDATABASE_NAME=$DATABASE_NAME -DDATABASE_USER=$DATABASE_USER -DDATABASE_PASSWORD=$DATABASE_PASSWORD clean test
 
       - name: Clean docker environment
         run: docker-compose -f docker-compose.testing.yaml down --rmi all -v --remove-orphans
