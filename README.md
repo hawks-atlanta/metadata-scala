@@ -63,12 +63,8 @@ sbt --version
 2. Setup the local database: 
 
 ```bash
-docker-compose -f docker-compose.testing.yaml down && \
- docker-compose -f docker-compose.testing.yaml build --no-cache && \
- docker-compose -f docker-compose.testing.yaml up
+docker-compose up
 ```
-
-Note that we're using a different `docker-compose` file for testing purposes. The `testing.yaml` file doesn't include the `pgadmin` container and doesn't mount a volume for the database container.
 
 3. Run the tests and generate the coverage report:
 
