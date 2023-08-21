@@ -12,8 +12,7 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=metadata
     volumes:
-      # - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./postgres-volume:/var/lib/postgresql/data
+      - ./volumes/postgres:/var/lib/postgresql/data
 
   postgres-admin:
     image: dpage/pgadmin4

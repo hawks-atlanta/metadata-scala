@@ -1,0 +1,13 @@
+version: '3.1'
+
+services:
+  postgres-db:
+    image: postgres:latest
+    container_name: postgres-db
+    restart: on-failure
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=metadata

@@ -29,5 +29,11 @@ jobs:
         with:
           java-version: openjdk@1.11.0-2
 
+      - name: Setup docker environment
+        run: docker-compose -f docker-compose.test.yaml up -d
+
       - name: Clean and test
         run: sbt clean test
+
+      - name: Clean docker environment
+        run: docker-compose -f docker-compose.test.yaml down --rmi all -v --remove-orphans

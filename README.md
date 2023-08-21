@@ -8,17 +8,29 @@
 
 ### Local database
 
-You can run a local postgres database and pgadmin using the following command:
+1. Run the `docker-compose` command: 
 
 ```bash
 docker-compose -f docker-compose.dev.yml up
 ```
 
-After that, you can access the pgadmin using the following url: `http://localhost:5050/` and the credentials:
+2. (Optional) Open the `pgadmin` page in `http://localhost:5050/` and login with the following credentials:
 
 | Email                 | Password |
 | --------------------- | -------- |
 | postgres@postgres.com | postgres |
+
+Note that sometimes the `pgadmin` container doesn't start properly, so you'll need to run the command again. This usually occurs the first time you run the command.
+
+3. (Optional) Create a new server in `pgadmin` with the following credentials:
+
+| Field                | Value       |
+|----------------------|-------------|
+| Host                 | postgres-db |
+| Port                 | 5432        |
+| Maintenance database | metadata    |
+| User                 | postgres    |
+| Password             | postgres    |
 
 ### Create packages
 
