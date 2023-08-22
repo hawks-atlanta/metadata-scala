@@ -16,7 +16,7 @@ paths:
   /files/{user_uuid}:
     get:
       tags: [ 'File' ]
-      description: List files in the user's root directory excluding the non-ready ones.
+      description: List files in the given directory. List the user's root directory by default when the parent_uuid query parameter is not provided.
       parameters:
         - in: path
           name: user_uuid
@@ -24,15 +24,33 @@ paths:
             type: string
             example: '658b4e63-b5ac-46a7-ac43-efb6a1415130'
           required: true
+        - in: query
+          name: parent_uuid
+          schema:
+            type: string
+            example: '5ad724f0-4091-453a-914a-c2d11d69d1e3'
+          required: false
       responses:
         '200':
-          description: Ok. The root directory was listed.
+          description: Ok. The directory was listed.
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/file'
+        '403':
+          description: Forbidden. The user tried to list a directory that doesn´t own.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+        '404':
+          description: Not found. No directory with the given parent_uuid was found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
         '500':
           description: Internal server error
           content:
@@ -66,51 +84,6 @@ paths:
                   file_uuid:
                     type: string
                     example: 'b96bdc16-8f27-44aa-9758-b4e5f13060fe'
-        '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error_response'
-
-  /files/{user_uuid}/{parent_uuid}:
-    get:
-      tags: [ 'File' ]
-      description: List files in given directory excluding the non-ready ones.
-      parameters:
-        - in: path
-          name: user_uuid
-          schema:
-            type: string
-            example: '658b4e63-b5ac-46a7-ac43-efb6a1415130'
-          required: true
-        - in: path
-          name: parent_uuid
-          schema:
-            type: string
-            example: '5ad724f0-4091-453a-914a-c2d11d69d1e3'
-          required: true
-      responses:
-        '200':
-          description: Ok. Thedirectory was listed.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/file'
-        '403':
-          description: Forbidden. The user tried to list a directory that doesn´t own.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error_response'
-        '404':
-          description: Not found. No directory with the given parent_uuid was found.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error_response'
         '500':
           description: Internal server error
           content:
