@@ -5,10 +5,10 @@ import fruit.application.UseCases
 import fruit.domain.Fruit
 import fruit.infrastructure.InMemoryRepository
 
-import org.junit.Test
+import org.junit.{Test}
 import org.scalatestplus.junit.JUnitSuite
 
-class FruitTest extends JUnitSuite {
+class FruitMemoryRepositoryTest extends JUnitSuite {
   val fruit_repository = new InMemoryRepository()
   val use_cases = new UseCases(fruit_repository)
 

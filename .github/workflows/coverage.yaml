@@ -16,7 +16,7 @@ jobs:
           java-version: openjdk@1.11.0-2
 
       - name: Set up docker environment
-        run: docker-compose -f docker-compose.dev.yaml up -d
+        run: docker-compose up -d
 
       - name: Clean and test
         run: sbt clean coverage test coverageReport
@@ -28,4 +28,4 @@ jobs:
           fail_ci_if_error: true
 
       - name: Clean docker environment
-        run: docker compose -f docker-compose.dev.yaml down --rmi all -v --remove-orphans
+        run: docker-compose down --rmi all -v --remove-orphans

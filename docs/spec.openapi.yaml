@@ -1,0 +1,258 @@
+openapi: 3.0.3
+
+info:
+  title: Metadata Scala
+
+  license:
+    name: MIT
+    url: https://github.com/hawks-atlanta/metadata-scala/blob/main/LICENSE
+
+  version: TBA
+
+tags:
+  - name: File
+
+paths:
+  /files/{user_uuid}:
+    get:
+      tags: [ 'File' ]
+      description: List files in the given directory. List the user's root directory by default when the parent_uuid query parameter is not provided.
+      parameters:
+        - in: path
+          name: user_uuid
+          schema:
+            type: string
+            example: '658b4e63-b5ac-46a7-ac43-efb6a1415130'
+          required: true
+        - in: query
+          name: parent_uuid
+          schema:
+            type: string
+            example: '5ad724f0-4091-453a-914a-c2d11d69d1e3'
+          required: false
+      responses:
+        '200':
+          description: Ok. The directory was listed.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/file'
+        '403':
+          description: Forbidden. The directory is not owned by the user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+        '404':
+          description: Not found. No directory with the given parent_uuid was found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+
+    post:
+      tags: [ 'File' ]
+      description: Save the metadata for a new file or directory.
+      parameters:
+        - in: path
+          name: user_uuid
+          schema:
+            type: string
+            example: '658b4e63-b5ac-46a7-ac43-efb6a1415130'
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/file_creation_request'
+      responses:
+        '201':
+          description: Created. The metadata was saved sucessfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  file_uuid:
+                    type: string
+                    example: 'b96bdc16-8f27-44aa-9758-b4e5f13060fe'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+
+  /files/{user_uuid}/{file_uuid}:
+    get:
+      tags: [ 'File' ]
+      description: Get the metadata of the given file. This endpoint is suposed to only be used by the gateway service to obtain the location (files/volume/archive_uuid) of the file.
+      parameters:
+        - in: path
+          name: user_uuid
+          schema:
+            type: string
+            example: '658b4e63-b5ac-46a7-ac43-efb6a1415130'
+          required: true
+        - in: path
+          name: file_uuid
+          schema:
+            type: string
+            example: 'b96bdc16-8f27-44aa-9758-b4e5f13060fe'
+          required: true
+      responses:
+        '200':
+          description: Ok. The metadata was returned successfuly.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/metadata'
+        '403':
+          description: Forbidden. The file is not owned by the user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+        '404':
+          description: Not found. No file with the given file_uuid was found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+    delete:
+      tags: [ 'File' ]
+      description: Delete the metadata of the given file.
+      parameters:
+        - in: path
+          name: user_uuid
+          schema:
+            type: string
+            example: '658b4e63-b5ac-46a7-ac43-efb6a1415130'
+          required: true
+        - in: path
+          name: file_uuid
+          schema:
+            type: string
+            example: 'b96bdc16-8f27-44aa-9758-b4e5f13060fe'
+          required: true
+      responses:
+        '204':
+          description: No content. The metadata of the file was deleted.
+        '403':
+          description: Forbidden. The user tried to delete the metadata of a file that doesn´t own.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+        '404':
+          description: Not found. No file with the given file_uuid was found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+
+  /files/{file_uuid}/ready:
+    put:
+      tags: [ 'File' ]
+      description: Mark the given file as ready (Stored in the filesystem).
+      parameters:
+        - in: path
+          name: file_uuid
+          schema:
+            type: string
+            example: 'b96bdc16-8f27-44aa-9758-b4e5f13060fe'
+          required: true
+      responses:
+        '204':
+          description: No content. The metadata of the file was updated.
+        '404':
+          description: Not found. No file with the given file_uuid was found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+
+components:
+  schemas:
+    file:
+      type: object
+      properties:
+        uuid:
+          type: string
+          example: 'b96bdc16-8f27-44aa-9758-b4e5f13060fe'
+        type:
+          type: string
+          enum: ['file', 'directory']
+          description: "Whether the file is a directory or an archive"
+          example: 'file'
+        name:
+          type: string
+          example: 'filename'
+
+    metadata:
+      type: object
+      properties:
+        volume:
+          type: string
+          example: 'VOLUME_1'
+        archive_uuid:
+          type: string
+          example: '0b82495a-350b-4f4f-95ce-0119998466d4'
+
+    file_creation_request:
+      type: object
+      properties:
+        parent_uuid:
+          type: string
+          example: '5ad724f0-4091-453a-914a-c2d11d69d1e3'
+        hash_sum:
+          type: string
+          example: '56d50f755d5dbca915cf93779d3b51d6562e6183'
+        type:
+          type: string
+          enum: ['file', 'directory']
+          description: "Whether the file is a directory or an archive"
+          example: 'file'
+        name:
+          type: string
+          example: 'filename'
+        size:
+          type: number
+          description: 'Size in KB'
+          example: 3072
+
+    error_response:
+      type: object
+      properties:
+        error:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Something went wrong. Try again later.

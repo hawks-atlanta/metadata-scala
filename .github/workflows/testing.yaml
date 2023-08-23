@@ -17,7 +17,7 @@ jobs:
 
       # Assemble the jar file without running tests
       - name: Clean and build
-        run: sbt "set test in assembly := {}" clean assembly
+        run: sbt "set assembly / test := {}" clean assembly
 
   test:
     runs-on: ubuntu-22.04
@@ -29,5 +29,11 @@ jobs:
         with:
           java-version: openjdk@1.11.0-2
 
+      - name: Setup docker environment
+        run: docker-compose up -d
+
       - name: Clean and test
         run: sbt clean test
+
+      - name: Clean docker environment
+        run: docker-compose down --rmi all -v --remove-orphans
