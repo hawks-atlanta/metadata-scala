@@ -4,6 +4,15 @@
 [![Tagging](https://github.com/hawks-atlanta/metadata-scala/actions/workflows/tagging.yaml/badge.svg?branch=dev)](https://github.com/hawks-atlanta/metadata-scala/actions/workflows/tagging.yaml)
 [![codecov](https://codecov.io/gh/hawks-atlanta/metadata-scala/graph/badge.svg?token=M9CJCEEIBK)](https://codecov.io/gh/hawks-atlanta/metadata-scala)
 
+## Documentation
+
+|      Document       |                                         URL                                         |
+|:-------------------:|:-----------------------------------------------------------------------------------:|
+| CLI documentation   |                                  [CLI.md](CLI.md)                                   |
+|    Database models    | [Database.md](https://github.com/hawks-atlanta/docs/blob/main/Database.md#metadata) |
+|     CONTRIBUTING      | [CONTRIBUTING.md](https://github.com/hawks-atlanta/docs/blob/main/CONTRIBUTING.md)  |
+| OpenAPI specification |                       [Specification](docs/spec.openapi.yaml)                       |
+
 ## Development
 
 ### Local database
@@ -52,7 +61,7 @@ make remove
 
 After running the command you'll be prompted to enter the name of the package.
 
-## Local tests
+## Testing
 
 1. Make sure you have `sbt` installed in your computer:
 
