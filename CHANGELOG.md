@@ -6,7 +6,6 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### 0.0.10 (2023-08-21)
 
-
 ### Features
 
 * PostgreSQL connection and Migrations ([#20](https://github.com/hawks-atlanta/metadata-scala/issues/20)) ([b502749](https://github.com/hawks-atlanta/metadata-scala/commit/b502749d51d3149d585972f8d19bc6f4c19b7fbc))
