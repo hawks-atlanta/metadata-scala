@@ -1,12 +1,13 @@
 package org.hawksatlanta.metadata
 package fruit.application
 
-import fruit.domain.{Fruit, Repository}
+import fruit.domain.Fruit
+import fruit.domain.Repository
 
 class UseCases {
   private var repository: Repository = _;
 
-  def this(repository: Repository) {
+  def this( repository: Repository ) {
     this()
     this.repository = repository
   }
@@ -15,7 +16,7 @@ class UseCases {
     return repository.get_fruits()
   }
 
-  def create_fruit(fruit: Fruit): Unit = {
-    repository.save(fruit)
+  def create_fruit( fruit: Fruit ): Unit = {
+    repository.save( fruit )
   }
 }

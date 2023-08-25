@@ -3,5 +3,5 @@ package fruit.domain
 
 trait Repository {
   def get_fruits(): List[Fruit]
-  def save(fruit: Fruit): Unit
+  def save( fruit: Fruit ): Unit
 }
