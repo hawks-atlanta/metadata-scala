@@ -1,13 +1,30 @@
 package org.hawksatlanta.metadata
 package files_metadata.infrastructure
 
+import java.util.UUID
+
 import com.wix.accord.validate
+import com.wix.accord.Validator
+import files_metadata.application.FilesMetaUseCases
+import files_metadata.domain.ArchivesMeta
+import files_metadata.domain.DomainExceptions
+import files_metadata.domain.FileMeta
+import files_metadata.domain.FilesMetaRepository
 import files_metadata.infrastructure.requests.CreationReqSchema
 import shared.infrastructure.CommonValidator
 import ujson.Obj
 import upickle.default.read
 
-object MetadataControllers {
+class MetadataControllers {
+  private var useCases: FilesMetaUseCases = _
+
+  def _init(): Unit = {
+    val repository: FilesMetaRepository =
+      new FilesMetaPostgresRepository()
+
+    useCases = new FilesMetaUseCases( repository )
+  }
+
   def SaveMetadataController(
       request: cask.Request,
       userUUID: String
@@ -31,33 +48,63 @@ object MetadataControllers {
       )
 
       // Validate the payload
-      val validationResult = validate[CreationReqSchema]( decoded )(
-        CreationReqSchema.schemaValidator
-      )
+      var validationRule: Validator[CreationReqSchema] = null
 
-      if (validationResult.isFailure) {
-        val errorsList = validationResult.toFailure
-          .map( failure => failure.violations.toList )
-          .getOrElse( List.empty )
-
+      if (decoded.fileType == "file")
+        validationRule = CreationReqSchema.fileSchemaValidator
+      else if (decoded.fileType == "directory")
+        validationRule = CreationReqSchema.directorySchemaValidator
+      else
         return cask.Response(
           ujson.Obj(
             "error"   -> true,
-            "message" -> "Fields validation failed",
-            "errors"  -> errorsList.map( _.toString )
+            "message" -> "The fileType should be either 'file' or 'directory'"
+          ),
+          statusCode = 400
+        )
+
+      val validationResult = validate[CreationReqSchema]( decoded )(
+        validationRule
+      )
+
+      if (validationResult.isFailure) {
+        return cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "Fields validation failed"
           ),
           statusCode = 400
         )
       }
 
-      // TODO: Save the metadata to the database
+      // Save the metadata
+      val receivedArchiveMeta = ArchivesMeta.createNewArchive(
+        decoded.hashSum,
+        decoded.fileSize
+      )
+
+      val parentUUID =
+        if (decoded.parentUUID == null) None
+        else Some( UUID.fromString( decoded.parentUUID ) )
+
+      val receivedFileMeta = FileMeta.createNewFile(
+        ownerUuid = UUID.fromString( userUUID ),
+        parentUuid = parentUUID,
+        name = decoded.fileName
+      )
+
+      // Save the metadata
+      useCases.saveMetadata( receivedArchiveMeta, receivedFileMeta )
       cask.Response(
-        ujson.Obj( "error" -> false, "message" -> "Working on it..." ),
+        ujson.Obj(
+          "error"   -> false,
+          "message" -> "Metadata was saved successfully"
+        ),
         statusCode = 200
       )
     } catch {
       // Unable to parse the given JSON payload
-      case e: upickle.core.AbortException =>
+      case _: upickle.core.AbortException =>
         cask.Response(
           ujson.Obj(
             "error"   -> true,
@@ -66,15 +113,27 @@ object MetadataControllers {
           statusCode = 400
         )
 
-      // Any other error
-      case _: Exception =>
+      case conflict: DomainExceptions.FileAlreadyExistsException =>
         cask.Response(
           ujson.Obj(
             "error"   -> true,
-            "message" -> "An unexpected error occurred"
+            "message" -> conflict.getMessage()
+          ),
+          statusCode = 409
+        )
+
+      // Any other error
+      case e: Exception =>
+        print( e )
+
+        cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "There was an error while saving the metadata"
           ),
           statusCode = 500
         )
+
     }
   }
 }

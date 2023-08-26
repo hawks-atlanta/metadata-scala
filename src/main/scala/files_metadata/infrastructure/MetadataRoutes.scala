@@ -6,13 +6,15 @@ import ujson.Obj
 case class MetadataRoutes() extends cask.Routes {
   private val basePath = "/api/v1/files"
 
+  private val controllers = new MetadataControllers()
+  controllers._init()
+
   @cask.post( s"${ basePath }/:userUUID" )
   def SaveMetadataHandler(
       request: cask.Request,
       userUUID: String
   ): cask.Response[Obj] = {
-    // Redirect to the controller
-    MetadataControllers.SaveMetadataController( request, userUUID )
+    controllers.SaveMetadataController( request, userUUID )
   }
 
   initialize()
