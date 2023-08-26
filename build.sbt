@@ -15,9 +15,11 @@ assembly / assemblyMergeStrategy := {
 
 // Testing dependencies
 libraryDependencies ++= Seq(
-  "org.scalatest"     %% "scalatest"  % "3.2.15"   % Test,
-  "junit"              % "junit"      % "4.13.2"   % Test,
-  "org.scalatestplus" %% "junit-4-13" % "3.2.15.0" % Test
+  "org.scalatest"       %% "scalatest"    % "3.2.15"   % Test,
+  "junit"                % "junit"        % "4.13.2"   % Test,
+  "io.rest-assured"      % "rest-assured" % "5.3.0"    % Test,
+  "com.google.code.gson" % "gson"         % "2.10.1"   % Test,
+  "org.scalatestplus"   %% "junit-4-13"   % "3.2.15.0" % Test
 )
 
 // Migration dependencies

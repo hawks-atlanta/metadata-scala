@@ -35,7 +35,7 @@ class MetadataControllers {
       return cask.Response(
         ujson.Obj(
           "error"   -> true,
-          "message" -> "The userUUID parameter wasn't a valid UUID"
+          "message" -> "The user_uuid parameter was not valid"
         ),
         statusCode = 400
       )
@@ -50,7 +50,7 @@ class MetadataControllers {
       // Validate the payload
       var validationRule: Validator[CreationReqSchema] = null
 
-      if (decoded.fileType == "file")
+      if (decoded.fileType == "archive")
         validationRule = CreationReqSchema.fileSchemaValidator
       else if (decoded.fileType == "directory")
         validationRule = CreationReqSchema.directorySchemaValidator
@@ -58,7 +58,7 @@ class MetadataControllers {
         return cask.Response(
           ujson.Obj(
             "error"   -> true,
-            "message" -> "The fileType should be either 'file' or 'directory'"
+            "message" -> "The fileType should be either 'archive' or 'directory'"
           ),
           statusCode = 400
         )
@@ -94,13 +94,15 @@ class MetadataControllers {
       )
 
       // Save the metadata
-      useCases.saveMetadata( receivedArchiveMeta, receivedFileMeta )
+      val savedUUID =
+        useCases.saveMetadata( receivedArchiveMeta, receivedFileMeta )
       cask.Response(
         ujson.Obj(
           "error"   -> false,
-          "message" -> "Metadata was saved successfully"
+          "message" -> "Metadata was saved successfully",
+          "uuid"    -> savedUUID.toString()
         ),
-        statusCode = 200
+        statusCode = 201
       )
     } catch {
       // Unable to parse the given JSON payload
@@ -122,7 +124,7 @@ class MetadataControllers {
           statusCode = 409
         )
 
-      case parentDirectoryNotFound: DomainExceptions.FileNoutFoundException =>
+      case parentDirectoryNotFound: DomainExceptions.FileNotFoundException =>
         cask.Response(
           ujson.Obj(
             "error"   -> true,

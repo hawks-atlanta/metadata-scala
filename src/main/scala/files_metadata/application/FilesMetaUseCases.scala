@@ -1,6 +1,8 @@
 package org.hawksatlanta.metadata
 package files_metadata.application
 
+import java.util.UUID
+
 import files_metadata.domain.ArchivesMeta
 import files_metadata.domain.DomainExceptions
 import files_metadata.domain.FileMeta
@@ -14,7 +16,7 @@ class FilesMetaUseCases {
     this.repository = repository
   }
 
-  def saveMetadata( archiveMeta: ArchivesMeta, fileMeta: FileMeta ): Unit = {
+  def saveMetadata( archiveMeta: ArchivesMeta, fileMeta: FileMeta ): UUID = {
     // Check if the file already exists
     val existingFileMeta = repository.searchFileInDirectory(
       ownerUuid = fileMeta.ownerUuid,
@@ -24,7 +26,7 @@ class FilesMetaUseCases {
 
     if (existingFileMeta.isDefined) {
       throw DomainExceptions.FileAlreadyExistsException(
-        "The user already has a file with the same name in the given directory"
+        "A file with the same name already exists in the given directory"
       )
     }
 

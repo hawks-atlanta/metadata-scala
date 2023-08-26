@@ -5,7 +5,7 @@ import java.util.UUID
 
 trait FilesMetaRepository {
   // --- Create ---
-  def saveFileMeta( archiveMeta: ArchivesMeta, fileMeta: FileMeta ): Unit
+  def saveFileMeta( archiveMeta: ArchivesMeta, fileMeta: FileMeta ): UUID
 
   // --- Read ---
   def getFilesMetaInRoot( ownerUuid: UUID ): Seq[FileMeta]

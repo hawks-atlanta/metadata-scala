@@ -2,7 +2,7 @@ package org.hawksatlanta.metadata
 package files_metadata.domain
 
 object DomainExceptions {
-  case class FileNoutFoundException( message: String )
+  case class FileNotFoundException( message: String )
       extends Exception( message )
 
   case class FileAlreadyExistsException( message: String )

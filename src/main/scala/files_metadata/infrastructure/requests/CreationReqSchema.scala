@@ -33,7 +33,7 @@ object CreationReqSchema {
             )
           )
         request.hashSum.has( size == 64 ) // SHA-256
-        request.fileType.is( equalTo( "file" ) )
+        request.fileType.is( equalTo( "archive" ) )
         request.fileName.is( notEmpty )
         request.fileName.has( size <= 128 )
         request.fileSize should be > 0L

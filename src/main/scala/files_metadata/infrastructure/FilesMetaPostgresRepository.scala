@@ -15,7 +15,7 @@ import shared.infrastructure.PostgreSQLPool
 class FilesMetaPostgresRepository extends FilesMetaRepository {
   private val pool: HikariDataSource = PostgreSQLPool.getInstance()
 
-  private def saveDirectory( fileMeta: FileMeta ): Option[UUID] = {
+  private def saveDirectory( fileMeta: FileMeta ): UUID = {
     val connection: Connection = pool.getConnection()
 
     try {
@@ -27,12 +27,16 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
       statemet.setObject( 2, fileMeta.parentUuid.orNull )
       statemet.setString( 3, fileMeta.name )
 
-      val result                     = statemet.executeQuery()
-      var insertedUUID: Option[UUID] = None
+      val result             = statemet.executeQuery()
+      var insertedUUID: UUID = null
 
       if (result.next()) {
         val parsedUUID = UUID.fromString( result.getString( "uuid" ) )
-        insertedUUID = Some( parsedUUID )
+        insertedUUID = parsedUUID
+      } else {
+        throw DomainExceptions.FileNotSavedException(
+          "There was an error while saving the directory"
+        )
       }
 
       insertedUUID
@@ -46,7 +50,7 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
   private def saveArchive(
       archivesMeta: ArchivesMeta,
       fileMeta: FileMeta
-  ): Option[UUID] = {
+  ): UUID = {
     val connection: Connection = pool.getConnection()
 
     try {
@@ -86,15 +90,13 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
       fileStatemet.setObject( 3, archiveUUID.get )
       fileStatemet.setString( 4, fileMeta.name )
 
-      val fileResult             = fileStatemet.executeQuery()
-      var fileUUID: Option[UUID] = None
+      val fileResult     = fileStatemet.executeQuery()
+      var fileUUID: UUID = null
 
       if (fileResult.next()) {
         val parsedUUID = UUID.fromString( fileResult.getString( "uuid" ) )
-        fileUUID = Some( parsedUUID )
-      }
-
-      if (fileUUID.isEmpty) {
+        fileUUID = parsedUUID
+      } else {
         throw DomainExceptions.FileNotSavedException(
           "There was an error while saving the file"
         )
@@ -115,7 +117,7 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
   override def saveFileMeta(
       archiveMeta: ArchivesMeta,
       fileMeta: FileMeta
-  ): Unit = {
+  ): UUID = {
     if (archiveMeta.hashSum.isEmpty) saveDirectory( fileMeta )
     else saveArchive( archiveMeta, fileMeta )
   }
@@ -159,8 +161,8 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
           name = result.getString( "name" )
         )
       } else {
-        throw DomainExceptions.FileNoutFoundException(
-          "There is no file with the given UUID or the user doesn't own it"
+        throw DomainExceptions.FileNotFoundException(
+          "The user does not own a file or directory with the given UUID"
         )
       }
     } catch {
