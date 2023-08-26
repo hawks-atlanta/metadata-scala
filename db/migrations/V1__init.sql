@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS archives (
 CREATE TABLE IF NOT EXISTS files (
     "uuid" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     "owner_uuid" UUID NOT NULL,
-    "parent_uuid" UUID DEFAULT NULL,
+    "parent_uuid" UUID DEFAULT NULL REFERENCES files("uuid"),
     "archive_uuid" UUID DEFAULT NULL REFERENCES archives("uuid"),
     "volume" VARCHAR(32) DEFAULT NULL,
     "name" VARCHAR(128) NOT NULL,

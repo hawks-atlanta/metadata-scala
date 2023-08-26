@@ -16,7 +16,6 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
   private val pool: HikariDataSource = PostgreSQLPool.getInstance()
 
   private def saveDirectory( fileMeta: FileMeta ): Option[UUID] = {
-    print( ">> Saving a directory <<" )
     val connection: Connection = pool.getConnection()
 
     try {
@@ -38,7 +37,7 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
 
       insertedUUID
     } catch {
-      case _: Exception => None
+      case exception: Exception => throw exception
     } finally {
       connection.close()
     }
@@ -128,7 +127,48 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
       directoryUuid: UUID
   ): Seq[FileMeta] = ???
 
-  override def getFileMeta( ownerUuid: UUID, uuid: UUID ): FileMeta = ???
+  override def getFileMeta( ownerUuid: UUID, uuid: UUID ): FileMeta = {
+    val connection: Connection = pool.getConnection()
+
+    try {
+      val statement = connection.prepareStatement(
+        "SELECT uuid, owner_uuid, parent_uuid, archive_uuid, volume, name FROM files WHERE owner_uuid = ? AND uuid = ?"
+      )
+
+      statement.setObject( 1, ownerUuid )
+      statement.setObject( 2, uuid )
+
+      val result = statement.executeQuery()
+      if (result.next()) {
+        val parentUUIDString  = result.getString( "parent_uuid" )
+        val archiveUUIDString = result.getString( "archive_uuid" )
+
+        val parentUUID =
+          if (parentUUIDString == null) None
+          else Some( UUID.fromString( parentUUIDString ) )
+        val archiveUUID =
+          if (archiveUUIDString == null) None
+          else Some( UUID.fromString( archiveUUIDString ) )
+
+        FileMeta(
+          uuid = UUID.fromString( result.getString( "uuid" ) ),
+          ownerUuid = UUID.fromString( result.getString( "owner_uuid" ) ),
+          parentUuid = parentUUID,
+          archiveUuid = archiveUUID,
+          volume = result.getString( "volume" ),
+          name = result.getString( "name" )
+        )
+      } else {
+        throw DomainExceptions.FileNoutFoundException(
+          "There is no file with the given UUID or the user doesn't own it"
+        )
+      }
+    } catch {
+      case exception: Exception => throw exception
+    } finally {
+      connection.close()
+    }
+  }
 
   override def searchFileInDirectory(
       ownerUuid: UUID,

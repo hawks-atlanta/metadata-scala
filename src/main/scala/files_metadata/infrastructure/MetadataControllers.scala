@@ -122,10 +122,17 @@ class MetadataControllers {
           statusCode = 409
         )
 
-      // Any other error
-      case e: Exception =>
-        print( e )
+      case parentDirectoryNotFound: DomainExceptions.FileNoutFoundException =>
+        cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> parentDirectoryNotFound.getMessage()
+          ),
+          statusCode = 404
+        )
 
+      // Any other error
+      case _: Exception =>
         cask.Response(
           ujson.Obj(
             "error"   -> true,

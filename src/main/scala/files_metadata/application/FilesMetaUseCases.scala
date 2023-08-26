@@ -28,6 +28,14 @@ class FilesMetaUseCases {
       )
     }
 
+    // If a parent directory is given, check if it exists
+    if (fileMeta.parentUuid.isDefined) {
+      repository.getFileMeta(
+        ownerUuid = fileMeta.ownerUuid,
+        uuid = fileMeta.parentUuid.get
+      )
+    }
+
     // Save the metadata
     repository.saveFileMeta( archiveMeta, fileMeta )
   }
