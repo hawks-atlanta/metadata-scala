@@ -50,7 +50,7 @@ object CreationReqSchema {
               CommonValidator.uuidRegex
             )
           )
-        request.hashSum.is( aNull ) // HashSum is not needed for a directory
+        request.hashSum.is( empty ) // HashSum is not needed for a directory
         request.fileType.is( equalTo( "directory" ) )
         request.fileName.is( notEmpty )
         request.fileName.has( size <= 128 )

@@ -16,6 +16,7 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
   private val pool: HikariDataSource = PostgreSQLPool.getInstance()
 
   private def saveDirectory( fileMeta: FileMeta ): Option[UUID] = {
+    print( ">> Saving a directory <<" )
     val connection: Connection = pool.getConnection()
 
     try {
@@ -23,8 +24,8 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
         "INSERT INTO files (owner_uuid, parent_uuid, name) VALUES (?, ?, ?) RETURNING uuid"
       )
 
-      statemet.setString( 1, fileMeta.ownerUuid.toString )
-      statemet.setString( 2, fileMeta.parentUuid.toString )
+      statemet.setObject( 1, fileMeta.ownerUuid )
+      statemet.setObject( 2, fileMeta.parentUuid.orNull )
       statemet.setString( 3, fileMeta.name )
 
       val result                     = statemet.executeQuery()
