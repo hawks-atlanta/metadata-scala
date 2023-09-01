@@ -1,5 +1,6 @@
 ThisBuild / version      := "0.1.0-SNAPSHOT"
 ThisBuild / scalaVersion := "2.13.11"
+ThisBuild / mainClass    := Some( "org.hawksatlanta.metadata.Main" )
 
 lazy val root = ( project in file( "." ) )
   .settings(
@@ -15,10 +16,10 @@ assembly / assemblyMergeStrategy := {
 
 // Testing dependencies
 libraryDependencies ++= Seq(
-  "org.scalatest"       %% "scalatest"    % "3.2.15"   % Test,
-  "junit"                % "junit"        % "4.13.2"   % Test,
-  "io.rest-assured"      % "rest-assured" % "5.3.0"    % Test,
-  "org.scalatestplus"   %% "junit-4-13"   % "3.2.15.0" % Test
+  "org.scalatest"     %% "scalatest"    % "3.2.15"   % Test,
+  "junit"              % "junit"        % "4.13.2"   % Test,
+  "io.rest-assured"    % "rest-assured" % "5.3.0"    % Test,
+  "org.scalatestplus" %% "junit-4-13"   % "3.2.15.0" % Test
 )
 
 // Migration dependencies
