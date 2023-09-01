@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 0.0.13 (2023-09-01)
+
+
+### Bug Fixes
+
+* **cd:** Build the Docker image without running tests ([#35](https://github.com/hawks-atlanta/metadata-scala/issues/35)) ([c1edb5d](https://github.com/hawks-atlanta/metadata-scala/commit/c1edb5d596dc573d467704d25ad93ee5f568b900))
+
 ### 0.0.12 (2023-08-23)
 
 ### 0.0.11 (2023-08-23)
