@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 0.0.14 (2023-09-05)
+
+
+### Features
+
+* Save metadata ([#31](https://github.com/hawks-atlanta/metadata-scala/issues/31)) ([94e1444](https://github.com/hawks-atlanta/metadata-scala/commit/94e1444b2561275e1debd1fb96a1bc0e2b497fbd))
+
 ### 0.0.13 (2023-09-01)
 
 
