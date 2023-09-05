@@ -81,9 +81,27 @@ paths:
               schema:
                 type: object
                 properties:
-                  file_uuid:
+                  uuid:
                     type: string
                     example: 'b96bdc16-8f27-44aa-9758-b4e5f13060fe'
+        '400':
+          description: Bad request. The provided user_uuid parameter wasn´t a valid UUID or the JSON body does´t fullfill the validations.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+        '404':
+          description: Not found. No parent directory with the given UUID was found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+        '409':
+          description: Conflict. There is already a file or directory with the given UUID in the given location.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
         '500':
           description: Internal server error
           content:
@@ -206,12 +224,12 @@ components:
         uuid:
           type: string
           example: 'b96bdc16-8f27-44aa-9758-b4e5f13060fe'
-        type:
+        fileType:
           type: string
-          enum: ['file', 'directory']
+          enum: ['archive', 'directory']
           description: "Whether the file is a directory or an archive"
           example: 'file'
-        name:
+        fileName:
           type: string
           example: 'filename'
 
@@ -221,28 +239,29 @@ components:
         volume:
           type: string
           example: 'VOLUME_1'
-        archive_uuid:
+        archiveUUID:
           type: string
           example: '0b82495a-350b-4f4f-95ce-0119998466d4'
 
     file_creation_request:
       type: object
       properties:
-        parent_uuid:
+        parentUUID:
           type: string
           example: '5ad724f0-4091-453a-914a-c2d11d69d1e3'
-        hash_sum:
+        hashSum:
           type: string
+          description: 'SHA256 hash of the file'
           example: '56d50f755d5dbca915cf93779d3b51d6562e6183'
-        type:
+        fileType:
           type: string
           enum: ['file', 'directory']
           description: "Whether the file is a directory or an archive"
           example: 'file'
-        name:
+        fileName:
           type: string
           example: 'filename'
-        size:
+        fileSize:
           type: number
           description: 'Size in KB'
           example: 3072

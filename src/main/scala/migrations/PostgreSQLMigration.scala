@@ -6,24 +6,28 @@ import org.hawksatlanta.metadata.shared.infrastructure.Environment
 
 object PostgreSQLMigration {
   def migrate(): Boolean = {
-    val flyway = Flyway.configure()
+    val flyway = Flyway
+      .configure()
       .dataSource(
-        s"jdbc:postgresql://${Environment.dbHost}:${Environment.dbPort}/${Environment.dbName}",
+        s"jdbc:postgresql://${ Environment.dbHost }:${ Environment.dbPort }/${ Environment.dbName }",
         Environment.dbUser,
         Environment.dbPassword
       )
-      .locations("filesystem:db/migrations")
+      .locations( "filesystem:db/migrations" )
       .load()
 
     try {
       val migrationResult = flyway.migrate()
-      print(s"${migrationResult.migrationsExecuted} migrations were successfully executed.")
+      print(
+        s"${ migrationResult.migrationsExecuted } migrations were successfully executed."
+      )
       migrationResult.success
-    }catch {
-      case e: Exception => {
-        print(s"Migration failed: ${e.getMessage}")
-      }
-      false
+    } catch {
+      case e: Exception =>
+        {
+          print( s"Migration failed: ${ e.getMessage }" )
+        }
+        false
     }
   }
 }

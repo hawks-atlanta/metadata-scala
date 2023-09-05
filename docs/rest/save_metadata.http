@@ -1,0 +1,51 @@
+### Save metadata for an archive file stored in the root directory
+
+POST http://localhost:8080/api/v1/files/9ae0ee6f-0644-46c8-b364-ee36c9f9bd81 HTTP/1.1
+Content-Type: application/json
+
+{
+  "parentUUID": null, 
+  "hashSum": "fb3a2b16764328a3c90f2122cdb4e583d2b344c9499fdf9bd1f846170e05cb52", 
+  "fileType": "archive",
+  "fileName": "project.txt", 
+  "fileSize": 32,
+}
+
+### Save metadata for a directory stored in the root directory
+
+POST http://localhost:8080/api/v1/files/9ae0ee6f-0644-46c8-b364-ee36c9f9bd81 HTTP/1.1
+Content-Type: application/json
+
+{
+  "parentUUID": null, 
+  "hashSum": "", 
+  "fileType": "directory",
+  "fileName": "university", 
+  "fileSize": 0,
+}
+
+### Save metadata for an archive file stored in a parent directory
+
+POST http://localhost:8080/api/v1/files/9ae0ee6f-0644-46c8-b364-ee36c9f9bd81 HTTP/1.1
+Content-Type: application/json
+
+{
+  "parentUUID": "92467e11-38e8-41f1-a088-0538f43811bd", 
+  "hashSum": "5a362b73f98d8a4123ba318e9c5bead3135caa33eada95e80e17290ce9bbf4be", 
+  "fileType": "archive",
+  "fileName": "nested.txt", 
+  "fileSize": 16,
+}
+
+### Save metadata for a directory stored in a parent directory
+
+POST http://localhost:8080/api/v1/files/9ae0ee6f-0644-46c8-b364-ee36c9f9bd81 HTTP/1.1
+Content-Type: application/json
+
+{
+  "parentUUID": "92467e11-38e8-41f1-a088-0538f43811bd", 
+  "hashSum": "", 
+  "fileType": "directory",
+  "fileName": "nested", 
+  "fileSize": 0,
+}
