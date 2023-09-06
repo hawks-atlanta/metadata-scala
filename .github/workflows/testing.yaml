@@ -24,9 +24,15 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: openlawteam/scalafmt-ci@v2
+      - uses: coursier/cache-action@v6
+
+      - uses: coursier/setup-action@v1
         with:
-          args: "--check src/"
+          jvm: adopt:1.11.0.2
+          apps: scalafmt
+
+      - name: Check format
+        run: scalafmt --check src/
 
   test:
     runs-on: ubuntu-22.04
