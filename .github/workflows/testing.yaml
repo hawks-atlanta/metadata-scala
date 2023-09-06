@@ -19,8 +19,22 @@ jobs:
       - name: Clean and build
         run: sbt "set assembly / test := {}" clean assembly
 
+  lint:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Scala
+        uses: olafurpg/setup-scala@v14
+        with:
+          java-version: openjdk@1.11.0-2
+
+      - name: Lint
+        run: scalafmt --check src/
   test:
     runs-on: ubuntu-22.04
+    needs: lint
+
     steps:
       - uses: actions/checkout@v3
 
