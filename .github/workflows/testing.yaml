@@ -19,8 +19,25 @@ jobs:
       - name: Clean and build
         run: sbt "set assembly / test := {}" clean assembly
 
+  lint:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: coursier/cache-action@v6
+
+      - uses: coursier/setup-action@v1
+        with:
+          jvm: adopt:1.11.0.2
+          apps: scalafmt
+
+      - name: Check format
+        run: scalafmt --check src/
+
   test:
     runs-on: ubuntu-22.04
+    needs: lint
+
     steps:
       - uses: actions/checkout@v3
 
