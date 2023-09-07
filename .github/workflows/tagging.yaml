@@ -18,3 +18,4 @@ jobs:
           git-user-nane: "Antonio Donis"
           git-user-email: "antoniojosedonishung@gmail.com"
           git-message: "chore(release): {version}"
+          version-file: "version.json"
