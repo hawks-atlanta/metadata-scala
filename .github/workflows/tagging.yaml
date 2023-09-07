@@ -11,18 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Setup node 18.x
-        uses: actions/setup-node@v3
+
+      - uses: TriPSs/conventional-changelog-action@v3
+        name: Tagging and Changelog
         with:
-          node-version: 18.x
-          cache: "npm"
-      - name: Git Identity
-        run: |
-          git checkout dev
-          git fetch --all --tags
-          git config --global user.email "antoniojosedonishung@gmail.com"
-          git config --global user.name "Antonio Donis"
-      - name: Changelog
-        run: 'npx standard-version --message "[ci skip] chore(release): %s"'
-      - name: Push changes
-        run: git push --follow-tags --force origin dev
+          git-user-nane: "Antonio Donis"
+          git-user-email: "antoniojosedonishung@gmail.com"
+          git-message: "chore(release): {version}"
