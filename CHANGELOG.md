@@ -1,4 +1,13 @@
-# 0.1.0 (2023-09-07)
+# [0.2.0](https://github.com/hawks-atlanta/metadata-scala/compare/v0.1.0...v0.2.0) (2023-09-10)
+
+
+### Features
+
+* New files are unshared by default ([#44](https://github.com/hawks-atlanta/metadata-scala/issues/44)) ([a1140d5](https://github.com/hawks-atlanta/metadata-scala/commit/a1140d5c8767278defc5e767c3c3eb87271ba81b))
+
+
+
+# [0.1.0](https://github.com/hawks-atlanta/metadata-scala/compare/1da251d344ba2f8af61efa8a339716672abec56f...v0.1.0) (2023-09-07)
 
 
 ### Bug Fixes
