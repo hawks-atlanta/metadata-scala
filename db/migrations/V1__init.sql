@@ -19,8 +19,15 @@ CREATE TABLE IF NOT EXISTS files (
     "archive_uuid" UUID DEFAULT NULL REFERENCES archives("uuid"),
     "volume" VARCHAR(32) DEFAULT NULL,
     "name" VARCHAR(128) NOT NULL,
+    "is_shared" BOOLEAN NOT NULL DEFAULT FALSE,
     "created_at" TIMESTAMP NOT NULL DEFAULT NOW(),
     "updated_at" TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS shared_files (
+    "uuid" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    "file_uuid" UUID NOT NULL REFERENCES files("uuid"),
+    "user_uuid" UUID NOT NULL
 );
 
 -- Indexes
