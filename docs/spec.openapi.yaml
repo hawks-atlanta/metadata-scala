@@ -109,10 +109,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/error_response'
 
-  /files/{user_uuid}/{file_uuid}:
+  /files/{user_uuid}/shared_with_me:
     get:
       tags: [ 'File' ]
-      description: Get the metadata of the given file. This endpoint is suposed to only be used by the gateway service to obtain the location (files/volume/archive_uuid) of the file.
+      description: List the files shared with the given user.
       parameters:
         - in: path
           name: user_uuid
@@ -120,6 +120,66 @@ paths:
             type: string
             example: '658b4e63-b5ac-46a7-ac43-efb6a1415130'
           required: true
+      responses:
+        '200':
+          description: Ok. The directory was listed.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/file'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+
+  /files/{user_uuid}/{file_uuid}/can_read:
+    get:
+      tags: [ 'File' ]
+      description: Check if the given user can read the given file.
+      parameters:
+        - in: path
+          name: user_uuid
+          schema:
+            type: string
+            example: '658b4e63-b5ac-46a7-ac43-efb6a1415130'
+          required: true
+        - in: path
+          name: file_uuid
+          schema:
+            type: string
+            example: 'b96bdc16-8f27-44aa-9758-b4e5f13060fe'
+          required: true
+      responses:
+        '204':
+          description: The user can read the file.
+        '403':
+          description: The user can't read the file.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+        '404':
+          description: No file with the given file_uuid was found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+
+  /files/{file_uuid}:
+    get:
+      tags: [ 'File' ]
+      description: Get the metadata of the given file. This endpoint is suposed to only be used by the gateway service to obtain the location (files/volume/archive_uuid) of the file.
+      parameters:
         - in: path
           name: file_uuid
           schema:
@@ -151,6 +211,38 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error_response'
+
+  /files/{file_uuid}/shared_with:
+    get:
+      tags: [ 'File' ]
+      parameters:
+        - in: path
+          name: file_uuid
+          schema:
+            type: string
+            example: 'b96bdc16-8f27-44aa-9758-b4e5f13060fe'
+          required: true
+      responses:
+        '200':
+          description: The list of UUIDs of the users which the file was shared is returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  shared_with:
+                    type: array
+                    items:
+                      type: string
+                      example: '6cec2ad8-7329-47f8-8b76-7daf7036945c'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+
+  /files/{user_uuid}/{file_uuid}:
     delete:
       tags: [ 'File' ]
       description: Delete the metadata of the given file.
@@ -178,6 +270,100 @@ paths:
                 $ref: '#/components/schemas/error_response'
         '404':
           description: Not found. No file with the given file_uuid was found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+
+  /files/{owner_uuid}/{file_uuid}/share:
+    post:
+      tags: [ 'File' ]
+      description: Share the given file with the given user
+      parameters:
+        - in: path
+          name: owner_uuid
+          schema:
+            type: string
+            example: '658b4e63-b5ac-46a7-ac43-efb6a1415130'
+          required: true
+        - in: path
+          name: file_uuid
+          schema:
+            type: string
+            example: 'b96bdc16-8f27-44aa-9758-b4e5f13060fe'
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/toggle_share_request'
+      responses:
+        '204':
+          description: The file was shared
+        '400':
+          description: The owner_uuid or file_uuid were not a valid UUID or the JSON body does´t fullfill the validations.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+        '403':
+          description: The file is not owned by the user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+        '409':
+          description: The file is already shared with the given user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+
+  /files/{owner_uuid}/{file_uuid}/unshare:
+    post:
+      tags: [ 'File' ]
+      description: Unshare the given file with the given user
+      parameters:
+        - in: path
+          name: owner_uuid
+          schema:
+            type: string
+            example: '658b4e63-b5ac-46a7-ac43-efb6a1415130'
+          required: true
+        - in: path
+          name: file_uuid
+          schema:
+            type: string
+            example: 'b96bdc16-8f27-44aa-9758-b4e5f13060fe'
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/toggle_share_request'
+      responses:
+        '204':
+          description: The file was unshared.
+        '400':
+          description: The owner_uuid or file_uuid were not a valid UUID or the JSON body does´t fullfill the validations.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+        '403':
+          description: The file is not owned by the user.
           content:
             application/json:
               schema:
@@ -265,6 +451,13 @@ components:
           type: number
           description: 'Size in KB'
           example: 3072
+
+    toggle_share_request:
+      type: object
+      properties:
+        otherUserUUID:
+          type: string
+          example: '6cec2ad8-7329-47f8-8b76-7daf7036945c'
 
     error_response:
       type: object
