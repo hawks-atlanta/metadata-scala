@@ -17,7 +17,7 @@ trait FilesMetaRepository {
       directoryUuid: UUID
   ): Seq[FileMeta]
 
-  def getFileMeta( ownerUuid: UUID, uuid: UUID ): FileMeta
+  def getFileMeta( uuid: UUID ): FileMeta
 
   def searchFileInDirectory(
       ownerUuid: UUID,

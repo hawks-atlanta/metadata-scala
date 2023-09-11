@@ -129,16 +129,14 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
       directoryUuid: UUID
   ): Seq[FileMeta] = ???
 
-  override def getFileMeta( ownerUuid: UUID, uuid: UUID ): FileMeta = {
+  override def getFileMeta( uuid: UUID ): FileMeta = {
     val connection: Connection = pool.getConnection()
 
     try {
       val statement = connection.prepareStatement(
-        "SELECT uuid, owner_uuid, parent_uuid, archive_uuid, volume, name FROM files WHERE owner_uuid = ? AND uuid = ?"
+        "SELECT uuid, owner_uuid, parent_uuid, archive_uuid, volume, name FROM files WHERE uuid = ?"
       )
-
-      statement.setObject( 1, ownerUuid )
-      statement.setObject( 2, uuid )
+      statement.setObject( 1, uuid )
 
       val result = statement.executeQuery()
       if (result.next()) {
