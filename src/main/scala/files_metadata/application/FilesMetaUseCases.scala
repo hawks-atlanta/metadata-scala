@@ -65,4 +65,13 @@ class FilesMetaUseCases {
 
     repository.shareFile( fileUUID, otherUserUUID )
   }
+
+  def canReadFile(
+      userUUID: UUID,
+      fileUUID: UUID
+  ): Boolean = {
+    val fileMeta = repository.getFileMeta( fileUUID )
+    if (fileMeta.ownerUuid == userUUID) return true
+    repository.canUserReadFile( userUUID, fileUUID )
+  }
 }

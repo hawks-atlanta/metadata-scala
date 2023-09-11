@@ -30,6 +30,8 @@ trait FilesMetaRepository {
       userUuid: UUID
   ): Boolean
 
+  def canUserReadFile( userUuid: UUID, fileUuid: UUID ): Boolean
+
   // --- Update ---
   def updateFileStatus( uuid: UUID, ready: Boolean ): Unit
 

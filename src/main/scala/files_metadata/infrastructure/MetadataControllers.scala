@@ -152,7 +152,6 @@ class MetadataControllers {
       val validationResult = validate[ShareReqSchema]( decoded )(
         validationRule
       )
-
       if (!isOwnerUUIDValid || !isFileUUIDValid || validationResult.isFailure) {
         return cask.Response(
           ujson.Obj(
@@ -215,6 +214,61 @@ class MetadataControllers {
           ujson.Obj(
             "error"   -> true,
             "message" -> "There was an error while sharing the file"
+          ),
+          statusCode = 500
+        )
+    }
+  }
+
+  def CanReadFileController(
+      request: cask.Request,
+      userUUID: String,
+      fileUUID: String
+  ): cask.Response[Obj] = {
+    try {
+      val isUserUUIDValid = CommonValidator.validateUUID( userUUID )
+      val isFileUUIDValid = CommonValidator.validateUUID( fileUUID )
+      if (!isUserUUIDValid || !isFileUUIDValid) {
+        return cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "Fields validation failed"
+          ),
+          statusCode = 400
+        )
+      }
+
+      val canRead = useCases.canReadFile(
+        userUUID = UUID.fromString( userUUID ),
+        fileUUID = UUID.fromString( fileUUID )
+      )
+
+      if (!canRead) {
+        cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "The user can't read the file"
+          ),
+          statusCode = 403
+        )
+      } else {
+        cask.Response( None, statusCode = 204 )
+      }
+    } catch {
+      case _: DomainExceptions.FileNotFoundException =>
+        cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "The file wasn't found"
+          ),
+          statusCode = 404
+        )
+
+      case _: Exception =>
+        cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "There was an error while checking if the user can read the file"
           ),
           statusCode = 500
         )
