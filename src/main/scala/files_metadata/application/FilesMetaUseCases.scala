@@ -33,7 +33,6 @@ class FilesMetaUseCases {
     // If a parent directory is given, check if it exists
     if (fileMeta.parentUuid.isDefined) {
       repository.getFileMeta(
-        ownerUuid = fileMeta.ownerUuid,
         uuid = fileMeta.parentUuid.get
       )
     }
@@ -47,7 +46,7 @@ class FilesMetaUseCases {
       fileUUID: UUID,
       otherUserUUID: UUID
   ): Unit = {
-    val fileMeta = repository.getFileMeta( ownerUUID, fileUUID )
+    val fileMeta = repository.getFileMeta( fileUUID )
 
     if (fileMeta.ownerUuid != ownerUUID) {
       throw DomainExceptions.FileNotOwnedException(
