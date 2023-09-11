@@ -8,9 +8,15 @@ object DomainExceptions {
   case class FileAlreadyExistsException( message: String )
       extends Exception( message )
 
+  case class FileNotOwnedException( message: String )
+      extends Exception( message )
+
   case class ArchiveNotSavedException( message: String )
       extends Exception( message )
 
   case class FileNotSavedException( message: String )
+      extends Exception( message )
+
+  case class FileAlreadySharedException( message: String )
       extends Exception( message )
 }

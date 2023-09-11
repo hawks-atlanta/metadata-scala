@@ -16,5 +16,14 @@ case class MetadataRoutes() extends cask.Routes {
     controllers.SaveMetadataController( request )
   }
 
+  @cask.post( s"${ basePath }/share/:ownerUUID/:fileUUID" )
+  def ShareMetadataHandler(
+      request: cask.Request,
+      ownerUUID: String,
+      fileUUID: String
+  ): cask.Response[Obj] = {
+    controllers.ShareFileController( request, ownerUUID, fileUUID )
+  }
+
   initialize()
 }
