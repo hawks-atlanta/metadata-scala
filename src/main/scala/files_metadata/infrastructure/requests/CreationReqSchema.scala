@@ -7,6 +7,7 @@ import shared.infrastructure.CommonValidator
 
 // --- Base class ---
 case class CreationReqSchema(
+    userUUID: String,
     parentUUID: String,
     hashSum: String,
     fileType: String,
@@ -25,6 +26,9 @@ object CreationReqSchema {
   val fileSchemaValidator: Validator[CreationReqSchema] =
     validator[CreationReqSchema] { request =>
       {
+        request.userUUID should matchRegex(
+          CommonValidator.uuidRegex
+        )
         request.parentUUID
           .is( aNull ) // Can be empty if it's in the root directory
           .or(         // Otherwise should be a valid UUID
@@ -43,6 +47,9 @@ object CreationReqSchema {
   val directorySchemaValidator: Validator[CreationReqSchema] =
     validator[CreationReqSchema] { request =>
       {
+        request.userUUID should matchRegex(
+          CommonValidator.uuidRegex
+        )
         request.parentUUID
           .is( aNull )
           .or(

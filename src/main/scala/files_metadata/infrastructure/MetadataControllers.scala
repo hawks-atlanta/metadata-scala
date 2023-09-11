@@ -26,21 +26,8 @@ class MetadataControllers {
   }
 
   def SaveMetadataController(
-      request: cask.Request,
-      userUUID: String
+      request: cask.Request
   ): cask.Response[Obj] = {
-    // Check if the given user UUID is valid
-    val isUserUUIDValid = CommonValidator.validateUUID( userUUID )
-    if (!isUserUUIDValid) {
-      return cask.Response(
-        ujson.Obj(
-          "error"   -> true,
-          "message" -> "The user_uuid parameter was not valid"
-        ),
-        statusCode = 400
-      )
-    }
-
     try {
       // Decode the JSON payload
       val decoded: CreationReqSchema = read[CreationReqSchema](
@@ -88,7 +75,7 @@ class MetadataControllers {
         else Some( UUID.fromString( decoded.parentUUID ) )
 
       val receivedFileMeta = FileMeta.createNewFile(
-        ownerUuid = UUID.fromString( userUUID ),
+        ownerUuid = UUID.fromString( decoded.userUUID ),
         parentUuid = parentUUID,
         name = decoded.fileName
       )
