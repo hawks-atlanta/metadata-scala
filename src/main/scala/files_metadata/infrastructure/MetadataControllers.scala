@@ -7,6 +7,7 @@ import com.wix.accord.validate
 import com.wix.accord.Validator
 import files_metadata.application.FilesMetaUseCases
 import files_metadata.domain.ArchivesMeta
+import files_metadata.domain.BaseDomainException
 import files_metadata.domain.DomainExceptions
 import files_metadata.domain.FileMeta
 import files_metadata.domain.FilesMetaRepository
@@ -93,7 +94,6 @@ class MetadataControllers {
         statusCode = 201
       )
     } catch {
-      // Unable to parse the given JSON payload
       case _: upickle.core.AbortException =>
         cask.Response(
           ujson.Obj(
@@ -103,25 +103,15 @@ class MetadataControllers {
           statusCode = 400
         )
 
-      case conflict: DomainExceptions.FileAlreadyExistsException =>
+      case e: BaseDomainException =>
         cask.Response(
           ujson.Obj(
             "error"   -> true,
-            "message" -> conflict.getMessage()
+            "message" -> e.message
           ),
-          statusCode = 409
+          statusCode = e.statusCode
         )
 
-      case parentDirectoryNotFound: DomainExceptions.FileNotFoundException =>
-        cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> parentDirectoryNotFound.getMessage()
-          ),
-          statusCode = 404
-        )
-
-      // Any other error
       case _: Exception =>
         cask.Response(
           ujson.Obj(
@@ -182,34 +172,16 @@ class MetadataControllers {
           statusCode = 400
         )
 
-      case _: DomainExceptions.FileNotFoundException =>
+      case e: BaseDomainException =>
         cask.Response(
           ujson.Obj(
             "error"   -> true,
-            "message" -> "The file wasn't found"
+            "message" -> e.message
           ),
-          statusCode = 404
+          statusCode = e.statusCode
         )
 
-      case _: DomainExceptions.FileNotOwnedException =>
-        cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> "The user does not own the file"
-          ),
-          statusCode = 403
-        )
-
-      case _: DomainExceptions.FileAlreadySharedException =>
-        cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> "The file is already shared with the given user"
-          ),
-          statusCode = 409
-        )
-
-      case e: Exception =>
+      case _: Exception =>
         cask.Response(
           ujson.Obj(
             "error"   -> true,
@@ -255,13 +227,13 @@ class MetadataControllers {
         cask.Response( None, statusCode = 204 )
       }
     } catch {
-      case _: DomainExceptions.FileNotFoundException =>
+      case e: BaseDomainException =>
         cask.Response(
           ujson.Obj(
             "error"   -> true,
-            "message" -> "The file wasn't found"
+            "message" -> e.message
           ),
-          statusCode = 404
+          statusCode = e.statusCode
         )
 
       case _: Exception =>
@@ -300,26 +272,16 @@ class MetadataControllers {
         statusCode = 204
       )
     } catch {
-      case _: DomainExceptions.FileNotFoundException =>
+      case e: BaseDomainException =>
         cask.Response(
           ujson.Obj(
             "error"   -> true,
-            "message" -> "The file wasn't found"
+            "message" -> e.message
           ),
-          statusCode = 404
+          statusCode = e.statusCode
         )
 
-      case _: DomainExceptions.FileAlreadyMarkedAsReadyException =>
-        cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> "The file is already marked as ready"
-          ),
-          statusCode = 409
-        )
-
-      case e: Exception =>
-        print( e )
+      case _: Exception =>
         cask.Response(
           ujson.Obj(
             "error"   -> true,
