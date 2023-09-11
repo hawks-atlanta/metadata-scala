@@ -11,14 +11,14 @@ import org.junit.Test
 import org.scalatestplus.junit.JUnitSuite
 import shared.infrastructure.CommonValidator
 
-object TestData {
+object SaveFileTestsData {
   val API_PREFIX: String = "/api/v1/files"
   val USER_UUID: UUID    = UUID.randomUUID()
 
   private var filePayload: util.HashMap[String, Any] = _
-  var directoryUUID: UUID                            = _
+  var savedDirectoryUUID: UUID                       = _
 
-  def getFilePayload(): util.HashMap[String, Any] = {
+  def getFilePayloadCopy(): util.HashMap[String, Any] = {
     if (filePayload == null) {
       filePayload = new util.HashMap[String, Any]
       filePayload.put( "userUUID", USER_UUID.toString )
@@ -28,7 +28,7 @@ object TestData {
         "71988c4d8e0803ba4519f0b2864c1331c14a1890bf8694e251379177bfedb5c3"
       )
       filePayload.put( "fileType", "archive" )
-      filePayload.put( "fileName", "project.txt" )
+      filePayload.put( "fileName", "save.txt" )
       filePayload.put( "fileSize", 150 )
     }
 
@@ -36,31 +36,23 @@ object TestData {
   }
 
   def setDirectoryUUID( uuid: UUID ): Unit = {
-    directoryUUID = uuid
+    savedDirectoryUUID = uuid
   }
 }
 
 @OrderWith( classOf[Alphanumeric] )
 class SaveFileMetadataTests extends JUnitSuite {
-  // Setup routes and perform migrations
-  @Test
-  def T0_setup(): Unit = {
-    Main.main( Array() )
-  }
-
   @Test
   // POST /api/v1/files/:user_uuid Success: Save file metadata
   def T1_SaveArchiveMetadataSuccess(): Unit = {
-    // --- Request ---
     val response = `given`()
       .port( 8080 )
-      .body( TestData.getFilePayload() )
+      .body( SaveFileTestsData.getFilePayloadCopy() )
       .contentType( "application/json" )
       .when()
-      .post( s"${ TestData.API_PREFIX }" )
+      .post( s"${ SaveFileTestsData.API_PREFIX }" )
     val responseJSON = response.jsonPath()
 
-    // --- Assertions ---
     assert( response.statusCode() == 201 )
     assert( !responseJSON.getBoolean( "error" ) )
     assert(
@@ -76,55 +68,48 @@ class SaveFileMetadataTests extends JUnitSuite {
   @Test
   // POST /api/v1/files/:user_uuid Success: Save directory metadata
   def T2_SaveDirectoryMetadataSuccess(): Unit = {
-    // --- Test data ---
     val payload = new util.HashMap[String, Any]()
-    payload.put( "userUUID", TestData.USER_UUID.toString )
+    payload.put( "userUUID", SaveFileTestsData.USER_UUID.toString )
     payload.put( "parentUUID", null )
     payload.put( "hashSum", "" )
     payload.put( "fileType", "directory" )
     payload.put( "fileName", "project" )
     payload.put( "fileSize", 0 )
 
-    // --- Request ---
     val response = `given`()
       .port( 8080 )
       .body( payload )
       .contentType( "application/json" )
       .when()
-      .post( s"${ TestData.API_PREFIX }" )
+      .post( s"${ SaveFileTestsData.API_PREFIX }" )
     val responseJSON = response.jsonPath()
 
-    // --- Assertions ---
     assert( response.statusCode() == 201 )
     assert( !responseJSON.getBoolean( "error" ) )
     assert(
       responseJSON.getString( "message" ) == "Metadata was saved successfully"
     )
 
-    // --- Save the directory UUID for the next test ---
     val directoryUUID = responseJSON.getString( "uuid" )
     assert( CommonValidator.validateUUID( directoryUUID ) )
-    TestData.setDirectoryUUID( UUID.fromString( directoryUUID ) )
+    SaveFileTestsData.setDirectoryUUID( UUID.fromString( directoryUUID ) )
   }
 
   @Test
   /* POST /api/v1/files/:user_uuid Success: Save file metadata with parent
    * directory */
   def T3_SaveArchiveMetadataWithParentSuccess(): Unit = {
-    // --- Test data ---
-    val payload = TestData.getFilePayload()
-    payload.put( "parentUUID", TestData.directoryUUID.toString )
+    val payload = SaveFileTestsData.getFilePayloadCopy()
+    payload.put( "parentUUID", SaveFileTestsData.savedDirectoryUUID.toString )
 
-    // --- Request ---
     val response = `given`()
       .port( 8080 )
       .body( payload )
       .contentType( "application/json" )
       .when()
-      .post( s"${ TestData.API_PREFIX }" )
+      .post( s"${ SaveFileTestsData.API_PREFIX }" )
     val responseJSON = response.jsonPath()
 
-    // --- Assertions ---
     assert( response.statusCode() == 201 )
     assert( !responseJSON.getBoolean( "error" ) )
     assert(
@@ -140,16 +125,14 @@ class SaveFileMetadataTests extends JUnitSuite {
   @Test
   // POST /api/v1/files/:user_uuid Conflict: File already exists
   def T4_SaveArchiveMetadataConflict(): Unit = {
-    // --- Request ---
     val response = `given`()
       .port( 8080 )
-      .body( TestData.getFilePayload() )
+      .body( SaveFileTestsData.getFilePayloadCopy() )
       .contentType( "application/json" )
       .when()
-      .post( s"${ TestData.API_PREFIX }" )
+      .post( s"${ SaveFileTestsData.API_PREFIX }" )
     val responseJSON = response.jsonPath()
 
-    // --- Assertions ---
     assert( response.statusCode() == 409 )
     assert( responseJSON.getBoolean( "error" ) )
     assert(
@@ -163,20 +146,17 @@ class SaveFileMetadataTests extends JUnitSuite {
   /* POST /api/v1/files/:user_uuid Conflict: File in parent directory already
    * exists */
   def T5_SaveArchiveMetadataWithParentConflict(): Unit = {
-    // --- Test data ---
-    val payload = TestData.getFilePayload()
-    payload.put( "parentUUID", TestData.directoryUUID.toString )
+    val payload = SaveFileTestsData.getFilePayloadCopy()
+    payload.put( "parentUUID", SaveFileTestsData.savedDirectoryUUID.toString )
 
-    // --- Request ---
     val response = `given`()
       .port( 8080 )
       .body( payload )
       .contentType( "application/json" )
       .when()
-      .post( s"${ TestData.API_PREFIX }" )
+      .post( s"${ SaveFileTestsData.API_PREFIX }" )
     val responseJSON = response.jsonPath()
 
-    // --- Assertions ---
     assert( response.statusCode() == 409 )
     assert( responseJSON.getBoolean( "error" ) )
     assert(
@@ -189,20 +169,17 @@ class SaveFileMetadataTests extends JUnitSuite {
   @Test
   // POST /api/v1/files/:user_uuid Not found: Parent directory does not exist
   def T6_SaveArchiveMetadataWithParentNotFound(): Unit = {
-    // --- Test data ---
-    val payload = TestData.getFilePayload()
+    val payload = SaveFileTestsData.getFilePayloadCopy()
     payload.put( "parentUUID", UUID.randomUUID().toString )
 
-    // --- Request ---
     val response = `given`()
       .port( 8080 )
       .body( payload )
       .contentType( "application/json" )
       .when()
-      .post( s"${ TestData.API_PREFIX }" )
+      .post( s"${ SaveFileTestsData.API_PREFIX }" )
     val responseJSON = response.jsonPath()
 
-    // --- Assertions ---
     assert( response.statusCode() == 404 )
     assert( responseJSON.getBoolean( "error" ) )
     assert(
