@@ -4,9 +4,9 @@ package files_metadata
 import java.util
 import java.util.UUID
 
-import io.restassured.RestAssured.`given`
 import org.junit.runner.manipulation.Alphanumeric
 import org.junit.runner.OrderWith
+import org.junit.Before
 import org.junit.Test
 import org.scalatestplus.junit.JUnitSuite
 import shared.infrastructure.CommonValidator
@@ -42,6 +42,11 @@ object SaveFileTestsData {
 
 @OrderWith( classOf[Alphanumeric] )
 class SaveFileMetadataTests extends JUnitSuite {
+  @Before
+  def startHttpServer(): Unit = {
+    FilesTestsUtils.StartHttpServer()
+  }
+
   @Test
   // POST /api/v1/files/:user_uuid Success: Save file metadata
   def T1_SaveArchiveMetadataSuccess(): Unit = {

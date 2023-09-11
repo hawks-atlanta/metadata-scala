@@ -6,6 +6,7 @@ import java.util.UUID
 import io.restassured.RestAssured.`given`
 import org.junit.runner.manipulation.Alphanumeric
 import org.junit.runner.OrderWith
+import org.junit.Before
 import org.junit.Test
 import org.scalatestplus.junit.JUnitSuite
 
@@ -144,10 +145,9 @@ class CanReadFileTests extends JUnitSuite {
     )
   }
 
-  @Test
-  def T0_setup(): Unit = {
-    // Setup routes and perform migrations
-    Main.main( Array() )
+  @Before
+  def startHttpServer(): Unit = {
+    FilesTestsUtils.StartHttpServer()
   }
 
   @Test

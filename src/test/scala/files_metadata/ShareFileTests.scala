@@ -5,6 +5,7 @@ import java.util.UUID
 
 import org.junit.runner.manipulation.Alphanumeric
 import org.junit.runner.OrderWith
+import org.junit.Before
 import org.junit.Test
 import org.scalatestplus.junit.JUnitSuite
 
@@ -65,6 +66,11 @@ class ShareFileTests extends JUnitSuite {
       FilesTestsUtils.SaveFile( saveDirectoryPayload )
     ShareFileTestsData.savedDirectoryUUID =
       UUID.fromString( saveDirectoryResponse.jsonPath().get( "uuid" ) )
+  }
+
+  @Before
+  def startHttpServer(): Unit = {
+    FilesTestsUtils.StartHttpServer()
   }
 
   @Test
