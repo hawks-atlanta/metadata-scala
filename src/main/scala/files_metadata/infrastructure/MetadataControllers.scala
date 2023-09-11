@@ -11,6 +11,7 @@ import files_metadata.domain.DomainExceptions
 import files_metadata.domain.FileMeta
 import files_metadata.domain.FilesMetaRepository
 import files_metadata.infrastructure.requests.CreationReqSchema
+import files_metadata.infrastructure.requests.ShareReqSchema
 import shared.infrastructure.CommonValidator
 import ujson.Obj
 import upickle.default.read
@@ -130,6 +131,93 @@ class MetadataControllers {
           statusCode = 500
         )
 
+    }
+  }
+
+  def ShareFileController(
+      request: cask.Request,
+      ownerUUID: String,
+      fileUUID: String
+  ): cask.Response[Obj] = {
+    try {
+      val decoded: ShareReqSchema = read[ShareReqSchema](
+        request.text()
+      )
+
+      val isOwnerUUIDValid = CommonValidator.validateUUID( ownerUUID )
+      val isFileUUIDValid  = CommonValidator.validateUUID( fileUUID )
+
+      val validationRule: Validator[ShareReqSchema] =
+        ShareReqSchema.shareSchemaValidator
+      val validationResult = validate[ShareReqSchema]( decoded )(
+        validationRule
+      )
+
+      if (!isOwnerUUIDValid || !isFileUUIDValid || validationResult.isFailure) {
+        return cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "Fields validation failed"
+          ),
+          statusCode = 400
+        )
+      }
+
+      useCases.shareFile(
+        ownerUUID = UUID.fromString( ownerUUID ),
+        fileUUID = UUID.fromString( fileUUID ),
+        otherUserUUID = UUID.fromString( decoded.otherUserUUID )
+      )
+
+      cask.Response(
+        None,
+        statusCode = 204
+      )
+    } catch {
+      case _: upickle.core.AbortException =>
+        cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "JSON payload wasn't valid"
+          ),
+          statusCode = 400
+        )
+
+      case _: DomainExceptions.FileNotFoundException =>
+        cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "The file wasn't found"
+          ),
+          statusCode = 404
+        )
+
+      case _: DomainExceptions.FileNotOwnedException =>
+        cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "The user does not own the file"
+          ),
+          statusCode = 403
+        )
+
+      case _: DomainExceptions.FileAlreadySharedException =>
+        cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "The file is already shared with the given user"
+          ),
+          statusCode = 409
+        )
+
+      case e: Exception =>
+        cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "There was an error while sharing the file"
+          ),
+          statusCode = 500
+        )
     }
   }
 }

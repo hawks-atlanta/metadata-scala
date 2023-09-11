@@ -41,4 +41,29 @@ class FilesMetaUseCases {
     // Save the metadata
     repository.saveFileMeta( archiveMeta, fileMeta )
   }
+
+  def shareFile(
+      ownerUUID: UUID,
+      fileUUID: UUID,
+      otherUserUUID: UUID
+  ): Unit = {
+    val fileMeta = repository.getFileMeta( ownerUUID, fileUUID )
+
+    if (fileMeta.ownerUuid != ownerUUID) {
+      throw DomainExceptions.FileNotOwnedException(
+        "The user does not own the file"
+      )
+    }
+
+    if (
+      fileMeta.ownerUuid == otherUserUUID ||
+      repository.isFileDirectlySharedWithUser( fileUUID, otherUserUUID )
+    ) {
+      throw DomainExceptions.FileAlreadySharedException(
+        "The file is already shared with the user"
+      )
+    }
+
+    repository.shareFile( fileUUID, otherUserUUID )
+  }
 }
