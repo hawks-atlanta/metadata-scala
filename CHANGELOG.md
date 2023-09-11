@@ -1,3 +1,12 @@
+# [0.4.0](https://github.com/hawks-atlanta/metadata-scala/compare/v0.3.0...v0.4.0) (2023-09-11)
+
+
+### Features
+
+* Can read endpoint ([#49](https://github.com/hawks-atlanta/metadata-scala/issues/49)) ([e1577c2](https://github.com/hawks-atlanta/metadata-scala/commit/e1577c26ede19cf8160fc828ec4ef45bea2663ab))
+
+
+
 # [0.3.0](https://github.com/hawks-atlanta/metadata-scala/compare/v0.2.1...v0.3.0) (2023-09-11)
 
 
