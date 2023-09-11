@@ -277,6 +277,21 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
     }
   }
 
+  override def canUserReadFile( userUuid: UUID, fileUuid: UUID ): Boolean = {
+    val connection: Connection = pool.getConnection()
+
+    val statement = connection.prepareStatement( "SELECT can_read(?, ?)" )
+    statement.setObject( 1, userUuid )
+    statement.setObject( 2, fileUuid )
+
+    val result = statement.executeQuery()
+    if (result.next()) {
+      result.getBoolean( 1 )
+    } else {
+      false
+    }
+  }
+
   override def updateFileStatus( uuid: UUID, ready: Boolean ): Unit = ???
 
   override def deleteFileMeta( ownerUuid: UUID, uuid: UUID ): Unit = ???
