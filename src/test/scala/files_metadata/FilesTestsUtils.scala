@@ -15,4 +15,19 @@ object FilesTestsUtils {
       .when()
       .post( s"${ SaveFileTestsData.API_PREFIX }" )
   }
+
+  def ShareFile(
+      ownerUUID: String,
+      fileUUID: String,
+      payload: util.HashMap[String, Any]
+  ): Response = {
+    `given`()
+      .port( 8080 )
+      .contentType( "application/json" )
+      .body( payload )
+      .when()
+      .post(
+        s"${ ShareFileTestsData.API_PREFIX }/${ ownerUUID }/${ fileUUID }"
+      )
+  }
 }
