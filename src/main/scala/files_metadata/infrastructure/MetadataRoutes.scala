@@ -26,13 +26,13 @@ case class MetadataRoutes() extends cask.Routes {
   }
 
   @cask.get( s"${ basePath }/can_read/:userUUID/:fileUUID" )
-    def CanReadMetadataHandler(
-        request: cask.Request,
-        userUUID: String,
-        fileUUID: String
-    ): cask.Response[Obj] = {
-        controllers.CanReadFileController( request, userUUID, fileUUID )
-    }
+  def CanReadMetadataHandler(
+      request: cask.Request,
+      userUUID: String,
+      fileUUID: String
+  ): cask.Response[Obj] = {
+    controllers.CanReadFileController( request, userUUID, fileUUID )
+  }
 
   initialize()
 }
