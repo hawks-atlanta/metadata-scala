@@ -28,7 +28,7 @@ BEGIN
 	IF folder_parent_uuid IS NULL THEN
 		RETURN FALSE;
 	ELSE
-		RETURN can_read(parent_uuid, user_uuid);
+		RETURN can_read(user_uuid_arg, folder_parent_uuid);
 	END IF;
 END $$
 ;
