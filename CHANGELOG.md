@@ -1,3 +1,12 @@
+# [0.3.0](https://github.com/hawks-atlanta/metadata-scala/compare/v0.2.1...v0.3.0) (2023-09-11)
+
+
+### Features
+
+* Share files ([#48](https://github.com/hawks-atlanta/metadata-scala/issues/48)) ([1c2e8ea](https://github.com/hawks-atlanta/metadata-scala/commit/1c2e8ea772c7c0ae51e17ab143f7f581cace8f34))
+
+
+
 ## [0.2.1](https://github.com/hawks-atlanta/metadata-scala/compare/v0.2.0...v0.2.1) (2023-09-11)
 
 
