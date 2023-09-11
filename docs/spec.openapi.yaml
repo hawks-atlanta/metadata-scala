@@ -13,7 +13,7 @@ tags:
   - name: File
 
 paths:
-  /files/{user_uuid}:
+  /files/list/{user_uuid}:
     get:
       tags: [ 'File' ]
       description: List files in the given directory. List the user's root directory by default when the parent_uuid query parameter is not provided.
@@ -58,16 +58,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/error_response'
 
+  /files:
     post:
       tags: [ 'File' ]
       description: Save the metadata for a new file or directory.
-      parameters:
-        - in: path
-          name: user_uuid
-          schema:
-            type: string
-            example: '658b4e63-b5ac-46a7-ac43-efb6a1415130'
-          required: true
       requestBody:
         content:
           application/json:
@@ -109,7 +103,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/error_response'
 
-  /files/{user_uuid}/shared_with_me:
+  /files/shared_with_me/{user_uuid}:
     get:
       tags: [ 'File' ]
       description: List the files shared with the given user.
@@ -136,7 +130,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/error_response'
 
-  /files/{user_uuid}/{file_uuid}/can_read:
+  /files/can_read/{user_uuid}/{file_uuid}:
     get:
       tags: [ 'File' ]
       description: Check if the given user can read the given file.
@@ -175,7 +169,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/error_response'
 
-  /files/{file_uuid}:
+  /files/metadata/{file_uuid}:
     get:
       tags: [ 'File' ]
       description: Get the metadata of the given file. This endpoint is suposed to only be used by the gateway service to obtain the location (files/volume/archive_uuid) of the file.
@@ -212,7 +206,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/error_response'
 
-  /files/{file_uuid}/shared_with:
+  /files/shared_with_who/{file_uuid}:
     get:
       tags: [ 'File' ]
       parameters:
@@ -281,7 +275,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/error_response'
 
-  /files/{owner_uuid}/{file_uuid}/share:
+  /files/share/{owner_uuid}/{file_uuid}:
     post:
       tags: [ 'File' ]
       description: Share the given file with the given user
@@ -331,7 +325,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/error_response'
 
-  /files/{owner_uuid}/{file_uuid}/unshare:
+  /files/unshare/{owner_uuid}/{file_uuid}:
     post:
       tags: [ 'File' ]
       description: Unshare the given file with the given user
@@ -375,7 +369,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/error_response'
 
-  /files/{file_uuid}/ready:
+  /files/ready/{file_uuid}:
     put:
       tags: [ 'File' ]
       description: Mark the given file as ready (Stored in the filesystem).
@@ -432,6 +426,9 @@ components:
     file_creation_request:
       type: object
       properties:
+        userUUID:
+          type: string
+          example: '658b4e63-b5ac-46a7-ac43-efb6a1415130'
         parentUUID:
           type: string
           example: '5ad724f0-4091-453a-914a-c2d11d69d1e3'
