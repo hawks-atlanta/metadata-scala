@@ -1,3 +1,12 @@
+## [0.2.1](https://github.com/hawks-atlanta/metadata-scala/compare/v0.2.0...v0.2.1) (2023-09-11)
+
+
+### Bug Fixes
+
+* Update save metadata endpoint to avoid endpoints overlapping ([#47](https://github.com/hawks-atlanta/metadata-scala/issues/47)) ([5e2ea56](https://github.com/hawks-atlanta/metadata-scala/commit/5e2ea56fac46705a9c77a7a2c13a3379391b0800))
+
+
+
 # [0.2.0](https://github.com/hawks-atlanta/metadata-scala/compare/v0.1.0...v0.2.0) (2023-09-10)
 
 
