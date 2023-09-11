@@ -46,13 +46,7 @@ class ShareFileTests extends JUnitSuite {
     saveFilePayload.put( "fileName", "share.txt" )
     saveFilePayload.put( "fileSize", 150 )
 
-    val saveFileResponse = `given`()
-      .port( 8080 )
-      .body( saveFilePayload )
-      .contentType( "application/json" )
-      .when()
-      .post( s"${ SaveFileTestsData.API_PREFIX }" )
-
+    val saveFileResponse = FilesTestsUtils.SaveFile( saveFilePayload )
     ShareFileTestsData.savedFileUUID =
       UUID.fromString( saveFileResponse.jsonPath().get( "uuid" ) )
 
@@ -68,13 +62,8 @@ class ShareFileTests extends JUnitSuite {
     saveDirectoryPayload.put( "fileName", "share" )
     saveDirectoryPayload.put( "fileSize", 0 )
 
-    val saveDirectoryResponse = `given`()
-      .port( 8080 )
-      .body( saveDirectoryPayload )
-      .contentType( "application/json" )
-      .when()
-      .post( s"${ SaveFileTestsData.API_PREFIX }" )
-
+    val saveDirectoryResponse =
+      FilesTestsUtils.SaveFile( saveDirectoryPayload )
     ShareFileTestsData.savedDirectoryUUID =
       UUID.fromString( saveDirectoryResponse.jsonPath().get( "uuid" ) )
   }

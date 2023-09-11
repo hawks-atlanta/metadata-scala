@@ -45,12 +45,9 @@ class SaveFileMetadataTests extends JUnitSuite {
   @Test
   // POST /api/v1/files/:user_uuid Success: Save file metadata
   def T1_SaveArchiveMetadataSuccess(): Unit = {
-    val response = `given`()
-      .port( 8080 )
-      .body( SaveFileTestsData.getFilePayloadCopy() )
-      .contentType( "application/json" )
-      .when()
-      .post( s"${ SaveFileTestsData.API_PREFIX }" )
+    val response = FilesTestsUtils.SaveFile(
+      SaveFileTestsData.getFilePayloadCopy()
+    )
     val responseJSON = response.jsonPath()
 
     assert( response.statusCode() == 201 )
@@ -76,12 +73,7 @@ class SaveFileMetadataTests extends JUnitSuite {
     payload.put( "fileName", "project" )
     payload.put( "fileSize", 0 )
 
-    val response = `given`()
-      .port( 8080 )
-      .body( payload )
-      .contentType( "application/json" )
-      .when()
-      .post( s"${ SaveFileTestsData.API_PREFIX }" )
+    val response     = FilesTestsUtils.SaveFile( payload )
     val responseJSON = response.jsonPath()
 
     assert( response.statusCode() == 201 )
@@ -102,12 +94,7 @@ class SaveFileMetadataTests extends JUnitSuite {
     val payload = SaveFileTestsData.getFilePayloadCopy()
     payload.put( "parentUUID", SaveFileTestsData.savedDirectoryUUID.toString )
 
-    val response = `given`()
-      .port( 8080 )
-      .body( payload )
-      .contentType( "application/json" )
-      .when()
-      .post( s"${ SaveFileTestsData.API_PREFIX }" )
+    val response     = FilesTestsUtils.SaveFile( payload )
     val responseJSON = response.jsonPath()
 
     assert( response.statusCode() == 201 )
@@ -125,12 +112,9 @@ class SaveFileMetadataTests extends JUnitSuite {
   @Test
   // POST /api/v1/files/:user_uuid Conflict: File already exists
   def T4_SaveArchiveMetadataConflict(): Unit = {
-    val response = `given`()
-      .port( 8080 )
-      .body( SaveFileTestsData.getFilePayloadCopy() )
-      .contentType( "application/json" )
-      .when()
-      .post( s"${ SaveFileTestsData.API_PREFIX }" )
+    val response = FilesTestsUtils.SaveFile(
+      SaveFileTestsData.getFilePayloadCopy()
+    )
     val responseJSON = response.jsonPath()
 
     assert( response.statusCode() == 409 )
@@ -149,12 +133,7 @@ class SaveFileMetadataTests extends JUnitSuite {
     val payload = SaveFileTestsData.getFilePayloadCopy()
     payload.put( "parentUUID", SaveFileTestsData.savedDirectoryUUID.toString )
 
-    val response = `given`()
-      .port( 8080 )
-      .body( payload )
-      .contentType( "application/json" )
-      .when()
-      .post( s"${ SaveFileTestsData.API_PREFIX }" )
+    val response     = FilesTestsUtils.SaveFile( payload )
     val responseJSON = response.jsonPath()
 
     assert( response.statusCode() == 409 )
@@ -172,12 +151,7 @@ class SaveFileMetadataTests extends JUnitSuite {
     val payload = SaveFileTestsData.getFilePayloadCopy()
     payload.put( "parentUUID", UUID.randomUUID().toString )
 
-    val response = `given`()
-      .port( 8080 )
-      .body( payload )
-      .contentType( "application/json" )
-      .when()
-      .post( s"${ SaveFileTestsData.API_PREFIX }" )
+    val response     = FilesTestsUtils.SaveFile( payload )
     val responseJSON = response.jsonPath()
 
     assert( response.statusCode() == 404 )
