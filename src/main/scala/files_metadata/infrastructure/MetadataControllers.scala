@@ -274,4 +274,59 @@ class MetadataControllers {
         )
     }
   }
+
+  def MarkArchiveAsReadyController(
+      request: cask.Request,
+      archiveUUID: String
+  ): cask.Response[Obj] = {
+    try {
+      val isFileUUIDValid = CommonValidator.validateUUID( archiveUUID )
+      if (!isFileUUIDValid) {
+        return cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "Fields validation failed"
+          ),
+          statusCode = 400
+        )
+      }
+
+      useCases.markFileAsReady(
+        fileUUID = UUID.fromString( archiveUUID )
+      )
+
+      cask.Response(
+        None,
+        statusCode = 204
+      )
+    } catch {
+      case _: DomainExceptions.FileNotFoundException =>
+        cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "The file wasn't found"
+          ),
+          statusCode = 404
+        )
+
+      case _: DomainExceptions.FileAlreadyMarkedAsReadyException =>
+        cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "The file is already marked as ready"
+          ),
+          statusCode = 409
+        )
+
+      case e: Exception =>
+        print( e )
+        cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "There was an error while marking the file as ready"
+          ),
+          statusCode = 500
+        )
+    }
+  }
 }

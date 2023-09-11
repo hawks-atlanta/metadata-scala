@@ -19,4 +19,7 @@ object DomainExceptions {
 
   case class FileAlreadySharedException( message: String )
       extends Exception( message )
+
+  case class FileAlreadyMarkedAsReadyException( message: String )
+      extends Exception( message )
 }

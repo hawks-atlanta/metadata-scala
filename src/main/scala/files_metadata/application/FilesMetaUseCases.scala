@@ -74,4 +74,16 @@ class FilesMetaUseCases {
     if (fileMeta.ownerUuid == userUUID) return true
     repository.canUserReadFile( userUUID, fileUUID )
   }
+
+  def markFileAsReady( fileUUID: UUID ): Unit = {
+    val archiveMetadata = repository.getArchiveMeta( fileUUID )
+
+    if (archiveMetadata.ready) {
+      throw DomainExceptions.FileAlreadyMarkedAsReadyException(
+        "The file is already marked as ready"
+      )
+    }
+
+    repository.updateArchiveStatus( fileUUID, ready = true )
+  }
 }
