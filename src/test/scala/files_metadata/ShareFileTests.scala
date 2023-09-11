@@ -3,7 +3,6 @@ package files_metadata
 
 import java.util.UUID
 
-import io.restassured.RestAssured.`given`
 import org.junit.runner.manipulation.Alphanumeric
 import org.junit.runner.OrderWith
 import org.junit.Test
@@ -66,12 +65,6 @@ class ShareFileTests extends JUnitSuite {
       FilesTestsUtils.SaveFile( saveDirectoryPayload )
     ShareFileTestsData.savedDirectoryUUID =
       UUID.fromString( saveDirectoryResponse.jsonPath().get( "uuid" ) )
-  }
-
-  @Test
-  def T0_setup(): Unit = {
-    // Setup routes and perform migrations
-    Main.main( Array() )
   }
 
   @Test
