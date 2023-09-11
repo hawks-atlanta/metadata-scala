@@ -9,12 +9,11 @@ case class MetadataRoutes() extends cask.Routes {
   private val controllers = new MetadataControllers()
   controllers._init()
 
-  @cask.post( s"${ basePath }/:userUUID" )
+  @cask.post( s"${ basePath }" )
   def SaveMetadataHandler(
-      request: cask.Request,
-      userUUID: String
+      request: cask.Request
   ): cask.Response[Obj] = {
-    controllers.SaveMetadataController( request, userUUID )
+    controllers.SaveMetadataController( request )
   }
 
   initialize()
