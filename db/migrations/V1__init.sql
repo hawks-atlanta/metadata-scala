@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS shared_files (
 CREATE INDEX IF NOT EXISTS "files_owner_uuid_index" ON files ("owner_uuid");
 CREATE INDEX IF NOT EXISTS "files_parent_uuid_index" ON files ("parent_uuid");
 CREATE UNIQUE INDEX IF NOT EXISTS "files_unique_triplet_index" ON files ("owner_uuid", "parent_uuid", "name");
+CREATE UNIQUE INDEX IF NOT EXISTS "shared_files_unique_tuple_index" ON shared_files ("file_uuid", "user_uuid");
 
 -- Triggers
 CREATE OR REPLACE FUNCTION "update_updated_at_column"()
