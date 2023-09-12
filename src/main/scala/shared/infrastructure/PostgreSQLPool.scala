@@ -16,7 +16,6 @@ object PostgreSQLPool {
       )
       config.setUsername( Environment.dbUser )
       config.setPassword( Environment.dbPassword )
-      config.setMaximumPoolSize( 8 )
 
       pool = new HikariDataSource( config )
     }

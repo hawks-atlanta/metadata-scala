@@ -8,7 +8,6 @@ import com.wix.accord.Validator
 import files_metadata.application.FilesMetaUseCases
 import files_metadata.domain.ArchivesMeta
 import files_metadata.domain.BaseDomainException
-import files_metadata.domain.DomainExceptions
 import files_metadata.domain.FileMeta
 import files_metadata.domain.FilesMetaRepository
 import files_metadata.infrastructure.requests.CreationReqSchema
@@ -242,6 +241,83 @@ class MetadataControllers {
           ujson.Obj(
             "error"   -> true,
             "message" -> "There was an error while checking if the user can read the file"
+          ),
+          statusCode = 500
+        )
+    }
+  }
+
+  def GetFileMetadataController(
+      request: cask.Request,
+      fileUUID: String
+  ): cask.Response[Obj] = {
+    try {
+      val isFileUUIDValid = CommonValidator.validateUUID( fileUUID )
+      if (!isFileUUIDValid) {
+        return cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "Fields validation failed"
+          ),
+          statusCode = 400
+        )
+      }
+
+      val fileMeta = useCases.getFileMetadata(
+        fileUUID = UUID.fromString( fileUUID )
+      )
+
+      if (fileMeta.volume == null) {
+        return cask.Response(
+          ujson.Obj(
+            "message" -> "The file is not ready yet"
+          ),
+          statusCode = 202
+        )
+      }
+
+      if (fileMeta.archiveUuid.isEmpty) {
+        // Directories metadata
+        cask.Response(
+          ujson.Obj(
+            "archiveUUID" -> ujson.Null, // Needs to be a "custom" null value
+            "volume"      -> fileMeta.volume,
+            "size"        -> 0,
+            "hashSum"     -> ""
+          ),
+          statusCode = 200
+        )
+      } else {
+        // Archives metadata
+        val archivesMeta = useCases.getArchiveMetadata(
+          archiveUUID = fileMeta.archiveUuid.get
+        )
+
+        cask.Response(
+          ujson.Obj(
+            "archiveUUID" -> fileMeta.archiveUuid.get.toString,
+            "volume"      -> fileMeta.volume,
+            "size"        -> archivesMeta.size,
+            "hashSum"     -> archivesMeta.hashSum
+          ),
+          statusCode = 200
+        )
+      }
+    } catch {
+      case e: BaseDomainException =>
+        cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> e.message
+          ),
+          statusCode = e.statusCode
+        )
+
+      case _: Exception =>
+        cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "There was an error while getting the file metadata"
           ),
           statusCode = 500
         )

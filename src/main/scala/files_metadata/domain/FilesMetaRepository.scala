@@ -21,8 +21,6 @@ trait FilesMetaRepository {
 
   def getArchiveMeta( uuid: UUID ): ArchivesMeta
 
-  def getFileMetaByArchiveUuid( archiveUuid: UUID ): FileMeta
-
   def searchFileInDirectory(
       ownerUuid: UUID,
       directoryUuid: Option[UUID],
