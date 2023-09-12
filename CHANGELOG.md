@@ -1,3 +1,12 @@
+# [0.6.0](https://github.com/hawks-atlanta/metadata-scala/compare/v0.5.0...v0.6.0) (2023-09-12)
+
+
+### Features
+
+* Obtain file metadata ([#53](https://github.com/hawks-atlanta/metadata-scala/issues/53)) ([22542c6](https://github.com/hawks-atlanta/metadata-scala/commit/22542c6e66cd95bd27ec3e4f30079ea9f54bb03c))
+
+
+
 # [0.5.0](https://github.com/hawks-atlanta/metadata-scala/compare/v0.4.0...v0.5.0) (2023-09-12)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * Update save metadata endpoint to avoid endpoints overlapping ([#47](https://github.com/hawks-atlanta/metadata-scala/issues/47)) ([5e2ea56](https://github.com/hawks-atlanta/metadata-scala/commit/5e2ea56fac46705a9c77a7a2c13a3379391b0800))
-
-
-
-# [0.2.0](https://github.com/hawks-atlanta/metadata-scala/compare/v0.1.0...v0.2.0) (2023-09-10)
-
-
-### Features
-
-* New files are unshared by default ([#44](https://github.com/hawks-atlanta/metadata-scala/issues/44)) ([a1140d5](https://github.com/hawks-atlanta/metadata-scala/commit/a1140d5c8767278defc5e767c3c3eb87271ba81b))
 
 
 
