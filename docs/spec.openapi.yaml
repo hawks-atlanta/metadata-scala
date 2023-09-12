@@ -187,8 +187,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/metadata'
-        '403':
-          description: Forbidden. The file is not owned by the user.
+        '202':
+          description: The file is not ready yet
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+        '400':
+          description: The file_uuid parameter was not a valid UUID.
           content:
             application/json:
               schema:
@@ -399,6 +405,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error_response'
+        '409':
+          description: The file was already marked as ready.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
         '500':
           description: Internal server error
           content:
@@ -426,12 +438,18 @@ components:
     metadata:
       type: object
       properties:
-        volume:
-          type: string
-          example: 'VOLUME_1'
         archiveUUID:
           type: string
           example: '0b82495a-350b-4f4f-95ce-0119998466d4'
+        volume:
+          type: string
+          example: 'VOLUME_1'
+        hashSum:
+          type: string
+          example: '56d50f755d5dbca915cf93779d3b51d6562e6183'
+        size:
+          type: number
+          example: 3072
 
     file_creation_request:
       type: object
