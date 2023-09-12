@@ -380,6 +380,16 @@ paths:
             type: string
             example: 'b96bdc16-8f27-44aa-9758-b4e5f13060fe'
           required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                volume:
+                  type: string
+                  description: The volume in which the file was saved
+                  example: "volume_1"
       responses:
         '204':
           description: No content. The metadata of the file was updated.

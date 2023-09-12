@@ -74,4 +74,24 @@ class FilesMetaUseCases {
     if (fileMeta.ownerUuid == userUUID) return true
     repository.canUserReadFile( userUUID, fileUUID )
   }
+
+  def updateSavedFile( fileUUID: UUID, volume: String ): Unit = {
+    val fileMetadata = repository.getFileMeta( fileUUID )
+
+    // If the file is an archive, update the archive status
+    if (fileMetadata.archiveUuid.isDefined) {
+      val archiveMetadata =
+        repository.getArchiveMeta( fileMetadata.archiveUuid.get )
+
+      if (archiveMetadata.ready || fileMetadata.volume != null)
+        throw DomainExceptions.FileAlreadyMarkedAsReadyException(
+          "The file was already marked as ready"
+        )
+
+      repository.updateArchiveStatus( archiveMetadata.uuid, ready = true )
+    }
+
+    // Update the file volume
+    repository.updateFileVolume( fileUUID, volume )
+  }
 }

@@ -170,6 +170,74 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
     }
   }
 
+  override def getArchiveMeta( uuid: UUID ): ArchivesMeta = {
+    val connection: Connection = pool.getConnection()
+
+    try {
+      val statement = connection.prepareStatement(
+        "SELECT uuid, hash_sum, size, ready FROM archives WHERE uuid = ?"
+      )
+      statement.setObject( 1, uuid )
+
+      val result = statement.executeQuery()
+      if (!result.next()) {
+        throw DomainExceptions.FileNotFoundException(
+          "There is no archive with the given UUID"
+        )
+      }
+
+      ArchivesMeta(
+        uuid = UUID.fromString( result.getString( "uuid" ) ),
+        hashSum = result.getString( "hash_sum" ),
+        size = result.getLong( "size" ),
+        ready = result.getBoolean( "ready" )
+      )
+    } finally {
+      connection.close()
+    }
+  }
+
+  override def getFileMetaByArchiveUuid( archiveUuid: UUID ): FileMeta = {
+    val connection: Connection = pool.getConnection()
+
+    try {
+      val statement = connection.prepareStatement(
+        "SELECT uuid, owner_uuid, parent_uuid, archive_uuid, volume, name FROM files WHERE archive_uuid = ?"
+      )
+      statement.setObject( 1, archiveUuid )
+
+      val result = statement.executeQuery()
+      if (result.next()) {
+        val parentUUIDString  = result.getString( "parent_uuid" )
+        val archiveUUIDString = result.getString( "archive_uuid" )
+
+        val parentUUID =
+          if (parentUUIDString == null) None
+          else Some( UUID.fromString( parentUUIDString ) )
+        val archiveUUID =
+          if (archiveUUIDString == null) None
+          else Some( UUID.fromString( archiveUUIDString ) )
+
+        FileMeta(
+          uuid = UUID.fromString( result.getString( "uuid" ) ),
+          ownerUuid = UUID.fromString( result.getString( "owner_uuid" ) ),
+          parentUuid = parentUUID,
+          archiveUuid = archiveUUID,
+          volume = result.getString( "volume" ),
+          name = result.getString( "name" )
+        )
+      } else {
+        throw DomainExceptions.FileNotFoundException(
+          "There is no file with the given archive UUID"
+        )
+      }
+    } catch {
+      case exception: Exception => throw exception
+    } finally {
+      connection.close()
+    }
+  }
+
   override def searchFileInDirectory(
       ownerUuid: UUID,
       directoryUuid: Option[UUID],
@@ -292,7 +360,35 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
     }
   }
 
-  override def updateFileStatus( uuid: UUID, ready: Boolean ): Unit = ???
+  override def updateArchiveStatus(
+      archiveUUID: UUID,
+      ready: Boolean
+  ): Unit = {
+    val connection: Connection = pool.getConnection()
+
+    val statement = connection.prepareStatement(
+      "UPDATE archives SET ready = ? WHERE uuid = ?"
+    )
+    statement.setBoolean( 1, ready )
+    statement.setObject( 2, archiveUUID )
+
+    statement.executeUpdate()
+  }
+
+  def updateFileVolume(
+      fileUUID: UUID,
+      volume: String
+  ): Unit = {
+    val connection: Connection = pool.getConnection()
+
+    val statement = connection.prepareStatement(
+      "UPDATE files SET volume = ? WHERE uuid = ?"
+    )
+    statement.setString( 1, volume )
+    statement.setObject( 2, fileUUID )
+
+    statement.executeUpdate()
+  }
 
   override def deleteFileMeta( ownerUuid: UUID, uuid: UUID ): Unit = ???
 }

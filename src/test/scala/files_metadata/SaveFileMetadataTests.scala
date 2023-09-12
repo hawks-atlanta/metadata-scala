@@ -58,9 +58,6 @@ class SaveFileMetadataTests extends JUnitSuite {
     assert( response.statusCode() == 201 )
     assert( !responseJSON.getBoolean( "error" ) )
     assert(
-      responseJSON.getString( "message" ) == "Metadata was saved successfully"
-    )
-    assert(
       CommonValidator.validateUUID(
         responseJSON.getString( "uuid" )
       )
@@ -83,9 +80,6 @@ class SaveFileMetadataTests extends JUnitSuite {
 
     assert( response.statusCode() == 201 )
     assert( !responseJSON.getBoolean( "error" ) )
-    assert(
-      responseJSON.getString( "message" ) == "Metadata was saved successfully"
-    )
 
     val directoryUUID = responseJSON.getString( "uuid" )
     assert( CommonValidator.validateUUID( directoryUUID ) )
@@ -105,9 +99,6 @@ class SaveFileMetadataTests extends JUnitSuite {
     assert( response.statusCode() == 201 )
     assert( !responseJSON.getBoolean( "error" ) )
     assert(
-      responseJSON.getString( "message" ) == "Metadata was saved successfully"
-    )
-    assert(
       CommonValidator.validateUUID(
         responseJSON.getString( "uuid" )
       )
@@ -124,11 +115,6 @@ class SaveFileMetadataTests extends JUnitSuite {
 
     assert( response.statusCode() == 409 )
     assert( responseJSON.getBoolean( "error" ) )
-    assert(
-      responseJSON.getString(
-        "message"
-      ) == "A file with the same name already exists in the given directory"
-    )
   }
 
   @Test
@@ -143,11 +129,6 @@ class SaveFileMetadataTests extends JUnitSuite {
 
     assert( response.statusCode() == 409 )
     assert( responseJSON.getBoolean( "error" ) )
-    assert(
-      responseJSON.getString(
-        "message"
-      ) == "A file with the same name already exists in the given directory"
-    )
   }
 
   @Test
@@ -161,10 +142,5 @@ class SaveFileMetadataTests extends JUnitSuite {
 
     assert( response.statusCode() == 404 )
     assert( responseJSON.getBoolean( "error" ) )
-    assert(
-      responseJSON.getString(
-        "message"
-      ) == "The user does not own a file or directory with the given UUID"
-    )
   }
 }

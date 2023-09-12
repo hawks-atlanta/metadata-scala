@@ -7,10 +7,12 @@ import com.wix.accord.validate
 import com.wix.accord.Validator
 import files_metadata.application.FilesMetaUseCases
 import files_metadata.domain.ArchivesMeta
+import files_metadata.domain.BaseDomainException
 import files_metadata.domain.DomainExceptions
 import files_metadata.domain.FileMeta
 import files_metadata.domain.FilesMetaRepository
 import files_metadata.infrastructure.requests.CreationReqSchema
+import files_metadata.infrastructure.requests.MarkAsReadyReqSchema
 import files_metadata.infrastructure.requests.ShareReqSchema
 import shared.infrastructure.CommonValidator
 import ujson.Obj
@@ -93,35 +95,24 @@ class MetadataControllers {
         statusCode = 201
       )
     } catch {
-      // Unable to parse the given JSON payload
       case _: upickle.core.AbortException =>
         cask.Response(
           ujson.Obj(
             "error"   -> true,
-            "message" -> "JSON payload wasn't valid"
+            "message" -> "Unable to decode JSON body"
           ),
           statusCode = 400
         )
 
-      case conflict: DomainExceptions.FileAlreadyExistsException =>
+      case e: BaseDomainException =>
         cask.Response(
           ujson.Obj(
             "error"   -> true,
-            "message" -> conflict.getMessage()
+            "message" -> e.message
           ),
-          statusCode = 409
+          statusCode = e.statusCode
         )
 
-      case parentDirectoryNotFound: DomainExceptions.FileNotFoundException =>
-        cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> parentDirectoryNotFound.getMessage()
-          ),
-          statusCode = 404
-        )
-
-      // Any other error
       case _: Exception =>
         cask.Response(
           ujson.Obj(
@@ -177,39 +168,21 @@ class MetadataControllers {
         cask.Response(
           ujson.Obj(
             "error"   -> true,
-            "message" -> "JSON payload wasn't valid"
+            "message" -> "Unable to decode JSON body"
           ),
           statusCode = 400
         )
 
-      case _: DomainExceptions.FileNotFoundException =>
+      case e: BaseDomainException =>
         cask.Response(
           ujson.Obj(
             "error"   -> true,
-            "message" -> "The file wasn't found"
+            "message" -> e.message
           ),
-          statusCode = 404
+          statusCode = e.statusCode
         )
 
-      case _: DomainExceptions.FileNotOwnedException =>
-        cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> "The user does not own the file"
-          ),
-          statusCode = 403
-        )
-
-      case _: DomainExceptions.FileAlreadySharedException =>
-        cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> "The file is already shared with the given user"
-          ),
-          statusCode = 409
-        )
-
-      case e: Exception =>
+      case _: Exception =>
         cask.Response(
           ujson.Obj(
             "error"   -> true,
@@ -255,13 +228,13 @@ class MetadataControllers {
         cask.Response( None, statusCode = 204 )
       }
     } catch {
-      case _: DomainExceptions.FileNotFoundException =>
+      case e: BaseDomainException =>
         cask.Response(
           ujson.Obj(
             "error"   -> true,
-            "message" -> "The file wasn't found"
+            "message" -> e.message
           ),
-          statusCode = 404
+          statusCode = e.statusCode
         )
 
       case _: Exception =>
@@ -269,6 +242,80 @@ class MetadataControllers {
           ujson.Obj(
             "error"   -> true,
             "message" -> "There was an error while checking if the user can read the file"
+          ),
+          statusCode = 500
+        )
+    }
+  }
+
+  def MarkFileAsReadyController(
+      request: cask.Request,
+      fileUUID: String
+  ): cask.Response[Obj] = {
+    try {
+      val isFileUUIDValid = CommonValidator.validateUUID( fileUUID )
+      if (!isFileUUIDValid) {
+        return cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "Fields validation failed"
+          ),
+          statusCode = 400
+        )
+      }
+
+      val decoded: MarkAsReadyReqSchema = read[MarkAsReadyReqSchema](
+        request.text()
+      )
+
+      val validationRule: Validator[MarkAsReadyReqSchema] =
+        MarkAsReadyReqSchema.schemaValidator
+      val validationResult = validate[MarkAsReadyReqSchema]( decoded )(
+        validationRule
+      )
+      if (validationResult.isFailure) {
+        return cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "Fields validation failed"
+          ),
+          statusCode = 400
+        )
+      }
+
+      useCases.updateSavedFile(
+        fileUUID = UUID.fromString( fileUUID ),
+        volume = decoded.volume
+      )
+
+      cask.Response(
+        None,
+        statusCode = 204
+      )
+    } catch {
+      case _: upickle.core.AbortException =>
+        cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "Unable to decode JSON body"
+          ),
+          statusCode = 400
+        )
+
+      case e: BaseDomainException =>
+        cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> e.message
+          ),
+          statusCode = e.statusCode
+        )
+
+      case e: Exception =>
+        cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "There was an error while marking the file as ready"
           ),
           statusCode = 500
         )
