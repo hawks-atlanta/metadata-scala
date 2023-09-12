@@ -42,3 +42,14 @@ libraryDependencies ++= Seq(
 libraryDependencies ++= Seq(
   "com.wix" %% "accord-core" % "0.7.6"
 )
+
+// Migration dependencies
+libraryDependencies ++= Seq(
+  "org.flywaydb" % "flyway-core" % "9.16.0"
+)
+
+// Database connection dependencies
+libraryDependencies ++= Seq(
+  "com.zaxxer" % "HikariCP" % "5.0.1",
+  "org.postgresql" % "postgresql" % "42.5.4"
+)

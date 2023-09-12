@@ -15,60 +15,60 @@ tags:
 paths:
   /files/list/{user_uuid}:
     get:
-      tags: [ 'File' ]
+      tags: ["File"]
       description: List files in the given directory. List the user's root directory by default when the parent_uuid query parameter is not provided.
       parameters:
         - in: path
           name: user_uuid
           schema:
             type: string
-            example: '658b4e63-b5ac-46a7-ac43-efb6a1415130'
+            example: "658b4e63-b5ac-46a7-ac43-efb6a1415130"
           required: true
         - in: query
           name: parent_uuid
           schema:
             type: string
-            example: '5ad724f0-4091-453a-914a-c2d11d69d1e3'
+            example: "5ad724f0-4091-453a-914a-c2d11d69d1e3"
           required: false
       responses:
-        '200':
+        "200":
           description: Ok. The directory was listed.
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/file'
-        '403':
+                  $ref: "#/components/schemas/file"
+        "403":
           description: Forbidden. The directory is not owned by the user.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error_response'
-        '404':
+                $ref: "#/components/schemas/error_response"
+        "404":
           description: Not found. No directory with the given parent_uuid was found.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error_response'
-        '500':
+                $ref: "#/components/schemas/error_response"
+        "500":
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error_response'
+                $ref: "#/components/schemas/error_response"
 
   /files:
     post:
-      tags: [ 'File' ]
+      tags: ["File"]
       description: Save the metadata for a new file or directory.
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/file_creation_request'
+              $ref: "#/components/schemas/file_creation_request"
       responses:
-        '201':
+        "201":
           description: Created. The metadata was saved sucessfully.
           content:
             application/json:
@@ -77,153 +77,153 @@ paths:
                 properties:
                   uuid:
                     type: string
-                    example: 'b96bdc16-8f27-44aa-9758-b4e5f13060fe'
-        '400':
+                    example: "b96bdc16-8f27-44aa-9758-b4e5f13060fe"
+        "400":
           description: Bad request. The provided user_uuid parameter wasn´t a valid UUID or the JSON body does´t fullfill the validations.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error_response'
-        '404':
+                $ref: "#/components/schemas/error_response"
+        "404":
           description: Not found. No parent directory with the given UUID was found.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error_response'
-        '409':
+                $ref: "#/components/schemas/error_response"
+        "409":
           description: Conflict. There is already a file or directory with the given UUID in the given location.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error_response'
-        '500':
+                $ref: "#/components/schemas/error_response"
+        "500":
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error_response'
+                $ref: "#/components/schemas/error_response"
 
   /files/shared_with_me/{user_uuid}:
     get:
-      tags: [ 'File' ]
+      tags: ["File"]
       description: List the files shared with the given user.
       parameters:
         - in: path
           name: user_uuid
           schema:
             type: string
-            example: '658b4e63-b5ac-46a7-ac43-efb6a1415130'
+            example: "658b4e63-b5ac-46a7-ac43-efb6a1415130"
           required: true
       responses:
-        '200':
+        "200":
           description: Ok. The directory was listed.
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/file'
-        '500':
+                  $ref: "#/components/schemas/file"
+        "500":
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error_response'
+                $ref: "#/components/schemas/error_response"
 
   /files/can_read/{user_uuid}/{file_uuid}:
     get:
-      tags: [ 'File' ]
+      tags: ["File"]
       description: Check if the given user can read the given file.
       parameters:
         - in: path
           name: user_uuid
           schema:
             type: string
-            example: '658b4e63-b5ac-46a7-ac43-efb6a1415130'
+            example: "658b4e63-b5ac-46a7-ac43-efb6a1415130"
           required: true
         - in: path
           name: file_uuid
           schema:
             type: string
-            example: 'b96bdc16-8f27-44aa-9758-b4e5f13060fe'
+            example: "b96bdc16-8f27-44aa-9758-b4e5f13060fe"
           required: true
       responses:
-        '204':
+        "204":
           description: The user can read the file.
-        '403':
+        "403":
           description: The user can't read the file.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error_response'
-        '404':
+                $ref: "#/components/schemas/error_response"
+        "404":
           description: No file with the given file_uuid was found.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error_response'
-        '500':
+                $ref: "#/components/schemas/error_response"
+        "500":
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error_response'
+                $ref: "#/components/schemas/error_response"
 
   /files/metadata/{file_uuid}:
     get:
-      tags: [ 'File' ]
+      tags: ["File"]
       description: Get the metadata of the given file. This endpoint is suposed to only be used by the gateway service to obtain the location (files/volume/archive_uuid) of the file.
       parameters:
         - in: path
           name: file_uuid
           schema:
             type: string
-            example: 'b96bdc16-8f27-44aa-9758-b4e5f13060fe'
+            example: "b96bdc16-8f27-44aa-9758-b4e5f13060fe"
           required: true
       responses:
-        '200':
+        "200":
           description: Ok. The metadata was returned successfuly.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/metadata'
-        '202':
+                $ref: "#/components/schemas/metadata"
+        "202":
           description: The file is not ready yet
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error_response'
-        '400':
+                $ref: "#/components/schemas/error_response"
+        "400":
           description: The file_uuid parameter was not a valid UUID.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error_response'
-        '404':
+                $ref: "#/components/schemas/error_response"
+        "404":
           description: Not found. No file with the given file_uuid was found.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error_response'
-        '500':
+                $ref: "#/components/schemas/error_response"
+        "500":
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error_response'
+                $ref: "#/components/schemas/error_response"
 
   /files/shared_with_who/{file_uuid}:
     get:
-      tags: [ 'File' ]
+      tags: ["File"]
       parameters:
         - in: path
           name: file_uuid
           schema:
             type: string
-            example: 'b96bdc16-8f27-44aa-9758-b4e5f13060fe'
+            example: "b96bdc16-8f27-44aa-9758-b4e5f13060fe"
           required: true
       responses:
-        '200':
+        "200":
           description: The list of UUIDs of the users which the file was shared is returned.
           content:
             application/json:
@@ -234,157 +234,157 @@ paths:
                     type: array
                     items:
                       type: string
-                      example: '6cec2ad8-7329-47f8-8b76-7daf7036945c'
-        '500':
+                      example: "6cec2ad8-7329-47f8-8b76-7daf7036945c"
+        "500":
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error_response'
+                $ref: "#/components/schemas/error_response"
 
   /files/{user_uuid}/{file_uuid}:
     delete:
-      tags: [ 'File' ]
+      tags: ["File"]
       description: Delete the metadata of the given file.
       parameters:
         - in: path
           name: user_uuid
           schema:
             type: string
-            example: '658b4e63-b5ac-46a7-ac43-efb6a1415130'
+            example: "658b4e63-b5ac-46a7-ac43-efb6a1415130"
           required: true
         - in: path
           name: file_uuid
           schema:
             type: string
-            example: 'b96bdc16-8f27-44aa-9758-b4e5f13060fe'
+            example: "b96bdc16-8f27-44aa-9758-b4e5f13060fe"
           required: true
       responses:
-        '204':
+        "204":
           description: No content. The metadata of the file was deleted.
-        '403':
+        "403":
           description: Forbidden. The user tried to delete the metadata of a file that doesn´t own.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error_response'
-        '404':
+                $ref: "#/components/schemas/error_response"
+        "404":
           description: Not found. No file with the given file_uuid was found.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error_response'
-        '500':
+                $ref: "#/components/schemas/error_response"
+        "500":
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error_response'
+                $ref: "#/components/schemas/error_response"
 
   /files/share/{owner_uuid}/{file_uuid}:
     post:
-      tags: [ 'File' ]
+      tags: ["File"]
       description: Share the given file with the given user
       parameters:
         - in: path
           name: owner_uuid
           schema:
             type: string
-            example: '658b4e63-b5ac-46a7-ac43-efb6a1415130'
+            example: "658b4e63-b5ac-46a7-ac43-efb6a1415130"
           required: true
         - in: path
           name: file_uuid
           schema:
             type: string
-            example: 'b96bdc16-8f27-44aa-9758-b4e5f13060fe'
+            example: "b96bdc16-8f27-44aa-9758-b4e5f13060fe"
           required: true
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/toggle_share_request'
+              $ref: "#/components/schemas/toggle_share_request"
       responses:
-        '204':
+        "204":
           description: The file was shared
-        '400':
+        "400":
           description: The owner_uuid or file_uuid were not a valid UUID or the JSON body does´t fullfill the validations.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error_response'
-        '403':
+                $ref: "#/components/schemas/error_response"
+        "403":
           description: The file is not owned by the user.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error_response'
-        '409':
+                $ref: "#/components/schemas/error_response"
+        "409":
           description: The file is already shared with the given user.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error_response'
-        '500':
+                $ref: "#/components/schemas/error_response"
+        "500":
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error_response'
+                $ref: "#/components/schemas/error_response"
 
   /files/unshare/{owner_uuid}/{file_uuid}:
     post:
-      tags: [ 'File' ]
+      tags: ["File"]
       description: Unshare the given file with the given user
       parameters:
         - in: path
           name: owner_uuid
           schema:
             type: string
-            example: '658b4e63-b5ac-46a7-ac43-efb6a1415130'
+            example: "658b4e63-b5ac-46a7-ac43-efb6a1415130"
           required: true
         - in: path
           name: file_uuid
           schema:
             type: string
-            example: 'b96bdc16-8f27-44aa-9758-b4e5f13060fe'
+            example: "b96bdc16-8f27-44aa-9758-b4e5f13060fe"
           required: true
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/toggle_share_request'
+              $ref: "#/components/schemas/toggle_share_request"
       responses:
-        '204':
+        "204":
           description: The file was unshared.
-        '400':
+        "400":
           description: The owner_uuid or file_uuid were not a valid UUID or the JSON body does´t fullfill the validations.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error_response'
-        '403':
+                $ref: "#/components/schemas/error_response"
+        "403":
           description: The file is not owned by the user.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error_response'
-        '500':
+                $ref: "#/components/schemas/error_response"
+        "500":
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error_response'
+                $ref: "#/components/schemas/error_response"
 
   /files/ready/{file_uuid}:
     put:
-      tags: [ 'File' ]
+      tags: ["File"]
       description: Mark the given file as ready (Stored in the filesystem).
       parameters:
         - in: path
           name: file_uuid
           schema:
             type: string
-            example: 'b96bdc16-8f27-44aa-9758-b4e5f13060fe'
+            example: "b96bdc16-8f27-44aa-9758-b4e5f13060fe"
           required: true
       requestBody:
         content:
@@ -397,26 +397,26 @@ paths:
                   description: The volume in which the file was saved
                   example: "volume_1"
       responses:
-        '204':
+        "204":
           description: No content. The metadata of the file was updated.
-        '404':
+        "404":
           description: Not found. No file with the given file_uuid was found.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error_response'
-        '409':
+                $ref: "#/components/schemas/error_response"
+        "409":
           description: The file was already marked as ready.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error_response'
-        '500':
+                $ref: "#/components/schemas/error_response"
+        "500":
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error_response'
+                $ref: "#/components/schemas/error_response"
 
 components:
   schemas:
@@ -425,28 +425,28 @@ components:
       properties:
         uuid:
           type: string
-          example: 'b96bdc16-8f27-44aa-9758-b4e5f13060fe'
+          example: "b96bdc16-8f27-44aa-9758-b4e5f13060fe"
         fileType:
           type: string
-          enum: ['archive', 'directory']
+          enum: ["archive", "directory"]
           description: "Whether the file is a directory or an archive"
-          example: 'file'
+          example: "file"
         fileName:
           type: string
-          example: 'filename'
+          example: "filename"
 
     metadata:
       type: object
       properties:
         archiveUUID:
           type: string
-          example: '0b82495a-350b-4f4f-95ce-0119998466d4'
+          example: "0b82495a-350b-4f4f-95ce-0119998466d4"
         volume:
           type: string
-          example: 'VOLUME_1'
+          example: "VOLUME_1"
         hashSum:
           type: string
-          example: '56d50f755d5dbca915cf93779d3b51d6562e6183'
+          example: "56d50f755d5dbca915cf93779d3b51d6562e6183"
         size:
           type: number
           example: 3072
@@ -456,25 +456,25 @@ components:
       properties:
         userUUID:
           type: string
-          example: '658b4e63-b5ac-46a7-ac43-efb6a1415130'
+          example: "658b4e63-b5ac-46a7-ac43-efb6a1415130"
         parentUUID:
           type: string
-          example: '5ad724f0-4091-453a-914a-c2d11d69d1e3'
+          example: "5ad724f0-4091-453a-914a-c2d11d69d1e3"
         hashSum:
           type: string
-          description: 'SHA256 hash of the file'
-          example: '56d50f755d5dbca915cf93779d3b51d6562e6183'
+          description: "SHA256 hash of the file"
+          example: "56d50f755d5dbca915cf93779d3b51d6562e6183"
         fileType:
           type: string
-          enum: ['file', 'directory']
+          enum: ["file", "directory"]
           description: "Whether the file is a directory or an archive"
-          example: 'file'
+          example: "file"
         fileName:
           type: string
-          example: 'filename'
+          example: "filename"
         fileSize:
           type: number
-          description: 'Size in KB'
+          description: "Size in KB"
           example: 3072
 
     toggle_share_request:
@@ -482,7 +482,7 @@ components:
       properties:
         otherUserUUID:
           type: string
-          example: '6cec2ad8-7329-47f8-8b76-7daf7036945c'
+          example: "6cec2ad8-7329-47f8-8b76-7daf7036945c"
 
     error_response:
       type: object
