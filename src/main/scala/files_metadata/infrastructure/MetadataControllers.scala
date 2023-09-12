@@ -248,7 +248,7 @@ class MetadataControllers {
     }
   }
 
-  def MarkArchiveAsReadyController(
+  def MarkFileAsReadyController(
       request: cask.Request,
       fileUUID: String
   ): cask.Response[Obj] = {

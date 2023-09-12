@@ -39,7 +39,7 @@ case class MetadataRoutes() extends cask.Routes {
       request: cask.Request,
       fileUUID: String
   ): cask.Response[Obj] = {
-    controllers.MarkArchiveAsReadyController( request, fileUUID )
+    controllers.MarkFileAsReadyController( request, fileUUID )
   }
 
   initialize()
