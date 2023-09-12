@@ -42,7 +42,10 @@ object FilesTestsUtils {
       )
   }
 
-  def UpdateReadyFile(fileUUID: String, payload: util.HashMap[String, Any]): Response = {
+  def UpdateReadyFile(
+      fileUUID: String,
+      payload: util.HashMap[String, Any]
+  ): Response = {
     `given`()
       .port( 8080 )
       .contentType( "application/json" )
@@ -50,6 +53,15 @@ object FilesTestsUtils {
       .when()
       .put(
         s"${ UpdateReadyFileTestsData.API_PREFIX }/${ fileUUID }"
+      )
+  }
+
+  def GetFileMetadata( fileUUID: String ): Response = {
+    `given`()
+      .port( 8080 )
+      .when()
+      .get(
+        s"${ GetFileMetadataTestsData.API_PREFIX }/${ fileUUID }"
       )
   }
 }
