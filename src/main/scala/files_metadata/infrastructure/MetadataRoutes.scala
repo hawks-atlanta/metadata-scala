@@ -42,5 +42,13 @@ case class MetadataRoutes() extends cask.Routes {
     controllers.MarkArchiveAsReadyController( request, fileUUID )
   }
 
+  @cask.get( s"${ basePath }/metadata/:fileUUID" )
+  def GetFileMetadataHandler(
+      request: cask.Request,
+      fileUUID: String
+  ): cask.Response[Obj] = {
+    controllers.GetFileMetadataController( request, fileUUID )
+  }
+
   initialize()
 }

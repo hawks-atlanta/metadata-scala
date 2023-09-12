@@ -88,4 +88,8 @@ class FilesMetaUseCases {
       repository.updateArchiveStatus( archiveMetadata.uuid, ready = true )
     }
   }
+
+  def getFileMetadata( fileUUID: UUID ): FileMeta = {
+    repository.getFileMeta( fileUUID )
+  }
 }

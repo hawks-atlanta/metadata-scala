@@ -321,4 +321,73 @@ class MetadataControllers {
         )
     }
   }
+
+  def GetFileMetadataController(
+      request: cask.Request,
+      fileUUID: String
+  ): cask.Response[Obj] = {
+    try {
+      val isFileUUIDValid = CommonValidator.validateUUID( fileUUID )
+      if (!isFileUUIDValid) {
+        return cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "Fields validation failed"
+          ),
+          statusCode = 400
+        )
+      }
+
+      val fileMeta = useCases.getFileMetadata(
+        fileUUID = UUID.fromString( fileUUID )
+      )
+
+      if (fileMeta.volume == null) {
+        return cask.Response(
+          ujson.Obj(
+            "message" -> "The file is not ready yet"
+          ),
+          statusCode = 202
+        )
+      }
+
+      if (fileMeta.archiveUuid.isEmpty) {
+        // Directories metadata (Null archiveUUID)
+        cask.Response(
+          ujson.Obj(
+            "volume"      -> fileMeta.volume,
+            "archiveUUID" -> ujson.Null // Needs to be a "custom" null value
+          ),
+          statusCode = 200
+        )
+      } else {
+        // Archives metadata
+        cask.Response(
+          ujson.Obj(
+            "volume"      -> fileMeta.volume,
+            "archiveUUID" -> fileMeta.archiveUuid.get.toString()
+          ),
+          statusCode = 200
+        )
+      }
+    } catch {
+      case e: BaseDomainException =>
+        cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> e.message
+          ),
+          statusCode = e.statusCode
+        )
+
+      case _: Exception =>
+        cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "There was an error while getting the file metadata"
+          ),
+          statusCode = 500
+        )
+    }
+  }
 }
