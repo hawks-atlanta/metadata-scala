@@ -26,4 +26,4 @@ remove:
 	rm -rf $$package_name;
 
 coverage:
-	sbt clean coverage test coverageReport
+	sbt coverage test coverageReport

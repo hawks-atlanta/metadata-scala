@@ -1,47 +1,29 @@
-# Changelog
-
-All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
-
-### 0.0.12 (2023-08-23)
-
-### 0.0.11 (2023-08-23)
-
-### 0.0.10 (2023-08-21)
+# [0.6.0](https://github.com/hawks-atlanta/metadata-scala/compare/v0.5.0...v0.6.0) (2023-09-12)
 
 ### Features
 
-* PostgreSQL connection and Migrations ([#20](https://github.com/hawks-atlanta/metadata-scala/issues/20)) ([b502749](https://github.com/hawks-atlanta/metadata-scala/commit/b502749d51d3149d585972f8d19bc6f4c19b7fbc))
+- Obtain file metadata ([#53](https://github.com/hawks-atlanta/metadata-scala/issues/53)) ([22542c6](https://github.com/hawks-atlanta/metadata-scala/commit/22542c6e66cd95bd27ec3e4f30079ea9f54bb03c))
 
-### 0.0.9 (2023-08-20)
+# [0.5.0](https://github.com/hawks-atlanta/metadata-scala/compare/v0.4.0...v0.5.0) (2023-09-12)
 
-### [0.0.8](https://github.com-university/hawks-atlanta/metadata-scala/compare/v0.0.7...v0.0.8) (2023-08-20)
+### Features
 
-### 0.0.7 (2023-08-20)
+- Mark files as ready ([#52](https://github.com/hawks-atlanta/metadata-scala/issues/52)) ([f66a70a](https://github.com/hawks-atlanta/metadata-scala/commit/f66a70a8669be258bfdc714c45cc1f82eef16f4f))
 
+# [0.4.0](https://github.com/hawks-atlanta/metadata-scala/compare/v0.3.0...v0.4.0) (2023-09-11)
 
-### Bug Fixes
+### Features
 
-* **ci:** Coverage pipeline ([#16](https://github.com-university/hawks-atlanta/metadata-scala/issues/16)) ([973e936](https://github.com-university/hawks-atlanta/metadata-scala/commit/973e936759affd769f80b900d02924422e2de698)), closes [#7](https://github.com-university/hawks-atlanta/metadata-scala/issues/7) [#9](https://github.com-university/hawks-atlanta/metadata-scala/issues/9) [#10](https://github.com-university/hawks-atlanta/metadata-scala/issues/10) [#11](https://github.com-university/hawks-atlanta/metadata-scala/issues/11) [#15](https://github.com-university/hawks-atlanta/metadata-scala/issues/15) [#8](https://github.com-university/hawks-atlanta/metadata-scala/issues/8) [#7](https://github.com-university/hawks-atlanta/metadata-scala/issues/7) [#9](https://github.com-university/hawks-atlanta/metadata-scala/issues/9) [#10](https://github.com-university/hawks-atlanta/metadata-scala/issues/10) [#11](https://github.com-university/hawks-atlanta/metadata-scala/issues/11)
-* **ci:** Fix coverage pipeline ([#14](https://github.com-university/hawks-atlanta/metadata-scala/issues/14)) ([013c956](https://github.com-university/hawks-atlanta/metadata-scala/commit/013c956ab386707a9db33f76a376dad6c1130cd2))
-* **ci:** Update test pipeline ([#8](https://github.com-university/hawks-atlanta/metadata-scala/issues/8)) ([1da251d](https://github.com-university/hawks-atlanta/metadata-scala/commit/1da251d344ba2f8af61efa8a339716672abec56f))
-* Trigger pipelines ([#13](https://github.com-university/hawks-atlanta/metadata-scala/issues/13)) ([791a672](https://github.com-university/hawks-atlanta/metadata-scala/commit/791a672b646753bb42a7aedaa20de30e44e05c1f))
+- Can read endpoint ([#49](https://github.com/hawks-atlanta/metadata-scala/issues/49)) ([e1577c2](https://github.com/hawks-atlanta/metadata-scala/commit/e1577c26ede19cf8160fc828ec4ef45bea2663ab))
 
-### 0.0.6 (2023-08-20)
+# [0.3.0](https://github.com/hawks-atlanta/metadata-scala/compare/v0.2.1...v0.3.0) (2023-09-11)
 
-### 0.0.5 (2023-08-20)
+### Features
 
-### Bug Fixes
+- Share files ([#48](https://github.com/hawks-atlanta/metadata-scala/issues/48)) ([1c2e8ea](https://github.com/hawks-atlanta/metadata-scala/commit/1c2e8ea772c7c0ae51e17ab143f7f581cace8f34))
 
-* **ci:** Detach docker compose ([#15](https://github.com/hawks-atlanta/metadata-scala/issues/15)) ([7dfbe61](https://github.com/hawks-atlanta/metadata-scala/commit/7dfbe610279e448e4362409e452bbff269fa6f0c)), closes [#8](https://github.com/hawks-atlanta/metadata-scala/issues/8) [#7](https://github.com/hawks-atlanta/metadata-scala/issues/7) [#9](https://github.com/hawks-atlanta/metadata-scala/issues/9) [#10](https://github.com/hawks-atlanta/metadata-scala/issues/10) [#11](https://github.com/hawks-atlanta/metadata-scala/issues/11)
-
-### 0.0.4 (2023-08-20)
-
-### 0.0.3 (2023-08-20)
-
-### 0.0.2 (2023-08-20)
-
-### 0.0.1 (2023-08-20)
+## [0.2.1](https://github.com/hawks-atlanta/metadata-scala/compare/v0.2.0...v0.2.1) (2023-09-11)
 
 ### Bug Fixes
 
-* **ci:** Update test pipeline ([#7](https://github.com/hawks-atlanta/metadata-scala/issues/7)) ([7e9080b](https://github.com/hawks-atlanta/metadata-scala/commit/7e9080bcf9d4ddd34a778aa30a67d74614988f32))
+- Update save metadata endpoint to avoid endpoints overlapping ([#47](https://github.com/hawks-atlanta/metadata-scala/issues/47)) ([5e2ea56](https://github.com/hawks-atlanta/metadata-scala/commit/5e2ea56fac46705a9c77a7a2c13a3379391b0800))

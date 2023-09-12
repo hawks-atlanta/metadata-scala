@@ -18,9 +18,8 @@ RUN mv ~/.local/share/coursier/bin/** /usr/local/bin
 # Copy project files
 COPY . .
 
-# Build project
-RUN sbt clean && \
-    sbt assembly
+# Clean and build without running tests
+RUN sbt "set assembly / test := {}" clean assembly
 
 # Rename jar file
 RUN mv target/scala-2.13/*.jar target/scala-2.13/bundle.jar
