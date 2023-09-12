@@ -160,7 +160,7 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
         )
       } else {
         throw DomainExceptions.FileNotFoundException(
-          "The user does not own a file or directory with the given UUID"
+          "There is no file with the given UUID"
         )
       }
     } catch {
