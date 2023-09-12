@@ -12,6 +12,7 @@ import files_metadata.domain.DomainExceptions
 import files_metadata.domain.FileMeta
 import files_metadata.domain.FilesMetaRepository
 import files_metadata.infrastructure.requests.CreationReqSchema
+import files_metadata.infrastructure.requests.MarkAsReadyReqSchema
 import files_metadata.infrastructure.requests.ShareReqSchema
 import shared.infrastructure.CommonValidator
 import ujson.Obj
@@ -98,7 +99,7 @@ class MetadataControllers {
         cask.Response(
           ujson.Obj(
             "error"   -> true,
-            "message" -> "JSON payload wasn't valid"
+            "message" -> "Unable to decode JSON body"
           ),
           statusCode = 400
         )
@@ -167,7 +168,7 @@ class MetadataControllers {
         cask.Response(
           ujson.Obj(
             "error"   -> true,
-            "message" -> "JSON payload wasn't valid"
+            "message" -> "Unable to decode JSON body"
           ),
           statusCode = 400
         )
@@ -263,8 +264,28 @@ class MetadataControllers {
         )
       }
 
+      val decoded: MarkAsReadyReqSchema = read[MarkAsReadyReqSchema](
+        request.text()
+      )
+
+      val validationRule: Validator[MarkAsReadyReqSchema] =
+        MarkAsReadyReqSchema.schemaValidator
+      val validationResult = validate[MarkAsReadyReqSchema]( decoded )(
+        validationRule
+      )
+      if (validationResult.isFailure) {
+        return cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "Fields validation failed"
+          ),
+          statusCode = 400
+        )
+      }
+
       useCases.markFileAsReady(
-        fileUUID = UUID.fromString( archiveUUID )
+        archiveUUID = UUID.fromString( archiveUUID ),
+        volume = decoded.volume
       )
 
       cask.Response(
@@ -272,6 +293,15 @@ class MetadataControllers {
         statusCode = 204
       )
     } catch {
+      case _: upickle.core.AbortException =>
+        cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "Unable to decode JSON body"
+          ),
+          statusCode = 400
+        )
+
       case e: BaseDomainException =>
         cask.Response(
           ujson.Obj(
@@ -281,7 +311,7 @@ class MetadataControllers {
           statusCode = e.statusCode
         )
 
-      case _: Exception =>
+      case e: Exception =>
         cask.Response(
           ujson.Obj(
             "error"   -> true,

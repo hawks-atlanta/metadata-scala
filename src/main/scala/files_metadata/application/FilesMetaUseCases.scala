@@ -75,8 +75,9 @@ class FilesMetaUseCases {
     repository.canUserReadFile( userUUID, fileUUID )
   }
 
-  def markFileAsReady( fileUUID: UUID ): Unit = {
-    val archiveMetadata = repository.getArchiveMeta( fileUUID )
+  def markFileAsReady( archiveUUID: UUID, volume: String ): Unit = {
+    val archiveMetadata = repository.getArchiveMeta( archiveUUID )
+    val fileMetadata    = repository.getFileMetaByArchiveUuid( archiveUUID )
 
     if (archiveMetadata.ready) {
       throw DomainExceptions.FileAlreadyMarkedAsReadyException(
@@ -84,6 +85,10 @@ class FilesMetaUseCases {
       )
     }
 
-    repository.updateArchiveStatus( fileUUID, ready = true )
+    repository.updateSavedArchive(
+      archiveUUID = archiveUUID,
+      fileUUID = fileMetadata.uuid,
+      volume
+    )
   }
 }
