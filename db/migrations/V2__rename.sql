@@ -1,1 +1,0 @@
-ALTER TABLE "FRUITS" RENAME TO fruits;
