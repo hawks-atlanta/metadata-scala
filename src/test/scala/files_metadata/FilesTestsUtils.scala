@@ -41,4 +41,15 @@ object FilesTestsUtils {
         s"${ ShareFileTestsData.API_PREFIX }/${ ownerUUID }/${ fileUUID }"
       )
   }
+
+  def UpdateReadyFile(fileUUID: String, payload: util.HashMap[String, Any]): Response = {
+    `given`()
+      .port( 8080 )
+      .contentType( "application/json" )
+      .body( payload )
+      .when()
+      .put(
+        s"${ UpdateReadyFileTestsData.API_PREFIX }/${ fileUUID }"
+      )
+  }
 }
