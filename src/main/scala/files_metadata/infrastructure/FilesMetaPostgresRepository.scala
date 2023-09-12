@@ -197,47 +197,6 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
     }
   }
 
-  override def getFileMetaByArchiveUuid( archiveUuid: UUID ): FileMeta = {
-    val connection: Connection = pool.getConnection()
-
-    try {
-      val statement = connection.prepareStatement(
-        "SELECT uuid, owner_uuid, parent_uuid, archive_uuid, volume, name FROM files WHERE archive_uuid = ?"
-      )
-      statement.setObject( 1, archiveUuid )
-
-      val result = statement.executeQuery()
-      if (result.next()) {
-        val parentUUIDString  = result.getString( "parent_uuid" )
-        val archiveUUIDString = result.getString( "archive_uuid" )
-
-        val parentUUID =
-          if (parentUUIDString == null) None
-          else Some( UUID.fromString( parentUUIDString ) )
-        val archiveUUID =
-          if (archiveUUIDString == null) None
-          else Some( UUID.fromString( archiveUUIDString ) )
-
-        FileMeta(
-          uuid = UUID.fromString( result.getString( "uuid" ) ),
-          ownerUuid = UUID.fromString( result.getString( "owner_uuid" ) ),
-          parentUuid = parentUUID,
-          archiveUuid = archiveUUID,
-          volume = result.getString( "volume" ),
-          name = result.getString( "name" )
-        )
-      } else {
-        throw DomainExceptions.FileNotFoundException(
-          "There is no file with the given archive UUID"
-        )
-      }
-    } catch {
-      case exception: Exception => throw exception
-    } finally {
-      connection.close()
-    }
-  }
-
   override def searchFileInDirectory(
       ownerUuid: UUID,
       directoryUuid: Option[UUID],
