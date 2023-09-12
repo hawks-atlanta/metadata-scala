@@ -250,10 +250,10 @@ class MetadataControllers {
 
   def MarkArchiveAsReadyController(
       request: cask.Request,
-      archiveUUID: String
+      fileUUID: String
   ): cask.Response[Obj] = {
     try {
-      val isFileUUIDValid = CommonValidator.validateUUID( archiveUUID )
+      val isFileUUIDValid = CommonValidator.validateUUID( fileUUID )
       if (!isFileUUIDValid) {
         return cask.Response(
           ujson.Obj(
@@ -283,8 +283,8 @@ class MetadataControllers {
         )
       }
 
-      useCases.markFileAsReady(
-        archiveUUID = UUID.fromString( archiveUUID ),
+      useCases.updateSavedFile(
+        fileUUID = UUID.fromString( fileUUID ),
         volume = decoded.volume
       )
 
