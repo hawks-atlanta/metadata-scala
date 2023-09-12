@@ -8,7 +8,6 @@ import com.wix.accord.Validator
 import files_metadata.application.FilesMetaUseCases
 import files_metadata.domain.ArchivesMeta
 import files_metadata.domain.BaseDomainException
-import files_metadata.domain.DomainExceptions
 import files_metadata.domain.FileMeta
 import files_metadata.domain.FilesMetaRepository
 import files_metadata.infrastructure.requests.CreationReqSchema
@@ -248,80 +247,6 @@ class MetadataControllers {
     }
   }
 
-  def MarkArchiveAsReadyController(
-      request: cask.Request,
-      fileUUID: String
-  ): cask.Response[Obj] = {
-    try {
-      val isFileUUIDValid = CommonValidator.validateUUID( fileUUID )
-      if (!isFileUUIDValid) {
-        return cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> "Fields validation failed"
-          ),
-          statusCode = 400
-        )
-      }
-
-      val decoded: MarkAsReadyReqSchema = read[MarkAsReadyReqSchema](
-        request.text()
-      )
-
-      val validationRule: Validator[MarkAsReadyReqSchema] =
-        MarkAsReadyReqSchema.schemaValidator
-      val validationResult = validate[MarkAsReadyReqSchema]( decoded )(
-        validationRule
-      )
-      if (validationResult.isFailure) {
-        return cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> "Fields validation failed"
-          ),
-          statusCode = 400
-        )
-      }
-
-      useCases.updateSavedFile(
-        fileUUID = UUID.fromString( fileUUID ),
-        volume = decoded.volume
-      )
-
-      cask.Response(
-        None,
-        statusCode = 204
-      )
-    } catch {
-      case _: upickle.core.AbortException =>
-        cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> "Unable to decode JSON body"
-          ),
-          statusCode = 400
-        )
-
-      case e: BaseDomainException =>
-        cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> e.message
-          ),
-          statusCode = e.statusCode
-        )
-
-      case e: Exception =>
-        cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> "There was an error while marking the file as ready"
-          ),
-          statusCode = 500
-        )
-    }
-  }
-
   def GetFileMetadataController(
       request: cask.Request,
       fileUUID: String
@@ -352,20 +277,28 @@ class MetadataControllers {
       }
 
       if (fileMeta.archiveUuid.isEmpty) {
-        // Directories metadata (Null archiveUUID)
+        // Directories metadata
         cask.Response(
           ujson.Obj(
+            "archiveUUID" -> ujson.Null, // Needs to be a "custom" null value
             "volume"      -> fileMeta.volume,
-            "archiveUUID" -> ujson.Null // Needs to be a "custom" null value
+            "size"        -> 0,
+            "hashSum"     -> ""
           ),
           statusCode = 200
         )
       } else {
         // Archives metadata
+        val archivesMeta = useCases.getArchiveMetadata(
+          archiveUUID = fileMeta.archiveUuid.get
+        )
+
         cask.Response(
           ujson.Obj(
+            "archiveUUID" -> fileMeta.archiveUuid.get.toString,
             "volume"      -> fileMeta.volume,
-            "archiveUUID" -> fileMeta.archiveUuid.get.toString()
+            "size"        -> archivesMeta.size,
+            "hashSum"     -> archivesMeta.hashSum
           ),
           statusCode = 200
         )
