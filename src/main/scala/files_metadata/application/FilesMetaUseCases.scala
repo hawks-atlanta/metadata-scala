@@ -89,12 +89,6 @@ class FilesMetaUseCases {
       val archiveMetadata =
         repository.getArchiveMeta( fileMetadata.archiveUuid.get )
 
-      if (archiveMetadata.ready) {
-        throw DomainExceptions.FileAlreadyMarkedAsReadyException(
-          "The file was already marked as ready"
-        )
-      }
-
       repository.updateArchiveStatus( archiveMetadata.uuid, ready = true )
     }
 

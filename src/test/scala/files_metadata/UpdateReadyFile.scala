@@ -125,4 +125,24 @@ class UpdateReadyFile extends JUnitSuite {
 
     assert( updateDirectoryResponse.statusCode() == 204 )
   }
+
+  @Test
+  // PUT /api/v1/files/read/{fileUUID} Conflict
+  def T4_UpdateReadyFileConflict(): Unit = {
+    // Try to mark the file as ready again
+    val updateFileResponse = FilesTestsUtils.UpdateReadyFile(
+      UpdateReadyFileTestsData.savedFileUUID.toString,
+      UpdateReadyFileTestsData.getPayloadCopy()
+    )
+
+    assert( updateFileResponse.statusCode() == 409 )
+
+    // Try to mark the directory as ready again
+    val updateDirectoryResponse = FilesTestsUtils.UpdateReadyFile(
+      UpdateReadyFileTestsData.savedDirectoryUUID.toString,
+      UpdateReadyFileTestsData.getPayloadCopy()
+    )
+
+    assert( updateDirectoryResponse.statusCode() == 409 )
+  }
 }
