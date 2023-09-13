@@ -450,4 +450,55 @@ class MetadataControllers {
         )
     }
   }
+
+  def GetSharedWithWhoController(
+      request: cask.Request,
+      fileUUID: String
+  ): cask.Response[Obj] = {
+    try {
+      val isFileUUIDValid = CommonValidator.validateUUID( fileUUID )
+      if (!isFileUUIDValid) {
+        return cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "Fields validation failed"
+          ),
+          statusCode = 400
+        )
+      }
+
+      val usersUUID = useCases.getUsersFileWasSharedWith(
+        fileUUID = UUID.fromString( fileUUID )
+      )
+
+      val responseArray = ujson.Arr.from(
+        usersUUID.map( userUUID => userUUID.toString )
+      )
+
+      cask.Response(
+        ujson.Obj(
+          "shared_with" -> responseArray
+        ),
+        statusCode = 200
+      )
+    } catch {
+      case e: BaseDomainException =>
+        cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> e.message
+          ),
+          statusCode = e.statusCode
+        )
+
+      case _: Exception =>
+        cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "There was an error while getting the users with whom the file is shared"
+          ),
+          statusCode = 500
+        )
+    }
+  }
 }

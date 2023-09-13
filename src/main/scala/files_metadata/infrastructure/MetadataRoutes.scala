@@ -58,5 +58,13 @@ case class MetadataRoutes() extends cask.Routes {
     controllers.GetSharedWithMeController( request, userUUID )
   }
 
+  @cask.get( s"${ basePath }/shared_with_who/:fileUUID" )
+  def GetSharedWithWhoHandler(
+      request: cask.Request,
+      fileUUID: String
+  ): cask.Response[Obj] = {
+    controllers.GetSharedWithWhoController( request, fileUUID )
+  }
+
   initialize()
 }

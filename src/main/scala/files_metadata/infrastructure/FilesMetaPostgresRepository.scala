@@ -242,6 +242,29 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
     }
   }
 
+  override def getUsersFileWasSharedWith( fileUuid: UUID ): Seq[UUID] = {
+    val connection: Connection = pool.getConnection()
+
+    try {
+      val statement = connection.prepareStatement(
+        "SELECT user_uuid FROM shared_files WHERE file_uuid = ?"
+      )
+      statement.setObject( 1, fileUuid )
+
+      val result               = statement.executeQuery()
+      var usersUUID: Seq[UUID] = Seq()
+
+      while (result.next()) {
+        usersUUID =
+          usersUUID :+ UUID.fromString( result.getString( "user_uuid" ) )
+      }
+
+      usersUUID
+    } finally {
+      connection.close()
+    }
+  }
+
   override def searchFileInDirectory(
       ownerUuid: UUID,
       directoryUuid: Option[UUID],
