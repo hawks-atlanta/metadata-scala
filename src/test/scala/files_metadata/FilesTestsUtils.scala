@@ -36,7 +36,7 @@ object FilesTestsUtils {
       parentDirUUID: Option[UUID]
   ): util.HashMap[String, Any] = {
     val parentUUID: String =
-      if (parentDirUUID.isDefined) parentDirUUID.toString
+      if (parentDirUUID.isDefined) parentDirUUID.get.toString
       else null
 
     val randomUUID: UUID = UUID.randomUUID()
@@ -66,7 +66,7 @@ object FilesTestsUtils {
       parentDirUUID: Option[UUID]
   ): util.HashMap[String, Any] = {
     val parentUUID: String =
-      if (parentDirUUID.isDefined) parentDirUUID.toString
+      if (parentDirUUID.isDefined) parentDirUUID.get.toString
       else null
 
     val randomUUID: UUID = UUID.randomUUID()

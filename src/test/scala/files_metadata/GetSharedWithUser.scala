@@ -21,38 +21,28 @@ object GetShareWithUserTestsData {
 @OrderWith( classOf[Alphanumeric] )
 class GetSharedWithUser extends JUnitSuite {
   def saveAndShareFilesToObtain(): Unit = {
-    // Save a file and a directory
-    val saveFilePayload = new java.util.HashMap[String, Any]()
-    saveFilePayload.put(
-      "userUUID",
-      GetShareWithUserTestsData.OWNER_USER_UUID.toString
+    // Save a directory
+    val saveDirectoryPayload = FilesTestsUtils.generateDirectoryPayload(
+      ownerUUID = GetShareWithUserTestsData.OWNER_USER_UUID,
+      parentDirUUID = None
     )
-    saveFilePayload.put( "parentUUID", null )
-    saveFilePayload.put( "hashSum", "" )
-    saveFilePayload.put( "fileType", "directory" )
-    saveFilePayload.put( "fileName", "Directory to share" )
-    saveFilePayload.put( "fileSize", 0 )
 
-    val saveDirectoryResponse = FilesTestsUtils.SaveFile( saveFilePayload )
+    val saveDirectoryResponse = FilesTestsUtils.SaveFile( saveDirectoryPayload )
     GetShareWithUserTestsData.savedDirectoryUUID =
       UUID.fromString( saveDirectoryResponse.jsonPath().get( "uuid" ) )
 
-    saveFilePayload.put( "fileName", "File to share" )
-    saveFilePayload.put( "fileType", "archive" )
-    saveFilePayload.put( "fileSize", 15 )
-    saveFilePayload.put(
-      "hashSum",
-      "71988c4d8e0803ba4519f0b2864c1331c14a1890bf8694e251379177bfedb5c3"
+    // Save a file
+    val saveFilePayload = FilesTestsUtils.generateFilePayload(
+      ownerUUID = GetShareWithUserTestsData.OWNER_USER_UUID,
+      parentDirUUID = None
     )
     val saveFileResponse = FilesTestsUtils.SaveFile( saveFilePayload )
     GetShareWithUserTestsData.savedFileUUID =
       UUID.fromString( saveFileResponse.jsonPath().get( "uuid" ) )
 
-    // Share the file and directory with the other user
-    val shareFilePayload = new java.util.HashMap[String, Any]()
-    shareFilePayload.put(
-      "otherUserUUID",
-      GetShareWithUserTestsData.OTHER_USER_UUID.toString
+    // Share the file and the directory
+    val shareFilePayload = FilesTestsUtils.generateShareFilePayload(
+      otherUserUUID = GetShareWithUserTestsData.OTHER_USER_UUID
     )
 
     FilesTestsUtils.ShareFile(
