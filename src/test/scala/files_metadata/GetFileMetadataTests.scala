@@ -21,8 +21,8 @@ object GetFileMetadataTestsData {
 class GetFileMetadataTests extends JUnitSuite {
   def saveFilesToBeObtained(): Unit = {
     val filePayload = FilesTestsUtils.generateFilePayload(
-        ownerUUID = GetFileMetadataTestsData.OWNER_UUID,
-        parentDirUUID = None
+      ownerUUID = GetFileMetadataTestsData.OWNER_UUID,
+      parentDirUUID = None
     )
 
     val fileResponse = FilesTestsUtils.SaveFile( filePayload )
@@ -31,8 +31,8 @@ class GetFileMetadataTests extends JUnitSuite {
     )
 
     val directoryPayload = FilesTestsUtils.generateDirectoryPayload(
-        ownerUUID = GetFileMetadataTestsData.OWNER_UUID,
-        parentDirUUID = None
+      ownerUUID = GetFileMetadataTestsData.OWNER_UUID,
+      parentDirUUID = None
     )
 
     val directoryResponse = FilesTestsUtils.SaveFile( directoryPayload )
