@@ -64,4 +64,13 @@ object FilesTestsUtils {
         s"${ GetFileMetadataTestsData.API_PREFIX }/${ fileUUID }"
       )
   }
+
+  def GetSharedWithUser( userUUID: String ): Response = {
+    `given`()
+      .port( 8080 )
+      .when()
+      .get(
+        s"${ GetShareWithUserTestsData.API_PREFIX }/${ userUUID }"
+      )
+  }
 }
