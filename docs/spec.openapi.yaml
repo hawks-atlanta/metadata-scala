@@ -235,6 +235,12 @@ paths:
                     items:
                       type: string
                       example: "6cec2ad8-7329-47f8-8b76-7daf7036945c"
+        "404":
+          description: There is no file with the given file_uuid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
         "500":
           description: Internal server error
           content:
