@@ -31,8 +31,8 @@ object UpdateReadyFileTestsData {
 class UpdateReadyFile extends JUnitSuite {
   def saveFilesToBeUpdated(): Unit = {
     val filePayload = FilesTestsUtils.generateFilePayload(
-        ownerUUID = UpdateReadyFileTestsData.OWNER_UUID,
-        parentDirUUID = None
+      ownerUUID = UpdateReadyFileTestsData.OWNER_UUID,
+      parentDirUUID = None
     )
 
     val fileResponse = FilesTestsUtils.SaveFile( filePayload )
@@ -41,8 +41,8 @@ class UpdateReadyFile extends JUnitSuite {
     )
 
     val directoryPayload = FilesTestsUtils.generateDirectoryPayload(
-        ownerUUID = UpdateReadyFileTestsData.OWNER_UUID,
-        parentDirUUID = None
+      ownerUUID = UpdateReadyFileTestsData.OWNER_UUID,
+      parentDirUUID = None
     )
 
     val directoryResponse = FilesTestsUtils.SaveFile( directoryPayload )
