@@ -197,6 +197,51 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
     }
   }
 
+  override def getFilesSharedWithUserMeta( userUuid: UUID ): Seq[FileMeta] = {
+    val connection: Connection = pool.getConnection()
+
+    try {
+      val statement = connection.prepareStatement(
+        """
+          |SELECT uuid, owner_uuid, parent_uuid, archive_uuid, volume, name
+          |FROM files WHERE uuid IN (
+          |SELECT file_uuid FROM shared_files WHERE user_uuid = ?
+          |)
+          | """.stripMargin
+      )
+      statement.setObject( 1, userUuid )
+
+      val result                   = statement.executeQuery()
+      var filesMeta: Seq[FileMeta] = Seq()
+
+      // Parse the rows into Domain objects
+      while (result.next()) {
+        val parentUUIDString  = result.getString( "parent_uuid" )
+        val archiveUUIDString = result.getString( "archive_uuid" )
+
+        val parentUUID =
+          if (parentUUIDString == null) None
+          else Some( UUID.fromString( parentUUIDString ) )
+        val archiveUUID =
+          if (archiveUUIDString == null) None
+          else Some( UUID.fromString( archiveUUIDString ) )
+
+        filesMeta = filesMeta :+ FileMeta(
+          uuid = UUID.fromString( result.getString( "uuid" ) ),
+          ownerUuid = UUID.fromString( result.getString( "owner_uuid" ) ),
+          parentUuid = parentUUID,
+          archiveUuid = archiveUUID,
+          volume = result.getString( "volume" ),
+          name = result.getString( "name" )
+        )
+      }
+
+      filesMeta
+    } finally {
+      connection.close()
+    }
+  }
+
   override def searchFileInDirectory(
       ownerUuid: UUID,
       directoryUuid: Option[UUID],

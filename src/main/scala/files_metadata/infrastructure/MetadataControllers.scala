@@ -397,4 +397,57 @@ class MetadataControllers {
         )
     }
   }
+
+  def GetSharedWithMeController(
+      request: cask.Request,
+      userUUID: String
+  ): cask.Response[Obj] = {
+    try {
+      val isUserUUIDValid = CommonValidator.validateUUID( userUUID )
+      if (!isUserUUIDValid) {
+        return cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "Fields validation failed"
+          ),
+          statusCode = 400
+        )
+      }
+
+      val filesMeta = useCases.getFilesMetadataSharedWithUser(
+        userUUID = UUID.fromString( userUUID )
+      )
+
+      val responseArray = ujson.Arr.from(
+        filesMeta.map( fileMeta => {
+          val fileType =
+            if (fileMeta.archiveUuid.isEmpty) "directory"
+            else "archive"
+
+          ujson.Obj(
+            "uuid"     -> fileMeta.uuid.toString,
+            "name"     -> fileMeta.name,
+            "fileType" -> fileType
+          )
+        } )
+      )
+
+      cask.Response(
+        ujson.Obj(
+          "files" -> responseArray
+        ),
+        statusCode = 200
+      )
+
+    } catch {
+      case _: Exception =>
+        cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "There was an error while getting the files shared with the user"
+          ),
+          statusCode = 500
+        )
+    }
+  }
 }
