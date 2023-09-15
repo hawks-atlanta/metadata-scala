@@ -141,6 +141,33 @@ object FilesTestsUtils {
       )
   }
 
+  def generateReadyFilePayload(): util.HashMap[String, Any] = {
+    val readyFilePayload = new util.HashMap[String, Any]()
+    readyFilePayload.put( "volume", "volume_x" )
+    readyFilePayload
+  }
+
+  def UpdateFileName(
+      userUUID: String,
+      fileUUID: String,
+      payload: util.HashMap[String, Any]
+  ): Response = {
+    `given`()
+      .port( 8080 )
+      .contentType( "application/json" )
+      .body( payload )
+      .when()
+      .put(
+        s"${ RenameFileTestsData.API_PREFIX }/${ userUUID }/${ fileUUID }"
+      )
+  }
+
+  def generateRenameFilePayload(): util.HashMap[String, Any] = {
+    val renameFilePayload = new util.HashMap[String, Any]()
+    renameFilePayload.put( "name", UUID.randomUUID().toString )
+    renameFilePayload
+  }
+
   // -- Get files metadata --
 
   def GetFileMetadata( fileUUID: String ): Response = {
