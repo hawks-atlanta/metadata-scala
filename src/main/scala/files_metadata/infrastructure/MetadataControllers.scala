@@ -12,6 +12,7 @@ import files_metadata.domain.FileMeta
 import files_metadata.domain.FilesMetaRepository
 import files_metadata.infrastructure.requests.CreationReqSchema
 import files_metadata.infrastructure.requests.MarkAsReadyReqSchema
+import files_metadata.infrastructure.requests.RenameReqSchema
 import files_metadata.infrastructure.requests.ShareReqSchema
 import shared.infrastructure.CommonValidator
 import ujson.Obj
@@ -25,6 +26,37 @@ class MetadataControllers {
       new FilesMetaPostgresRepository()
 
     useCases = new FilesMetaUseCases( repository )
+  }
+
+  private def _handleException( exception: Exception ): cask.Response[Obj] = {
+    exception match {
+      case _: upickle.core.AbortException | _: ujson.IncompleteParseException =>
+        cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "Unable to decode JSON body"
+          ),
+          statusCode = 400
+        )
+
+      case e: BaseDomainException =>
+        cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> e.message
+          ),
+          statusCode = e.statusCode
+        )
+
+      case _: Exception =>
+        cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "There was an error"
+          ),
+          statusCode = 500
+        )
+    }
   }
 
   def SaveMetadataController(
@@ -499,6 +531,55 @@ class MetadataControllers {
           ),
           statusCode = 500
         )
+    }
+  }
+
+  def RenameFileController(
+      request: cask.Request,
+      fileUUID: String
+  ): cask.Response[Obj] = {
+    try {
+      val isFileUUIDValid = CommonValidator.validateUUID( fileUUID )
+      if (!isFileUUIDValid) {
+        return cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "Fields validation failed"
+          ),
+          statusCode = 400
+        )
+      }
+
+      val decoded: RenameReqSchema = read[RenameReqSchema](
+        request.text()
+      )
+
+      val validationRule: Validator[RenameReqSchema] =
+        RenameReqSchema.schemaValidator
+      val validationResult = validate[RenameReqSchema]( decoded )(
+        validationRule
+      )
+      if (validationResult.isFailure) {
+        return cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "Fields validation failed"
+          ),
+          statusCode = 400
+        )
+      }
+
+      useCases.renameFile(
+        fileUUID = UUID.fromString( fileUUID ),
+        newName = decoded.name
+      )
+
+      cask.Response(
+        None,
+        statusCode = 204
+      )
+    } catch {
+      case e: Exception => _handleException( e )
     }
   }
 }

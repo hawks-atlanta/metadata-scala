@@ -417,5 +417,20 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
     statement.executeUpdate()
   }
 
+  override def updateFileName(
+      fileUUID: UUID,
+      newName: String
+  ): Unit = {
+    val connection: Connection = pool.getConnection()
+
+    val statement = connection.prepareStatement(
+      "UPDATE files SET name = ? WHERE uuid = ?"
+    )
+    statement.setString( 1, newName )
+    statement.setObject( 2, fileUUID )
+
+    statement.executeUpdate()
+  }
+
   override def deleteFileMeta( ownerUuid: UUID, uuid: UUID ): Unit = ???
 }

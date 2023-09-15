@@ -112,4 +112,21 @@ class FilesMetaUseCases {
     repository.getFileMeta( fileUUID )
     repository.getUsersFileWasSharedWith( fileUUID )
   }
+
+  def renameFile( fileUUID: UUID, newName: String ): Unit = {
+    val fileMeta = repository.getFileMeta( fileUUID )
+
+    val existingFileMeta = repository.searchFileInDirectory(
+      ownerUuid = fileMeta.ownerUuid,
+      directoryUuid = fileMeta.parentUuid,
+      fileName = newName
+    )
+    if (existingFileMeta.isDefined) {
+      throw DomainExceptions.FileAlreadyExistsException(
+        "A file with the same name already exists in the file directory"
+      )
+    }
+
+    repository.updateFileName( fileUUID, newName )
+  }
 }
