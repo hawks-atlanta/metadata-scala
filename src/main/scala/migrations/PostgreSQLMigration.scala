@@ -13,7 +13,7 @@ object PostgreSQLMigration {
         Environment.dbUser,
         Environment.dbPassword
       )
-      .locations( "filesystem:db/migrations" )
+      .locations( "classpath:/migrations" )
       .load()
 
     try {
