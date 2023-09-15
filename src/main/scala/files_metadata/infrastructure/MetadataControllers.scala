@@ -126,33 +126,7 @@ class MetadataControllers {
         statusCode = 201
       )
     } catch {
-      case _: upickle.core.AbortException =>
-        cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> "Unable to decode JSON body"
-          ),
-          statusCode = 400
-        )
-
-      case e: BaseDomainException =>
-        cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> e.message
-          ),
-          statusCode = e.statusCode
-        )
-
-      case _: Exception =>
-        cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> "There was an error while saving the metadata"
-          ),
-          statusCode = 500
-        )
-
+      case e: Exception => _handleException( e )
     }
   }
 
@@ -195,32 +169,7 @@ class MetadataControllers {
         statusCode = 204
       )
     } catch {
-      case _: upickle.core.AbortException =>
-        cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> "Unable to decode JSON body"
-          ),
-          statusCode = 400
-        )
-
-      case e: BaseDomainException =>
-        cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> e.message
-          ),
-          statusCode = e.statusCode
-        )
-
-      case _: Exception =>
-        cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> "There was an error while sharing the file"
-          ),
-          statusCode = 500
-        )
+      case e: Exception => _handleException( e )
     }
   }
 
@@ -259,23 +208,7 @@ class MetadataControllers {
         cask.Response( None, statusCode = 204 )
       }
     } catch {
-      case e: BaseDomainException =>
-        cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> e.message
-          ),
-          statusCode = e.statusCode
-        )
-
-      case _: Exception =>
-        cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> "There was an error while checking if the user can read the file"
-          ),
-          statusCode = 500
-        )
+      case e: Exception => _handleException( e )
     }
   }
 
@@ -336,23 +269,7 @@ class MetadataControllers {
         )
       }
     } catch {
-      case e: BaseDomainException =>
-        cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> e.message
-          ),
-          statusCode = e.statusCode
-        )
-
-      case _: Exception =>
-        cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> "There was an error while getting the file metadata"
-          ),
-          statusCode = 500
-        )
+      case e: Exception => _handleException( e )
     }
   }
 
@@ -401,32 +318,7 @@ class MetadataControllers {
         statusCode = 204
       )
     } catch {
-      case _: upickle.core.AbortException =>
-        cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> "Unable to decode JSON body"
-          ),
-          statusCode = 400
-        )
-
-      case e: BaseDomainException =>
-        cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> e.message
-          ),
-          statusCode = e.statusCode
-        )
-
-      case e: Exception =>
-        cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> "There was an error while marking the file as ready"
-          ),
-          statusCode = 500
-        )
+      case e: Exception => _handleException( e )
     }
   }
 
@@ -472,14 +364,7 @@ class MetadataControllers {
       )
 
     } catch {
-      case _: Exception =>
-        cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> "There was an error while getting the files shared with the user"
-          ),
-          statusCode = 500
-        )
+      case e: Exception => _handleException( e )
     }
   }
 
@@ -514,23 +399,7 @@ class MetadataControllers {
         statusCode = 200
       )
     } catch {
-      case e: BaseDomainException =>
-        cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> e.message
-          ),
-          statusCode = e.statusCode
-        )
-
-      case _: Exception =>
-        cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> "There was an error while getting the users with whom the file is shared"
-          ),
-          statusCode = 500
-        )
+      case e: Exception => _handleException( e )
     }
   }
 
