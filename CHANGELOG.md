@@ -1,3 +1,12 @@
+## [0.8.1](https://github.com/hawks-atlanta/metadata-scala/compare/v0.8.0...v0.8.1) (2023-09-15)
+
+
+### Bug Fixes
+
+* Production migrations ([#61](https://github.com/hawks-atlanta/metadata-scala/issues/61)) ([db1f85c](https://github.com/hawks-atlanta/metadata-scala/commit/db1f85c28a2b64000e81341ce4f880bbcc748da3))
+
+
+
 # [0.8.0](https://github.com/hawks-atlanta/metadata-scala/compare/v0.7.0...v0.8.0) (2023-09-15)
 
 
@@ -31,15 +40,6 @@
 ### Features
 
 * Mark files as ready ([#52](https://github.com/hawks-atlanta/metadata-scala/issues/52)) ([f66a70a](https://github.com/hawks-atlanta/metadata-scala/commit/f66a70a8669be258bfdc714c45cc1f82eef16f4f))
-
-
-
-# [0.4.0](https://github.com/hawks-atlanta/metadata-scala/compare/v0.3.0...v0.4.0) (2023-09-11)
-
-
-### Features
-
-* Can read endpoint ([#49](https://github.com/hawks-atlanta/metadata-scala/issues/49)) ([e1577c2](https://github.com/hawks-atlanta/metadata-scala/commit/e1577c26ede19cf8160fc828ec4ef45bea2663ab))
 
 
 
