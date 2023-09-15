@@ -23,6 +23,8 @@ trait FilesMetaRepository {
 
   def getFilesSharedWithUserMeta( userUuid: UUID ): Seq[FileMeta]
 
+  def getUsersFileWasSharedWith( fileUuid: UUID ): Seq[UUID]
+
   def searchFileInDirectory(
       ownerUuid: UUID,
       directoryUuid: Option[UUID],

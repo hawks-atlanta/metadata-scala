@@ -30,35 +30,20 @@ object UpdateReadyFileTestsData {
 @OrderWith( classOf[Alphanumeric] )
 class UpdateReadyFile extends JUnitSuite {
   def saveFilesToBeUpdated(): Unit = {
-    val filePayload = new java.util.HashMap[String, Any]()
-    filePayload.put(
-      "userUUID",
-      UpdateReadyFileTestsData.OWNER_UUID.toString
+    val filePayload = FilesTestsUtils.generateFilePayload(
+      ownerUUID = UpdateReadyFileTestsData.OWNER_UUID,
+      parentDirUUID = None
     )
-    filePayload.put( "parentUUID", null )
-    filePayload.put(
-      "hashSum",
-      "71988c4d8e0803ba4519f0b2864c1331c14a1890bf8694e251379177bfedb5c3"
-    )
-    filePayload.put( "fileType", "archive" )
-    filePayload.put( "fileName", "File to mark as ready.txt" )
-    filePayload.put( "fileSize", 15 )
 
     val fileResponse = FilesTestsUtils.SaveFile( filePayload )
     UpdateReadyFileTestsData.savedFileUUID = UUID.fromString(
       fileResponse.body().jsonPath().getString( "uuid" )
     )
 
-    val directoryPayload = new java.util.HashMap[String, Any]()
-    directoryPayload.put(
-      "userUUID",
-      UpdateReadyFileTestsData.OWNER_UUID.toString
+    val directoryPayload = FilesTestsUtils.generateDirectoryPayload(
+      ownerUUID = UpdateReadyFileTestsData.OWNER_UUID,
+      parentDirUUID = None
     )
-    directoryPayload.put( "parentUUID", null )
-    directoryPayload.put( "hashSum", "" )
-    directoryPayload.put( "fileType", "directory" )
-    directoryPayload.put( "fileName", "Directory to mark as ready" )
-    directoryPayload.put( "fileSize", 0 )
 
     val directoryResponse = FilesTestsUtils.SaveFile( directoryPayload )
     UpdateReadyFileTestsData.savedDirectoryUUID = UUID.fromString(
@@ -71,7 +56,6 @@ class UpdateReadyFile extends JUnitSuite {
   }
 
   @Test
-  // PUT /api/v1/files/ready/{fileUUID} Bad Request
   def T1_UpdateReadyFileBadRequest(): Unit = {
     saveFilesToBeUpdated()
 
@@ -96,7 +80,6 @@ class UpdateReadyFile extends JUnitSuite {
   }
 
   @Test
-  // PUT /api/v1/files/ready/{fileUUID} Not Found
   def T2_UpdateReadyFileNotFound(): Unit = {
     val response = FilesTestsUtils.UpdateReadyFile(
       UUID.randomUUID().toString,
@@ -107,7 +90,6 @@ class UpdateReadyFile extends JUnitSuite {
   }
 
   @Test
-  // PUT /api/v1/files/ready/{fileUUID} Success
   def T3_UpdateReadyFileSuccess(): Unit = {
     // Update file
     val updateFileResponse = FilesTestsUtils.UpdateReadyFile(
@@ -127,7 +109,6 @@ class UpdateReadyFile extends JUnitSuite {
   }
 
   @Test
-  // PUT /api/v1/files/read/{fileUUID} Conflict
   def T4_UpdateReadyFileConflict(): Unit = {
     // Try to mark the file as ready again
     val updateFileResponse = FilesTestsUtils.UpdateReadyFile(

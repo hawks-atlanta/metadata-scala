@@ -1,0 +1,3 @@
+### Get the list of UUIDs of the users whom a file is shared with
+
+GET http://localhost:8080/api/v1/files/shared_with_who/{fileUUID} HTTP/1.1
