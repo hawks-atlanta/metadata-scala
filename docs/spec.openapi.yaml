@@ -423,11 +423,17 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/error_response"
-  /files/rename/{file_uuid}:
+  /files/rename/{user_uuid}/{file_uuid}:
     put:
       tags: ["File"]
       description: Rename the given file.
       parameters:
+        - in: path
+          name: user_uuid
+          schema:
+            type: string
+            example: "658b4e63-b5ac-46a7-ac43-efb6a1415130"
+          required: true
         - in: path
           name: file_uuid
           schema:
@@ -446,6 +452,12 @@ paths:
       responses:
         "204":
           description: No content. The name of the file was updated.
+        "403":
+          description: The file is not owned by the user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
         "404":
           description: Not found. No file with the given file_uuid was found.
           content:
@@ -464,11 +476,17 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/error_response"
-  /files/move/{file_uuid}:
+  /files/move/{user_uuid}/{file_uuid}:
     put:
       tags: ["File"]
       description: Move the given file to the given directory.
       parameters:
+        - in: path
+          name: user_uuid
+          schema:
+            type: string
+            example: "658b4e63-b5ac-46a7-ac43-efb6a1415130"
+          required: true
         - in: path
           name: file_uuid
           schema:
@@ -487,6 +505,12 @@ paths:
       responses:
         "204":
           description: No content. The parent of the file was updated.
+        "403":
+          description: The file is not owned by the user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
         "404":
           description: Not found. No file with the given file_uuid was found.
           content:
