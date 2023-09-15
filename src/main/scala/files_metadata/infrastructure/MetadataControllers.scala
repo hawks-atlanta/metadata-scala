@@ -405,11 +405,13 @@ class MetadataControllers {
 
   def RenameFileController(
       request: cask.Request,
+      userUUID: String,
       fileUUID: String
   ): cask.Response[Obj] = {
     try {
       val isFileUUIDValid = CommonValidator.validateUUID( fileUUID )
-      if (!isFileUUIDValid) {
+      val isUserUUIDValid = CommonValidator.validateUUID( userUUID )
+      if (!isFileUUIDValid || !isUserUUIDValid) {
         return cask.Response(
           ujson.Obj(
             "error"   -> true,
@@ -440,6 +442,7 @@ class MetadataControllers {
 
       useCases.renameFile(
         fileUUID = UUID.fromString( fileUUID ),
+        userUUID = UUID.fromString( userUUID ),
         newName = decoded.name
       )
 

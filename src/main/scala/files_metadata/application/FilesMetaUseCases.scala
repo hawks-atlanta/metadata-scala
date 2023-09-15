@@ -113,8 +113,13 @@ class FilesMetaUseCases {
     repository.getUsersFileWasSharedWith( fileUUID )
   }
 
-  def renameFile( fileUUID: UUID, newName: String ): Unit = {
+  def renameFile( userUUID: UUID, fileUUID: UUID, newName: String ): Unit = {
     val fileMeta = repository.getFileMeta( fileUUID )
+    if (fileMeta.ownerUuid != userUUID) {
+      throw DomainExceptions.FileNotOwnedException(
+        "The user does not own the file"
+      )
+    }
 
     val existingFileMeta = repository.searchFileInDirectory(
       ownerUuid = fileMeta.ownerUuid,
