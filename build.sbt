@@ -10,8 +10,8 @@ lazy val root = ( project in file( "." ) )
 
 // Strategy to solve duplicate files in the assembly process
 assembly / assemblyMergeStrategy := {
-  case PathList( "META-INF", _* ) => MergeStrategy.discard
-  case _                          => MergeStrategy.first
+  case PathList( "META-INF", "MANIFEST.MF" ) => MergeStrategy.discard
+  case _                                     => MergeStrategy.first
 }
 
 // Testing dependencies
@@ -41,15 +41,4 @@ libraryDependencies ++= Seq(
 // Validation libraries
 libraryDependencies ++= Seq(
   "com.wix" %% "accord-core" % "0.7.6"
-)
-
-// Migration dependencies
-libraryDependencies ++= Seq(
-  "org.flywaydb" % "flyway-core" % "9.16.0"
-)
-
-// Database connection dependencies
-libraryDependencies ++= Seq(
-  "com.zaxxer" % "HikariCP" % "5.0.1",
-  "org.postgresql" % "postgresql" % "42.5.4"
 )
