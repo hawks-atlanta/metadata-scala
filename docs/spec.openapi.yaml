@@ -423,6 +423,88 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/error_response"
+  /files/rename/{file_uuid}:
+    put:
+      tags: ["File"]
+      description: Rename the given file.
+      parameters:
+        - in: path
+          name: file_uuid
+          schema:
+            type: string
+            example: "b96bdc16-8f27-44aa-9758-b4e5f13060fe"
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "renamed"
+      responses:
+        "204":
+          description: No content. The name of the file was updated.
+        "404":
+          description: Not found. No file with the given file_uuid was found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
+        "409":
+          description: There is another file in the same folder with the same name.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
+  /files/move/{file_uuid}:
+    put:
+      tags: ["File"]
+      description: Move the given file to the given directory.
+      parameters:
+        - in: path
+          name: file_uuid
+          schema:
+            type: string
+            example: "b96bdc16-8f27-44aa-9758-b4e5f13060fe"
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                parentUUID:
+                  type: string
+                  example: "5ad724f0-4091-453a-914a-c2d11d69d1e3"
+      responses:
+        "204":
+          description: No content. The parent of the file was updated.
+        "404":
+          description: Not found. No file with the given file_uuid was found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
+        "409":
+          description: There is another file in the same folder with the same name.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
 
 components:
   schemas:
