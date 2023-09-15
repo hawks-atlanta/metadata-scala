@@ -397,4 +397,108 @@ class MetadataControllers {
         )
     }
   }
+
+  def GetSharedWithMeController(
+      request: cask.Request,
+      userUUID: String
+  ): cask.Response[Obj] = {
+    try {
+      val isUserUUIDValid = CommonValidator.validateUUID( userUUID )
+      if (!isUserUUIDValid) {
+        return cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "Fields validation failed"
+          ),
+          statusCode = 400
+        )
+      }
+
+      val filesMeta = useCases.getFilesMetadataSharedWithUser(
+        userUUID = UUID.fromString( userUUID )
+      )
+
+      val responseArray = ujson.Arr.from(
+        filesMeta.map( fileMeta => {
+          val fileType =
+            if (fileMeta.archiveUuid.isEmpty) "directory"
+            else "archive"
+
+          ujson.Obj(
+            "uuid"     -> fileMeta.uuid.toString,
+            "name"     -> fileMeta.name,
+            "fileType" -> fileType
+          )
+        } )
+      )
+
+      cask.Response(
+        ujson.Obj(
+          "files" -> responseArray
+        ),
+        statusCode = 200
+      )
+
+    } catch {
+      case _: Exception =>
+        cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "There was an error while getting the files shared with the user"
+          ),
+          statusCode = 500
+        )
+    }
+  }
+
+  def GetSharedWithWhoController(
+      request: cask.Request,
+      fileUUID: String
+  ): cask.Response[Obj] = {
+    try {
+      val isFileUUIDValid = CommonValidator.validateUUID( fileUUID )
+      if (!isFileUUIDValid) {
+        return cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "Fields validation failed"
+          ),
+          statusCode = 400
+        )
+      }
+
+      val usersUUID = useCases.getUsersFileWasSharedWith(
+        fileUUID = UUID.fromString( fileUUID )
+      )
+
+      val responseArray = ujson.Arr.from(
+        usersUUID.map( userUUID => userUUID.toString )
+      )
+
+      cask.Response(
+        ujson.Obj(
+          "shared_with" -> responseArray
+        ),
+        statusCode = 200
+      )
+    } catch {
+      case e: BaseDomainException =>
+        cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> e.message
+          ),
+          statusCode = e.statusCode
+        )
+
+      case _: Exception =>
+        cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "There was an error while getting the users with whom the file is shared"
+          ),
+          statusCode = 500
+        )
+    }
+  }
 }

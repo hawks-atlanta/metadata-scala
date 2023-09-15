@@ -103,4 +103,13 @@ class FilesMetaUseCases {
   def getArchiveMetadata( archiveUUID: UUID ): ArchivesMeta = {
     repository.getArchiveMeta( archiveUUID )
   }
+
+  def getFilesMetadataSharedWithUser( userUUID: UUID ): Seq[FileMeta] = {
+    repository.getFilesSharedWithUserMeta( userUUID )
+  }
+
+  def getUsersFileWasSharedWith( fileUUID: UUID ): Seq[UUID] = {
+    repository.getFileMeta( fileUUID )
+    repository.getUsersFileWasSharedWith( fileUUID )
+  }
 }
