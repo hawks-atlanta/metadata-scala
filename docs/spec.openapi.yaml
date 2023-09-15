@@ -287,13 +287,13 @@ paths:
               schema:
                 $ref: "#/components/schemas/error_response"
 
-  /files/share/{owner_uuid}/{file_uuid}:
+  /files/share/{user_uuid}/{file_uuid}:
     post:
       tags: ["File"]
       description: Share the given file with the given user
       parameters:
         - in: path
-          name: owner_uuid
+          name: user_uuid
           schema:
             type: string
             example: "658b4e63-b5ac-46a7-ac43-efb6a1415130"
@@ -337,13 +337,13 @@ paths:
               schema:
                 $ref: "#/components/schemas/error_response"
 
-  /files/unshare/{owner_uuid}/{file_uuid}:
+  /files/unshare/{user_uuid}/{file_uuid}:
     post:
       tags: ["File"]
       description: Unshare the given file with the given user
       parameters:
         - in: path
-          name: owner_uuid
+          name: user_uuid
           schema:
             type: string
             example: "658b4e63-b5ac-46a7-ac43-efb6a1415130"
