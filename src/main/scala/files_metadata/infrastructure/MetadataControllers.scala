@@ -246,6 +246,7 @@ class MetadataControllers {
         cask.Response(
           ujson.Obj(
             "archiveUUID" -> ujson.Null, // Needs to be a "custom" null value
+            "name"        -> fileMeta.name,
             "volume"      -> fileMeta.volume,
             "size"        -> 0,
             "hashSum"     -> ""
@@ -261,6 +262,7 @@ class MetadataControllers {
         cask.Response(
           ujson.Obj(
             "archiveUUID" -> fileMeta.archiveUuid.get.toString,
+            "name"        -> fileMeta.name,
             "volume"      -> fileMeta.volume,
             "size"        -> archivesMeta.size,
             "hashSum"     -> archivesMeta.hashSum
