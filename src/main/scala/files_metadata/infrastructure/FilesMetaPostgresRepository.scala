@@ -67,12 +67,13 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
 
       // 1. Insert the archive
       val archiveStatemet = connection.prepareStatement(
-        "INSERT INTO archives (hash_sum, size, ready) VALUES (?, ?, ?) RETURNING uuid"
+        "INSERT INTO archives (extension, hash_sum, size, ready) VALUES (?, ?, ?, ?) RETURNING uuid"
       )
 
-      archiveStatemet.setString( 1, archivesMeta.hashSum )
-      archiveStatemet.setLong( 2, archivesMeta.size )
-      archiveStatemet.setBoolean( 3, false )
+      archiveStatemet.setString( 1, archivesMeta.extension )
+      archiveStatemet.setString( 2, archivesMeta.hashSum )
+      archiveStatemet.setLong( 3, archivesMeta.size )
+      archiveStatemet.setBoolean( 4, false )
 
       val archiveResult             = archiveStatemet.executeQuery()
       var archiveUUID: Option[UUID] = None
@@ -173,7 +174,7 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
 
     try {
       val statement = connection.prepareStatement(
-        "SELECT uuid, hash_sum, size, ready FROM archives WHERE uuid = ?"
+        "SELECT uuid, extension, hash_sum, size, ready FROM archives WHERE uuid = ?"
       )
       statement.setObject( 1, uuid )
 
@@ -186,6 +187,7 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
 
       ArchivesMeta(
         uuid = UUID.fromString( result.getString( "uuid" ) ),
+        extension = result.getString( "extension" ),
         hashSum = result.getString( "hash_sum" ),
         size = result.getLong( "size" ),
         ready = result.getBoolean( "ready" )

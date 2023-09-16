@@ -100,6 +100,7 @@ class MetadataControllers {
 
       // Save the metadata
       val receivedArchiveMeta = ArchivesMeta.createNewArchive(
+        decoded.fileExtension,
         decoded.hashSum,
         decoded.fileSize
       )
@@ -247,6 +248,7 @@ class MetadataControllers {
           ujson.Obj(
             "archiveUUID" -> ujson.Null, // Needs to be a "custom" null value
             "name"        -> fileMeta.name,
+            "extension"   -> ujson.Null,
             "volume"      -> fileMeta.volume,
             "size"        -> 0,
             "hashSum"     -> ""
@@ -263,6 +265,7 @@ class MetadataControllers {
           ujson.Obj(
             "archiveUUID" -> fileMeta.archiveUuid.get.toString,
             "name"        -> fileMeta.name,
+            "extension"   -> archivesMeta.extension,
             "volume"      -> fileMeta.volume,
             "size"        -> archivesMeta.size,
             "hashSum"     -> archivesMeta.hashSum
