@@ -5,6 +5,7 @@ import java.util.UUID
 
 import files_metadata.domain.ArchivesMeta
 import files_metadata.domain.DomainExceptions
+import files_metadata.domain.FileExtendedMeta
 import files_metadata.domain.FileMeta
 import files_metadata.domain.FilesMetaRepository
 
@@ -104,7 +105,9 @@ class FilesMetaUseCases {
     repository.getArchiveMeta( archiveUUID )
   }
 
-  def getFilesMetadataSharedWithUser( userUUID: UUID ): Seq[FileMeta] = {
+  def getFilesMetadataSharedWithUser(
+      userUUID: UUID
+  ): Seq[FileExtendedMeta] = {
     repository.getFilesSharedWithUserMeta( userUUID )
   }
 

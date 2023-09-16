@@ -349,15 +349,21 @@ class MetadataControllers {
 
       val responseArray = ujson.Arr.from(
         filesMeta.map( fileMeta => {
-          val fileType =
-            if (fileMeta.archiveUuid.isEmpty) "directory"
-            else "archive"
-
-          ujson.Obj(
-            "uuid"     -> fileMeta.uuid.toString,
-            "name"     -> fileMeta.name,
-            "fileType" -> fileType
-          )
+          if (fileMeta.archiveUuid.isEmpty) {
+            ujson.Obj(
+              "uuid"      -> fileMeta.uuid.toString,
+              "fileType"  -> "directory",
+              "name"      -> fileMeta.name,
+              "extension" -> ujson.Null
+            )
+          } else {
+            ujson.Obj(
+              "uuid"      -> fileMeta.uuid.toString,
+              "fileType"  -> "archive",
+              "name"      -> fileMeta.name,
+              "extension" -> fileMeta.extension
+            )
+          }
         } )
       )
 

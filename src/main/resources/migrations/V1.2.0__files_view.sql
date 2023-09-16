@@ -7,6 +7,7 @@ CREATE OR REPLACE VIEW files_view AS
         files."uuid",
         files."owner_uuid",
         files."parent_uuid",
+        files."archive_uuid",
         files."volume",
         files."name",
         archives."extension",

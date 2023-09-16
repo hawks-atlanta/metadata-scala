@@ -21,7 +21,7 @@ trait FilesMetaRepository {
 
   def getArchiveMeta( uuid: UUID ): ArchivesMeta
 
-  def getFilesSharedWithUserMeta( userUuid: UUID ): Seq[FileMeta]
+  def getFilesSharedWithUserMeta( userUuid: UUID ): Seq[FileExtendedMeta]
 
   def getUsersFileWasSharedWith( fileUuid: UUID ): Seq[UUID]
 
