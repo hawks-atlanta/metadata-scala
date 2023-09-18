@@ -8,6 +8,7 @@ import java.util.UUID
 import com.zaxxer.hikari.HikariDataSource
 import files_metadata.domain.ArchivesMeta
 import files_metadata.domain.DomainExceptions
+import files_metadata.domain.FileExtendedMeta
 import files_metadata.domain.FileMeta
 import files_metadata.domain.FilesMetaRepository
 import shared.infrastructure.PostgreSQLPool
@@ -67,12 +68,13 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
 
       // 1. Insert the archive
       val archiveStatemet = connection.prepareStatement(
-        "INSERT INTO archives (hash_sum, size, ready) VALUES (?, ?, ?) RETURNING uuid"
+        "INSERT INTO archives (extension, hash_sum, size, ready) VALUES (?, ?, ?, ?) RETURNING uuid"
       )
 
-      archiveStatemet.setString( 1, archivesMeta.hashSum )
-      archiveStatemet.setLong( 2, archivesMeta.size )
-      archiveStatemet.setBoolean( 3, false )
+      archiveStatemet.setString( 1, archivesMeta.extension )
+      archiveStatemet.setString( 2, archivesMeta.hashSum )
+      archiveStatemet.setLong( 3, archivesMeta.size )
+      archiveStatemet.setBoolean( 4, false )
 
       val archiveResult             = archiveStatemet.executeQuery()
       var archiveUUID: Option[UUID] = None
@@ -173,7 +175,7 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
 
     try {
       val statement = connection.prepareStatement(
-        "SELECT uuid, hash_sum, size, ready FROM archives WHERE uuid = ?"
+        "SELECT uuid, extension, hash_sum, size, ready FROM archives WHERE uuid = ?"
       )
       statement.setObject( 1, uuid )
 
@@ -186,6 +188,7 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
 
       ArchivesMeta(
         uuid = UUID.fromString( result.getString( "uuid" ) ),
+        extension = result.getString( "extension" ),
         hashSum = result.getString( "hash_sum" ),
         size = result.getLong( "size" ),
         ready = result.getBoolean( "ready" )
@@ -195,22 +198,26 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
     }
   }
 
-  override def getFilesSharedWithUserMeta( userUuid: UUID ): Seq[FileMeta] = {
+  override def getFilesSharedWithUserMeta(
+      userUuid: UUID
+  ): Seq[FileExtendedMeta] = {
     val connection: Connection = pool.getConnection()
 
     try {
       val statement = connection.prepareStatement(
         """
-          |SELECT uuid, owner_uuid, parent_uuid, archive_uuid, volume, name
-          |FROM files WHERE uuid IN (
-          |SELECT file_uuid FROM shared_files WHERE user_uuid = ?
+          |SELECT uuid, owner_uuid, parent_uuid, archive_uuid, volume, name, extension, hash_sum, size
+          |FROM files_view WHERE
+          |uuid IN (
+          | SELECT file_uuid FROM shared_files WHERE user_uuid = ?
           |)
+          |AND volume IS NOT NULL
           | """.stripMargin
       )
       statement.setObject( 1, userUuid )
 
-      val result                   = statement.executeQuery()
-      var filesMeta: Seq[FileMeta] = Seq()
+      val result                           = statement.executeQuery()
+      var filesMeta: Seq[FileExtendedMeta] = Seq()
 
       // Parse the rows into Domain objects
       while (result.next()) {
@@ -220,17 +227,22 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
         val parentUUID =
           if (parentUUIDString == null) None
           else Some( UUID.fromString( parentUUIDString ) )
+
         val archiveUUID =
           if (archiveUUIDString == null) None
           else Some( UUID.fromString( archiveUUIDString ) )
 
-        filesMeta = filesMeta :+ FileMeta(
+        filesMeta = filesMeta :+ FileExtendedMeta(
           uuid = UUID.fromString( result.getString( "uuid" ) ),
           ownerUuid = UUID.fromString( result.getString( "owner_uuid" ) ),
           parentUuid = parentUUID,
           archiveUuid = archiveUUID,
           volume = result.getString( "volume" ),
-          name = result.getString( "name" )
+          name = result.getString( "name" ),
+          extension = result.getString( "extension" ),
+          hashSum = result.getString( "hash_sum" ),
+          size = result.getLong( "size" ),
+          ready = true
         )
       }
 

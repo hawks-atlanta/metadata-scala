@@ -542,10 +542,13 @@ components:
           type: string
           enum: ["archive", "directory"]
           description: "Whether the file is a directory or an archive"
-          example: "file"
+          example: "archive"
         fileName:
           type: string
           example: "filename"
+        fileExtension:
+          type: string
+          example: "pdf"
 
     metadata:
       type: object
@@ -553,6 +556,12 @@ components:
         archiveUUID:
           type: string
           example: "0b82495a-350b-4f4f-95ce-0119998466d4"
+        name:
+          type: string
+          example: "filename"
+        extension:
+          type: string
+          example: "pdf"
         volume:
           type: string
           example: "VOLUME_1"
@@ -578,12 +587,15 @@ components:
           example: "56d50f755d5dbca915cf93779d3b51d6562e6183"
         fileType:
           type: string
-          enum: ["file", "directory"]
+          enum: ["archive", "directory"]
           description: "Whether the file is a directory or an archive"
-          example: "file"
+          example: "archive"
         fileName:
           type: string
           example: "filename"
+        fileExtension:
+          type: string
+          example: "pdf"
         fileSize:
           type: number
           description: "Size in KB"
