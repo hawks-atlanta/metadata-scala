@@ -6,7 +6,6 @@ import java.util.UUID
 case class ArchivesMeta(
     uuid: UUID,
     extension: String,
-    hashSum: String,
     size: Long,
     ready: Boolean
 )
@@ -14,14 +13,12 @@ case class ArchivesMeta(
 object ArchivesMeta {
   def createNewArchive(
       extension: String,
-      hashSum: String,
       size: Long
   ): ArchivesMeta =
     new ArchivesMeta(
       uuid = null,
+      ready = false,
       extension = extension,
-      hashSum = hashSum,
-      size = size,
-      ready = false
+      size = size
     )
 }
