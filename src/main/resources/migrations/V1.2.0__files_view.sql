@@ -1,6 +1,5 @@
 -- Add a new column to separate the extension from the name
-ALTER TABLE archives ADD COLUMN extension VARCHAR(16) NOT NULL DEFAULT '';
-ALTER TABLE archives ALTER COLUMN extension DROP DEFAULT;
+ALTER TABLE archives ADD COLUMN extension VARCHAR(16) DEFAULT NULL;
 
 -- View to simplify the queries
 CREATE OR REPLACE VIEW files_view AS
