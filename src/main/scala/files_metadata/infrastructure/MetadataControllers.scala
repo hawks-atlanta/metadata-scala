@@ -12,6 +12,7 @@ import files_metadata.domain.FileMeta
 import files_metadata.domain.FilesMetaRepository
 import files_metadata.infrastructure.requests.CreationReqSchema
 import files_metadata.infrastructure.requests.MarkAsReadyReqSchema
+import files_metadata.infrastructure.requests.RenameReqSchema
 import files_metadata.infrastructure.requests.ShareReqSchema
 import shared.infrastructure.CommonValidator
 import ujson.Obj
@@ -25,6 +26,37 @@ class MetadataControllers {
       new FilesMetaPostgresRepository()
 
     useCases = new FilesMetaUseCases( repository )
+  }
+
+  private def _handleException( exception: Exception ): cask.Response[Obj] = {
+    exception match {
+      case _: upickle.core.AbortException | _: ujson.IncompleteParseException =>
+        cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "Unable to decode JSON body"
+          ),
+          statusCode = 400
+        )
+
+      case e: BaseDomainException =>
+        cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> e.message
+          ),
+          statusCode = e.statusCode
+        )
+
+      case _: Exception =>
+        cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "There was an error"
+          ),
+          statusCode = 500
+        )
+    }
   }
 
   def SaveMetadataController(
@@ -68,6 +100,7 @@ class MetadataControllers {
 
       // Save the metadata
       val receivedArchiveMeta = ArchivesMeta.createNewArchive(
+        decoded.fileExtension,
         decoded.hashSum,
         decoded.fileSize
       )
@@ -94,33 +127,7 @@ class MetadataControllers {
         statusCode = 201
       )
     } catch {
-      case _: upickle.core.AbortException =>
-        cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> "Unable to decode JSON body"
-          ),
-          statusCode = 400
-        )
-
-      case e: BaseDomainException =>
-        cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> e.message
-          ),
-          statusCode = e.statusCode
-        )
-
-      case _: Exception =>
-        cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> "There was an error while saving the metadata"
-          ),
-          statusCode = 500
-        )
-
+      case e: Exception => _handleException( e )
     }
   }
 
@@ -163,32 +170,7 @@ class MetadataControllers {
         statusCode = 204
       )
     } catch {
-      case _: upickle.core.AbortException =>
-        cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> "Unable to decode JSON body"
-          ),
-          statusCode = 400
-        )
-
-      case e: BaseDomainException =>
-        cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> e.message
-          ),
-          statusCode = e.statusCode
-        )
-
-      case _: Exception =>
-        cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> "There was an error while sharing the file"
-          ),
-          statusCode = 500
-        )
+      case e: Exception => _handleException( e )
     }
   }
 
@@ -227,23 +209,7 @@ class MetadataControllers {
         cask.Response( None, statusCode = 204 )
       }
     } catch {
-      case e: BaseDomainException =>
-        cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> e.message
-          ),
-          statusCode = e.statusCode
-        )
-
-      case _: Exception =>
-        cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> "There was an error while checking if the user can read the file"
-          ),
-          statusCode = 500
-        )
+      case e: Exception => _handleException( e )
     }
   }
 
@@ -281,6 +247,8 @@ class MetadataControllers {
         cask.Response(
           ujson.Obj(
             "archiveUUID" -> ujson.Null, // Needs to be a "custom" null value
+            "name"        -> fileMeta.name,
+            "extension"   -> ujson.Null,
             "volume"      -> fileMeta.volume,
             "size"        -> 0,
             "hashSum"     -> ""
@@ -296,6 +264,8 @@ class MetadataControllers {
         cask.Response(
           ujson.Obj(
             "archiveUUID" -> fileMeta.archiveUuid.get.toString,
+            "name"        -> fileMeta.name,
+            "extension"   -> archivesMeta.extension,
             "volume"      -> fileMeta.volume,
             "size"        -> archivesMeta.size,
             "hashSum"     -> archivesMeta.hashSum
@@ -304,23 +274,7 @@ class MetadataControllers {
         )
       }
     } catch {
-      case e: BaseDomainException =>
-        cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> e.message
-          ),
-          statusCode = e.statusCode
-        )
-
-      case _: Exception =>
-        cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> "There was an error while getting the file metadata"
-          ),
-          statusCode = 500
-        )
+      case e: Exception => _handleException( e )
     }
   }
 
@@ -369,32 +323,7 @@ class MetadataControllers {
         statusCode = 204
       )
     } catch {
-      case _: upickle.core.AbortException =>
-        cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> "Unable to decode JSON body"
-          ),
-          statusCode = 400
-        )
-
-      case e: BaseDomainException =>
-        cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> e.message
-          ),
-          statusCode = e.statusCode
-        )
-
-      case e: Exception =>
-        cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> "There was an error while marking the file as ready"
-          ),
-          statusCode = 500
-        )
+      case e: Exception => _handleException( e )
     }
   }
 
@@ -420,15 +349,21 @@ class MetadataControllers {
 
       val responseArray = ujson.Arr.from(
         filesMeta.map( fileMeta => {
-          val fileType =
-            if (fileMeta.archiveUuid.isEmpty) "directory"
-            else "archive"
-
-          ujson.Obj(
-            "uuid"     -> fileMeta.uuid.toString,
-            "name"     -> fileMeta.name,
-            "fileType" -> fileType
-          )
+          if (fileMeta.archiveUuid.isEmpty) {
+            ujson.Obj(
+              "uuid"      -> fileMeta.uuid.toString,
+              "fileType"  -> "directory",
+              "name"      -> fileMeta.name,
+              "extension" -> ujson.Null
+            )
+          } else {
+            ujson.Obj(
+              "uuid"      -> fileMeta.uuid.toString,
+              "fileType"  -> "archive",
+              "name"      -> fileMeta.name,
+              "extension" -> fileMeta.extension
+            )
+          }
         } )
       )
 
@@ -440,14 +375,7 @@ class MetadataControllers {
       )
 
     } catch {
-      case _: Exception =>
-        cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> "There was an error while getting the files shared with the user"
-          ),
-          statusCode = 500
-        )
+      case e: Exception => _handleException( e )
     }
   }
 
@@ -482,23 +410,59 @@ class MetadataControllers {
         statusCode = 200
       )
     } catch {
-      case e: BaseDomainException =>
-        cask.Response(
-          ujson.Obj(
-            "error"   -> true,
-            "message" -> e.message
-          ),
-          statusCode = e.statusCode
-        )
+      case e: Exception => _handleException( e )
+    }
+  }
 
-      case _: Exception =>
-        cask.Response(
+  def RenameFileController(
+      request: cask.Request,
+      userUUID: String,
+      fileUUID: String
+  ): cask.Response[Obj] = {
+    try {
+      val isFileUUIDValid = CommonValidator.validateUUID( fileUUID )
+      val isUserUUIDValid = CommonValidator.validateUUID( userUUID )
+      if (!isFileUUIDValid || !isUserUUIDValid) {
+        return cask.Response(
           ujson.Obj(
             "error"   -> true,
-            "message" -> "There was an error while getting the users with whom the file is shared"
+            "message" -> "Fields validation failed"
           ),
-          statusCode = 500
+          statusCode = 400
         )
+      }
+
+      val decoded: RenameReqSchema = read[RenameReqSchema](
+        request.text()
+      )
+
+      val validationRule: Validator[RenameReqSchema] =
+        RenameReqSchema.schemaValidator
+      val validationResult = validate[RenameReqSchema]( decoded )(
+        validationRule
+      )
+      if (validationResult.isFailure) {
+        return cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "Fields validation failed"
+          ),
+          statusCode = 400
+        )
+      }
+
+      useCases.renameFile(
+        fileUUID = UUID.fromString( fileUUID ),
+        userUUID = UUID.fromString( userUUID ),
+        newName = decoded.name
+      )
+
+      cask.Response(
+        None,
+        statusCode = 204
+      )
+    } catch {
+      case e: Exception => _handleException( e )
     }
   }
 }

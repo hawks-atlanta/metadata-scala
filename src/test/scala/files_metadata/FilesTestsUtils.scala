@@ -54,6 +54,7 @@ object FilesTestsUtils {
     filePayload.put( "userUUID", ownerUUID.toString )
     filePayload.put( "parentUUID", parentUUID )
     filePayload.put( "fileName", randomUUID.toString )
+    filePayload.put( "fileExtension", "txt" )
     filePayload.put( "fileType", "archive" )
     filePayload.put( "fileSize", 15 )
     filePayload.put( "hashSum", hash )
@@ -75,6 +76,7 @@ object FilesTestsUtils {
     directoryPayload.put( "userUUID", ownerUUID.toString )
     directoryPayload.put( "parentUUID", parentUUID )
     directoryPayload.put( "fileName", randomUUID.toString )
+    directoryPayload.put( "fileExtension", null )
     directoryPayload.put( "fileType", "directory" )
     directoryPayload.put( "fileSize", 0 )
     directoryPayload.put( "hashSum", "" )
@@ -139,6 +141,33 @@ object FilesTestsUtils {
       .put(
         s"${ UpdateReadyFileTestsData.API_PREFIX }/${ fileUUID }"
       )
+  }
+
+  def generateReadyFilePayload(): util.HashMap[String, Any] = {
+    val readyFilePayload = new util.HashMap[String, Any]()
+    readyFilePayload.put( "volume", "volume_x" )
+    readyFilePayload
+  }
+
+  def UpdateFileName(
+      userUUID: String,
+      fileUUID: String,
+      payload: util.HashMap[String, Any]
+  ): Response = {
+    `given`()
+      .port( 8080 )
+      .contentType( "application/json" )
+      .body( payload )
+      .when()
+      .put(
+        s"${ RenameFileTestsData.API_PREFIX }/${ userUUID }/${ fileUUID }"
+      )
+  }
+
+  def generateRenameFilePayload(): util.HashMap[String, Any] = {
+    val renameFilePayload = new util.HashMap[String, Any]()
+    renameFilePayload.put( "name", UUID.randomUUID().toString )
+    renameFilePayload
   }
 
   // -- Get files metadata --

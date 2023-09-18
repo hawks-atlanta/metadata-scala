@@ -8,12 +8,21 @@ import java.util.UUID
 import com.zaxxer.hikari.HikariDataSource
 import files_metadata.domain.ArchivesMeta
 import files_metadata.domain.DomainExceptions
+import files_metadata.domain.FileExtendedMeta
 import files_metadata.domain.FileMeta
 import files_metadata.domain.FilesMetaRepository
 import shared.infrastructure.PostgreSQLPool
 
 class FilesMetaPostgresRepository extends FilesMetaRepository {
   private val pool: HikariDataSource = PostgreSQLPool.getInstance()
+
+  override def saveFileMeta(
+      archiveMeta: ArchivesMeta,
+      fileMeta: FileMeta
+  ): UUID = {
+    if (archiveMeta.hashSum.isEmpty) saveDirectory( fileMeta )
+    else saveArchive( archiveMeta, fileMeta )
+  }
 
   private def saveDirectory( fileMeta: FileMeta ): UUID = {
     val connection: Connection = pool.getConnection()
@@ -59,12 +68,13 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
 
       // 1. Insert the archive
       val archiveStatemet = connection.prepareStatement(
-        "INSERT INTO archives (hash_sum, size, ready) VALUES (?, ?, ?) RETURNING uuid"
+        "INSERT INTO archives (extension, hash_sum, size, ready) VALUES (?, ?, ?, ?) RETURNING uuid"
       )
 
-      archiveStatemet.setString( 1, archivesMeta.hashSum )
-      archiveStatemet.setLong( 2, archivesMeta.size )
-      archiveStatemet.setBoolean( 3, false )
+      archiveStatemet.setString( 1, archivesMeta.extension )
+      archiveStatemet.setString( 2, archivesMeta.hashSum )
+      archiveStatemet.setLong( 3, archivesMeta.size )
+      archiveStatemet.setBoolean( 4, false )
 
       val archiveResult             = archiveStatemet.executeQuery()
       var archiveUUID: Option[UUID] = None
@@ -114,14 +124,6 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
     }
   }
 
-  override def saveFileMeta(
-      archiveMeta: ArchivesMeta,
-      fileMeta: FileMeta
-  ): UUID = {
-    if (archiveMeta.hashSum.isEmpty) saveDirectory( fileMeta )
-    else saveArchive( archiveMeta, fileMeta )
-  }
-
   override def getFilesMetaInRoot( ownerUuid: UUID ): Seq[FileMeta] = ???
 
   override def getFilesMetaInDirectory(
@@ -163,8 +165,6 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
           "There is no file with the given UUID"
         )
       }
-    } catch {
-      case exception: Exception => throw exception
     } finally {
       connection.close()
     }
@@ -175,7 +175,7 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
 
     try {
       val statement = connection.prepareStatement(
-        "SELECT uuid, hash_sum, size, ready FROM archives WHERE uuid = ?"
+        "SELECT uuid, extension, hash_sum, size, ready FROM archives WHERE uuid = ?"
       )
       statement.setObject( 1, uuid )
 
@@ -188,6 +188,7 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
 
       ArchivesMeta(
         uuid = UUID.fromString( result.getString( "uuid" ) ),
+        extension = result.getString( "extension" ),
         hashSum = result.getString( "hash_sum" ),
         size = result.getLong( "size" ),
         ready = result.getBoolean( "ready" )
@@ -197,22 +198,26 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
     }
   }
 
-  override def getFilesSharedWithUserMeta( userUuid: UUID ): Seq[FileMeta] = {
+  override def getFilesSharedWithUserMeta(
+      userUuid: UUID
+  ): Seq[FileExtendedMeta] = {
     val connection: Connection = pool.getConnection()
 
     try {
       val statement = connection.prepareStatement(
         """
-          |SELECT uuid, owner_uuid, parent_uuid, archive_uuid, volume, name
-          |FROM files WHERE uuid IN (
-          |SELECT file_uuid FROM shared_files WHERE user_uuid = ?
+          |SELECT uuid, owner_uuid, parent_uuid, archive_uuid, volume, name, extension, hash_sum, size
+          |FROM files_view WHERE
+          |uuid IN (
+          | SELECT file_uuid FROM shared_files WHERE user_uuid = ?
           |)
+          |AND volume IS NOT NULL
           | """.stripMargin
       )
       statement.setObject( 1, userUuid )
 
-      val result                   = statement.executeQuery()
-      var filesMeta: Seq[FileMeta] = Seq()
+      val result                           = statement.executeQuery()
+      var filesMeta: Seq[FileExtendedMeta] = Seq()
 
       // Parse the rows into Domain objects
       while (result.next()) {
@@ -222,17 +227,22 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
         val parentUUID =
           if (parentUUIDString == null) None
           else Some( UUID.fromString( parentUUIDString ) )
+
         val archiveUUID =
           if (archiveUUIDString == null) None
           else Some( UUID.fromString( archiveUUIDString ) )
 
-        filesMeta = filesMeta :+ FileMeta(
+        filesMeta = filesMeta :+ FileExtendedMeta(
           uuid = UUID.fromString( result.getString( "uuid" ) ),
           ownerUuid = UUID.fromString( result.getString( "owner_uuid" ) ),
           parentUuid = parentUUID,
           archiveUuid = archiveUUID,
           volume = result.getString( "volume" ),
-          name = result.getString( "name" )
+          name = result.getString( "name" ),
+          extension = result.getString( "extension" ),
+          hashSum = result.getString( "hash_sum" ),
+          size = result.getLong( "size" ),
+          ready = true
         )
       }
 
@@ -346,8 +356,6 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
       } else {
         false
       }
-    } catch {
-      case _: Exception => false
     } finally {
       connection.close()
     }
@@ -365,8 +373,6 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
       statement.setObject( 2, userUUID )
 
       statement.executeUpdate()
-    } catch {
-      case exception: Exception => throw exception
     } finally {
       connection.close()
     }
@@ -375,15 +381,19 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
   override def canUserReadFile( userUuid: UUID, fileUuid: UUID ): Boolean = {
     val connection: Connection = pool.getConnection()
 
-    val statement = connection.prepareStatement( "SELECT can_read(?, ?)" )
-    statement.setObject( 1, userUuid )
-    statement.setObject( 2, fileUuid )
+    try {
+      val statement = connection.prepareStatement( "SELECT can_read(?, ?)" )
+      statement.setObject( 1, userUuid )
+      statement.setObject( 2, fileUuid )
 
-    val result = statement.executeQuery()
-    if (result.next()) {
-      result.getBoolean( 1 )
-    } else {
-      false
+      val result = statement.executeQuery()
+      if (result.next()) {
+        result.getBoolean( 1 )
+      } else {
+        false
+      }
+    } finally {
+      connection.close()
     }
   }
 
@@ -393,13 +403,17 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
   ): Unit = {
     val connection: Connection = pool.getConnection()
 
-    val statement = connection.prepareStatement(
-      "UPDATE archives SET ready = ? WHERE uuid = ?"
-    )
-    statement.setBoolean( 1, ready )
-    statement.setObject( 2, archiveUUID )
+    try {
+      val statement = connection.prepareStatement(
+        "UPDATE archives SET ready = ? WHERE uuid = ?"
+      )
+      statement.setBoolean( 1, ready )
+      statement.setObject( 2, archiveUUID )
 
-    statement.executeUpdate()
+      statement.executeUpdate()
+    } finally {
+      connection.close()
+    }
   }
 
   def updateFileVolume(
@@ -408,13 +422,36 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
   ): Unit = {
     val connection: Connection = pool.getConnection()
 
-    val statement = connection.prepareStatement(
-      "UPDATE files SET volume = ? WHERE uuid = ?"
-    )
-    statement.setString( 1, volume )
-    statement.setObject( 2, fileUUID )
+    try {
+      val statement = connection.prepareStatement(
+        "UPDATE files SET volume = ? WHERE uuid = ?"
+      )
+      statement.setString( 1, volume )
+      statement.setObject( 2, fileUUID )
 
-    statement.executeUpdate()
+      statement.executeUpdate()
+    } finally {
+      connection.close()
+    }
+  }
+
+  override def updateFileName(
+      fileUUID: UUID,
+      newName: String
+  ): Unit = {
+    val connection: Connection = pool.getConnection()
+
+    try {
+      val statement = connection.prepareStatement(
+        "UPDATE files SET name = ? WHERE uuid = ?"
+      )
+      statement.setString( 1, newName )
+      statement.setObject( 2, fileUUID )
+
+      statement.executeUpdate()
+    } finally {
+      connection.close()
+    }
   }
 
   override def deleteFileMeta( ownerUuid: UUID, uuid: UUID ): Unit = ???

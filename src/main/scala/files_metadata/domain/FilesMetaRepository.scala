@@ -21,7 +21,7 @@ trait FilesMetaRepository {
 
   def getArchiveMeta( uuid: UUID ): ArchivesMeta
 
-  def getFilesSharedWithUserMeta( userUuid: UUID ): Seq[FileMeta]
+  def getFilesSharedWithUserMeta( userUuid: UUID ): Seq[FileExtendedMeta]
 
   def getUsersFileWasSharedWith( fileUuid: UUID ): Seq[UUID]
 
@@ -42,6 +42,8 @@ trait FilesMetaRepository {
   def updateArchiveStatus( archiveUUID: UUID, ready: Boolean ): Unit
 
   def updateFileVolume( fileUUID: UUID, volume: String ): Unit
+
+  def updateFileName( fileUUID: UUID, newName: String ): Unit
 
   // --- Delete ---
   def deleteFileMeta( ownerUuid: UUID, uuid: UUID ): Unit

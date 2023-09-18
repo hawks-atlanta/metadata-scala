@@ -66,5 +66,14 @@ case class MetadataRoutes() extends cask.Routes {
     controllers.GetSharedWithWhoController( request, fileUUID )
   }
 
+  @cask.put( s"${ basePath }/rename/:userUUID/:fileUUID" )
+  def RenameFileHandler(
+      request: cask.Request,
+      userUUID: String,
+      fileUUID: String
+  ): cask.Response[Obj] = {
+    controllers.RenameFileController( request, userUUID, fileUUID )
+  }
+
   initialize()
 }

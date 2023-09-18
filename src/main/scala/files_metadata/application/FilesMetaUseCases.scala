@@ -5,6 +5,7 @@ import java.util.UUID
 
 import files_metadata.domain.ArchivesMeta
 import files_metadata.domain.DomainExceptions
+import files_metadata.domain.FileExtendedMeta
 import files_metadata.domain.FileMeta
 import files_metadata.domain.FilesMetaRepository
 
@@ -104,12 +105,36 @@ class FilesMetaUseCases {
     repository.getArchiveMeta( archiveUUID )
   }
 
-  def getFilesMetadataSharedWithUser( userUUID: UUID ): Seq[FileMeta] = {
+  def getFilesMetadataSharedWithUser(
+      userUUID: UUID
+  ): Seq[FileExtendedMeta] = {
     repository.getFilesSharedWithUserMeta( userUUID )
   }
 
   def getUsersFileWasSharedWith( fileUUID: UUID ): Seq[UUID] = {
     repository.getFileMeta( fileUUID )
     repository.getUsersFileWasSharedWith( fileUUID )
+  }
+
+  def renameFile( userUUID: UUID, fileUUID: UUID, newName: String ): Unit = {
+    val fileMeta = repository.getFileMeta( fileUUID )
+    if (fileMeta.ownerUuid != userUUID) {
+      throw DomainExceptions.FileNotOwnedException(
+        "The user does not own the file"
+      )
+    }
+
+    val existingFileMeta = repository.searchFileInDirectory(
+      ownerUuid = fileMeta.ownerUuid,
+      directoryUuid = fileMeta.parentUuid,
+      fileName = newName
+    )
+    if (existingFileMeta.isDefined) {
+      throw DomainExceptions.FileAlreadyExistsException(
+        "A file with the same name already exists in the file directory"
+      )
+    }
+
+    repository.updateFileName( fileUUID, newName )
   }
 }

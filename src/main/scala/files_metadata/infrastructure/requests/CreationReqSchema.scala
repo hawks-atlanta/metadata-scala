@@ -12,6 +12,7 @@ case class CreationReqSchema(
     hashSum: String,
     fileType: String,
     fileName: String,
+    fileExtension: String,
     fileSize: Long
 )
 
@@ -31,7 +32,7 @@ object CreationReqSchema {
         )
         request.parentUUID
           .is( aNull ) // Can be empty if it's in the root directory
-          .or(         // Otherwise should be a valid UUID
+          .or(
             request.parentUUID should matchRegex(
               CommonValidator.uuidRegex
             )
@@ -39,6 +40,13 @@ object CreationReqSchema {
         request.hashSum.has( size == 64 ) // SHA-256
         request.fileType.is( equalTo( "archive" ) )
         request.fileName.is( notEmpty )
+        request.fileExtension
+          .is( aNull ) // Can't be able to recognize MIME type
+          .or(
+            request.fileExtension
+              .is( notEmpty )
+              .and( request.fileExtension.has( size <= 16 ) )
+          )
         request.fileName.has( size <= 128 )
         request.fileSize should be > 0L
       }
@@ -61,6 +69,7 @@ object CreationReqSchema {
         request.fileType.is( equalTo( "directory" ) )
         request.fileName.is( notEmpty )
         request.fileName.has( size <= 128 )
+        request.fileExtension.is( aNull )
         request.fileSize.is( equalTo( 0L ) ) // File size is 0 for a directory
       }
     }
