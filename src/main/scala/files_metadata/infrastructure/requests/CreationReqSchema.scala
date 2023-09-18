@@ -9,7 +9,6 @@ import shared.infrastructure.CommonValidator
 case class CreationReqSchema(
     userUUID: String,
     parentUUID: String,
-    hashSum: String,
     fileType: String,
     fileName: String,
     fileExtension: String,
@@ -37,7 +36,6 @@ object CreationReqSchema {
               CommonValidator.uuidRegex
             )
           )
-        request.hashSum.has( size == 64 ) // SHA-256
         request.fileType.is( equalTo( "archive" ) )
         request.fileName.is( notEmpty )
         request.fileExtension
@@ -65,7 +63,6 @@ object CreationReqSchema {
               CommonValidator.uuidRegex
             )
           )
-        request.hashSum.is( empty ) // HashSum is not needed for a directory
         request.fileType.is( equalTo( "directory" ) )
         request.fileName.is( notEmpty )
         request.fileName.has( size <= 128 )
