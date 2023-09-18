@@ -57,7 +57,6 @@ object FilesTestsUtils {
     filePayload.put( "fileExtension", "txt" )
     filePayload.put( "fileType", "archive" )
     filePayload.put( "fileSize", 15 )
-    filePayload.put( "hashSum", hash )
 
     filePayload
   }
@@ -79,7 +78,6 @@ object FilesTestsUtils {
     directoryPayload.put( "fileExtension", null )
     directoryPayload.put( "fileType", "directory" )
     directoryPayload.put( "fileSize", 0 )
-    directoryPayload.put( "hashSum", "" )
 
     directoryPayload
   }
