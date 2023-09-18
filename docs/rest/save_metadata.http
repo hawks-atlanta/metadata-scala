@@ -6,7 +6,6 @@ Content-Type: application/json
 {
   "userUUID": "9ae0ee6f-0644-46c8-b364-ee36c9f9bd81",
   "parentUUID": null, 
-  "hashSum": "fb3a2b16764328a3c90f2122cdb4e583d2b344c9499fdf9bd1f846170e05cb52", 
   "fileType": "archive",
   "fileName": "project",
   "fileExtension": "txt", 
@@ -21,7 +20,6 @@ Content-Type: application/json
 {
   "userUUID": "9ae0ee6f-0644-46c8-b364-ee36c9f9bd81",
   "parentUUID": null, 
-  "hashSum": "", 
   "fileType": "directory",
   "fileName": "university", 
   "fileExtension": null, 
@@ -36,7 +34,6 @@ Content-Type: application/json
 {
   "userUUID": "9ae0ee6f-0644-46c8-b364-ee36c9f9bd81",
   "parentUUID": "92467e11-38e8-41f1-a088-0538f43811bd", 
-  "hashSum": "5a362b73f98d8a4123ba318e9c5bead3135caa33eada95e80e17290ce9bbf4be", 
   "fileType": "archive",
   "fileName": "nested",
   "fileExtension": "txt", 
@@ -51,7 +48,6 @@ Content-Type: application/json
 {
   "userUUID": "9ae0ee6f-0644-46c8-b364-ee36c9f9bd81",
   "parentUUID": "92467e11-38e8-41f1-a088-0538f43811bd", 
-  "hashSum": "", 
   "fileType": "directory",
   "fileName": "nested", 
   "fileExtension": null,

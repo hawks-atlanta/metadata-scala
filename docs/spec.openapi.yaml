@@ -565,9 +565,6 @@ components:
         volume:
           type: string
           example: "VOLUME_1"
-        hashSum:
-          type: string
-          example: "56d50f755d5dbca915cf93779d3b51d6562e6183"
         size:
           type: number
           example: 3072
@@ -581,10 +578,6 @@ components:
         parentUUID:
           type: string
           example: "5ad724f0-4091-453a-914a-c2d11d69d1e3"
-        hashSum:
-          type: string
-          description: "SHA256 hash of the file"
-          example: "56d50f755d5dbca915cf93779d3b51d6562e6183"
         fileType:
           type: string
           enum: ["archive", "directory"]
