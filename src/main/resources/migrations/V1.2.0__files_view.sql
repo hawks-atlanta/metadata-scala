@@ -1,6 +1,9 @@
 -- Add a new column to separate the extension from the name
 ALTER TABLE archives ADD COLUMN extension VARCHAR(16) DEFAULT NULL;
 
+-- Remove the hash-sum column from the files table
+ALTER TABLE archives DROP COLUMN hash_sum;
+
 -- View to simplify the queries
 CREATE OR REPLACE VIEW files_view AS
     SELECT
@@ -11,7 +14,6 @@ CREATE OR REPLACE VIEW files_view AS
         files."volume",
         files."name",
         archives."extension",
-        archives."hash_sum",
         archives."size",
         archives."ready",
         files."is_shared",

@@ -101,7 +101,6 @@ class MetadataControllers {
       // Save the metadata
       val receivedArchiveMeta = ArchivesMeta.createNewArchive(
         decoded.fileExtension,
-        decoded.hashSum,
         decoded.fileSize
       )
 
@@ -116,8 +115,18 @@ class MetadataControllers {
       )
 
       // Save the metadata
-      val savedUUID =
-        useCases.saveMetadata( receivedArchiveMeta, receivedFileMeta )
+      var savedUUID: UUID = null
+      if (decoded.fileType == "archive") {
+        savedUUID = useCases.saveArchiveMetadata(
+          archiveMeta = receivedArchiveMeta,
+          fileMeta = receivedFileMeta
+        )
+      } else {
+        savedUUID = useCases.saveDirectoryMetadata(
+          fileMeta = receivedFileMeta
+        )
+      }
+
       cask.Response(
         ujson.Obj(
           "error"   -> false,
@@ -250,8 +259,7 @@ class MetadataControllers {
             "name"        -> fileMeta.name,
             "extension"   -> ujson.Null,
             "volume"      -> fileMeta.volume,
-            "size"        -> 0,
-            "hashSum"     -> ""
+            "size"        -> 0
           ),
           statusCode = 200
         )
@@ -267,8 +275,7 @@ class MetadataControllers {
             "name"        -> fileMeta.name,
             "extension"   -> archivesMeta.extension,
             "volume"      -> fileMeta.volume,
-            "size"        -> archivesMeta.size,
-            "hashSum"     -> archivesMeta.hashSum
+            "size"        -> archivesMeta.size
           ),
           statusCode = 200
         )

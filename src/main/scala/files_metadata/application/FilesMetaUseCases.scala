@@ -17,8 +17,9 @@ class FilesMetaUseCases {
     this.repository = repository
   }
 
-  def saveMetadata( archiveMeta: ArchivesMeta, fileMeta: FileMeta ): UUID = {
-    // Check if the file already exists
+  private def ensureFileCanBeCreated(
+      fileMeta: FileMeta
+  ): Unit = {
     val existingFileMeta = repository.searchFileInDirectory(
       ownerUuid = fileMeta.ownerUuid,
       directoryUuid = fileMeta.parentUuid,
@@ -37,9 +38,21 @@ class FilesMetaUseCases {
         uuid = fileMeta.parentUuid.get
       )
     }
+  }
 
-    // Save the metadata
-    repository.saveFileMeta( archiveMeta, fileMeta )
+  def saveArchiveMetadata(
+      archiveMeta: ArchivesMeta,
+      fileMeta: FileMeta
+  ): UUID = {
+    ensureFileCanBeCreated( fileMeta = fileMeta )
+    repository.saveArchiveMeta( archiveMeta, fileMeta )
+  }
+
+  def saveDirectoryMetadata(
+      fileMeta: FileMeta
+  ): UUID = {
+    ensureFileCanBeCreated( fileMeta = fileMeta )
+    repository.saveDirectoryMeta( fileMeta )
   }
 
   def shareFile(
