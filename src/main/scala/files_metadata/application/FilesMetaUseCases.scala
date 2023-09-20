@@ -166,6 +166,13 @@ class FilesMetaUseCases {
       )
     }
 
+    // Check the current parent is not the same as the new parent
+    if (fileMeta.parentUuid.orNull == newParentUUID.orNull) {
+      throw DomainExceptions.FileAlreadyExistsException(
+        "The file is already in the given directory"
+      )
+    }
+
     if (newParentUUID.isDefined) {
       // Check the parent exists
       val newParentMeta = repository.getFileMeta( newParentUUID.get )
