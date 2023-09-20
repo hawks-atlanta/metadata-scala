@@ -1,7 +1,6 @@
 package org.hawksatlanta.metadata
 package files_metadata
 
-import java.security.MessageDigest
 import java.util
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.UUID
@@ -40,15 +39,6 @@ object FilesTestsUtils {
       else null
 
     val randomUUID: UUID = UUID.randomUUID()
-    val hash = String.format(
-      "%064x",
-      new java.math.BigInteger(
-        1,
-        MessageDigest
-          .getInstance( "SHA-256" )
-          .digest( randomUUID.toString.getBytes( "UTF-8" ) )
-      )
-    )
 
     val filePayload = new util.HashMap[String, Any]()
     filePayload.put( "userUUID", ownerUUID.toString )
@@ -166,6 +156,27 @@ object FilesTestsUtils {
     val renameFilePayload = new util.HashMap[String, Any]()
     renameFilePayload.put( "name", UUID.randomUUID().toString )
     renameFilePayload
+  }
+
+  def MoveFile(
+      userUUID: String,
+      fileUUID: String,
+      payload: util.HashMap[String, Any]
+  ): Response = {
+    `given`()
+      .port( 8080 )
+      .contentType( "application/json" )
+      .body( payload )
+      .when()
+      .put(
+        s"${ MoveFileTestsData.API_PREFIX }/${ userUUID }/${ fileUUID }"
+      )
+  }
+
+  def generateMoveFilePayload( parentUUID: UUID ): util.HashMap[String, Any] = {
+    val moveFilePayload = new util.HashMap[String, Any]()
+    moveFilePayload.put( "parentUUID", parentUUID.toString )
+    moveFilePayload
   }
 
   // -- Get files metadata --
