@@ -1,3 +1,12 @@
+# [0.10.0](https://github.com/hawks-atlanta/metadata-scala/compare/v0.9.0...v0.10.0) (2023-09-21)
+
+
+### Features
+
+* Move file ([#67](https://github.com/hawks-atlanta/metadata-scala/issues/67)) ([0684246](https://github.com/hawks-atlanta/metadata-scala/commit/06842463a6c24c2b38569991bfb8cb6c5caf15e6))
+
+
+
 # [0.9.0](https://github.com/hawks-atlanta/metadata-scala/compare/v0.8.1...v0.9.0) (2023-09-18)
 
 
@@ -31,15 +40,6 @@
 ### Features
 
 * List files shared with user ([#56](https://github.com/hawks-atlanta/metadata-scala/issues/56)) ([4111fea](https://github.com/hawks-atlanta/metadata-scala/commit/4111feacd98f88e19191312ae22cb29c4457b3a6))
-
-
-
-# [0.6.0](https://github.com/hawks-atlanta/metadata-scala/compare/v0.5.0...v0.6.0) (2023-09-12)
-
-
-### Features
-
-* Obtain file metadata ([#53](https://github.com/hawks-atlanta/metadata-scala/issues/53)) ([22542c6](https://github.com/hawks-atlanta/metadata-scala/commit/22542c6e66cd95bd27ec3e4f30079ea9f54bb03c))
 
 
 
