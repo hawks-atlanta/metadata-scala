@@ -12,6 +12,7 @@ import files_metadata.domain.FileMeta
 import files_metadata.domain.FilesMetaRepository
 import files_metadata.infrastructure.requests.CreationReqSchema
 import files_metadata.infrastructure.requests.MarkAsReadyReqSchema
+import files_metadata.infrastructure.requests.MoveReqSchema
 import files_metadata.infrastructure.requests.RenameReqSchema
 import files_metadata.infrastructure.requests.ShareReqSchema
 import shared.infrastructure.CommonValidator
@@ -462,6 +463,62 @@ class MetadataControllers {
         fileUUID = UUID.fromString( fileUUID ),
         userUUID = UUID.fromString( userUUID ),
         newName = decoded.name
+      )
+
+      cask.Response(
+        None,
+        statusCode = 204
+      )
+    } catch {
+      case e: Exception => _handleException( e )
+    }
+  }
+
+  def MoveFileController(
+      request: cask.Request,
+      userUUID: String,
+      fileUUID: String
+  ): cask.Response[Obj] = {
+    try {
+      val isFileUUIDValid = CommonValidator.validateUUID( fileUUID )
+      val isUserUUIDValid = CommonValidator.validateUUID( userUUID )
+      if (!isFileUUIDValid || !isUserUUIDValid) {
+        return cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "Fields validation failed"
+          ),
+          statusCode = 400
+        )
+      }
+
+      val decoded: MoveReqSchema = read[MoveReqSchema](
+        request.text()
+      )
+
+      val validationRule: Validator[MoveReqSchema] =
+        MoveReqSchema.schemaValidator
+      val validationResult = validate[MoveReqSchema]( decoded )(
+        validationRule
+      )
+      if (validationResult.isFailure) {
+        return cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "Fields validation failed"
+          ),
+          statusCode = 400
+        )
+      }
+
+      val parentUUID =
+        if (decoded.parentUUID == null) None
+        else Some( UUID.fromString( decoded.parentUUID ) )
+
+      useCases.moveFile(
+        userUUID = UUID.fromString( userUUID ),
+        fileUUID = UUID.fromString( fileUUID ),
+        newParentUUID = parentUUID
       )
 
       cask.Response(

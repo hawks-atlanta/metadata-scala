@@ -153,7 +153,7 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
         )
       } else {
         throw DomainExceptions.FileNotFoundException(
-          "There is no file with the given UUID"
+          s"There is no file with the ${ uuid.toString } UUID"
         )
       }
     } finally {
@@ -435,6 +435,25 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
         "UPDATE files SET name = ? WHERE uuid = ?"
       )
       statement.setString( 1, newName )
+      statement.setObject( 2, fileUUID )
+
+      statement.executeUpdate()
+    } finally {
+      connection.close()
+    }
+  }
+
+  override def updateFileParent(
+      fileUUID: UUID,
+      parentUUID: Option[UUID]
+  ): Unit = {
+    val connection: Connection = pool.getConnection()
+
+    try {
+      val statement = connection.prepareStatement(
+        "UPDATE files SET parent_uuid = ? WHERE uuid = ?"
+      )
+      statement.setObject( 1, parentUUID.orNull )
       statement.setObject( 2, fileUUID )
 
       statement.executeUpdate()

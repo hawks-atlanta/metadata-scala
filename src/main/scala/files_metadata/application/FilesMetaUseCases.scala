@@ -150,4 +150,54 @@ class FilesMetaUseCases {
 
     repository.updateFileName( fileUUID, newName )
   }
+
+  def moveFile(
+      userUUID: UUID,
+      fileUUID: UUID,
+      newParentUUID: Option[UUID]
+  ): Unit = {
+    // Check the file exists
+    val fileMeta = repository.getFileMeta( fileUUID )
+
+    // Check the user owns the file
+    if (fileMeta.ownerUuid != userUUID) {
+      throw DomainExceptions.FileNotOwnedException(
+        "The user does not own the file"
+      )
+    }
+
+    // Check the current parent is not the same as the new parent
+    if (fileMeta.parentUuid.orNull == newParentUUID.orNull) {
+      throw DomainExceptions.FileAlreadyExistsException(
+        "The file is already in the given directory"
+      )
+    }
+
+    if (newParentUUID.isDefined) {
+      // Check the parent exists
+      val newParentMeta = repository.getFileMeta( newParentUUID.get )
+
+      // Check the new parent is a directory
+      val parentIsDirectory = newParentMeta.archiveUuid.isEmpty
+      if (!parentIsDirectory) {
+        throw DomainExceptions.ParentIsNotADirectoryException(
+          "The new parent is not a directory"
+        )
+      }
+    }
+
+    // Check there is no file with the same name in the new parent
+    val existingFileMeta = repository.searchFileInDirectory(
+      ownerUuid = fileMeta.ownerUuid,
+      directoryUuid = newParentUUID,
+      fileName = fileMeta.name
+    )
+    if (existingFileMeta.isDefined) {
+      throw DomainExceptions.FileAlreadyExistsException(
+        "A file with the same name already exists in the file directory"
+      )
+    }
+
+    repository.updateFileParent( fileUUID, newParentUUID )
+  }
 }
