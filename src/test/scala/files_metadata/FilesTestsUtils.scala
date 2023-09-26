@@ -1,8 +1,10 @@
 package org.hawksatlanta.metadata
 package files_metadata
 
+import java.security.MessageDigest
 import java.util
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.UUID
 import java.util.UUID
 
 import io.restassured.response.Response
@@ -18,6 +20,8 @@ object FilesTestsUtils {
       Main.main( Array[String]() )
     }
   }
+
+  // -- Save files --
 
   // -- Save files --
 
