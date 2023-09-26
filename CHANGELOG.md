@@ -1,3 +1,12 @@
+## [0.10.1](https://github.com/hawks-atlanta/metadata-scala/compare/v0.10.0...v0.10.1) (2023-09-26)
+
+
+### Bug Fixes
+
+* Update is_shared column when a file is shared ([#70](https://github.com/hawks-atlanta/metadata-scala/issues/70)) ([7f63347](https://github.com/hawks-atlanta/metadata-scala/commit/7f63347667d0095616e8d09641d264e888f44ffb))
+
+
+
 # [0.10.0](https://github.com/hawks-atlanta/metadata-scala/compare/v0.9.0...v0.10.0) (2023-09-21)
 
 
@@ -31,15 +40,6 @@
 ### Features
 
 * Shared with who ([#57](https://github.com/hawks-atlanta/metadata-scala/issues/57)) ([4cbb5bb](https://github.com/hawks-atlanta/metadata-scala/commit/4cbb5bbfe61fd0dc1c94e0315c97b88c9d141e3d))
-
-
-
-# [0.7.0](https://github.com/hawks-atlanta/metadata-scala/compare/v0.6.0...v0.7.0) (2023-09-13)
-
-
-### Features
-
-* List files shared with user ([#56](https://github.com/hawks-atlanta/metadata-scala/issues/56)) ([4111fea](https://github.com/hawks-atlanta/metadata-scala/commit/4111feacd98f88e19191312ae22cb29c4457b3a6))
 
 
 
