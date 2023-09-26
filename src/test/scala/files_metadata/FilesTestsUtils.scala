@@ -1,10 +1,8 @@
 package org.hawksatlanta.metadata
 package files_metadata
 
-import java.security.MessageDigest
 import java.util
 import java.util.concurrent.atomic.AtomicBoolean
-import java.util.UUID
 import java.util.UUID
 
 import io.restassured.response.Response
@@ -22,9 +20,6 @@ object FilesTestsUtils {
   }
 
   // -- Save files --
-
-  // -- Save files --
-
   def SaveFile( payload: util.HashMap[String, Any] ): Response = {
     `given`()
       .port( 8080 )
