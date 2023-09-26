@@ -127,7 +127,7 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
 
     try {
       val statement = connection.prepareStatement(
-        "SELECT uuid, owner_uuid, parent_uuid, archive_uuid, volume, name FROM files WHERE uuid = ?"
+        "SELECT uuid, owner_uuid, parent_uuid, archive_uuid, volume, name, is_shared FROM files WHERE uuid = ?"
       )
       statement.setObject( 1, uuid )
 
@@ -149,7 +149,8 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
           parentUuid = parentUUID,
           archiveUuid = archiveUUID,
           volume = result.getString( "volume" ),
-          name = result.getString( "name" )
+          name = result.getString( "name" ),
+          isShared = result.getBoolean( "is_shared" )
         )
       } else {
         throw DomainExceptions.FileNotFoundException(
@@ -276,7 +277,7 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
 
       if (directoryUuid.isEmpty) {
         statement = connection.prepareStatement(
-          "SELECT uuid, owner_uuid, parent_uuid, archive_uuid, volume, name FROM files WHERE owner_uuid = ? AND parent_uuid IS NULL AND name = ? Limit 1"
+          "SELECT uuid, owner_uuid, parent_uuid, archive_uuid, volume, name, is_shared FROM files WHERE owner_uuid = ? AND parent_uuid IS NULL AND name = ? Limit 1"
         )
 
         statement.setObject( 1, ownerUuid )
@@ -311,7 +312,8 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
             parentUuid = parentUUID,
             archiveUuid = archiveUUID,
             volume = result.getString( "volume" ),
-            name = result.getString( "name" )
+            name = result.getString( "name" ),
+            isShared = result.getBoolean( "is_shared" )
           )
         )
       } else {
@@ -352,16 +354,23 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
 
   override def shareFile( fileUUID: UUID, userUUID: UUID ): Unit = {
     val connection: Connection = pool.getConnection()
+    connection.setAutoCommit( false )
 
     try {
-      val statement = connection.prepareStatement(
+      val shareStatement = connection.prepareStatement(
         "INSERT INTO shared_files (file_uuid, user_uuid) VALUES (?, ?)"
       )
+      shareStatement.setObject( 1, fileUUID )
+      shareStatement.setObject( 2, userUUID )
+      shareStatement.executeUpdate()
 
-      statement.setObject( 1, fileUUID )
-      statement.setObject( 2, userUUID )
+      val updateStatement = connection.prepareStatement(
+        "UPDATE files SET is_shared = true WHERE uuid = ?"
+      )
+      updateStatement.setObject( 1, fileUUID )
+      updateStatement.executeUpdate()
 
-      statement.executeUpdate()
+      connection.commit()
     } finally {
       connection.close()
     }
