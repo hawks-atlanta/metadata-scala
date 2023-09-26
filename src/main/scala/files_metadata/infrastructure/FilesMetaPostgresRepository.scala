@@ -277,14 +277,26 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
 
       if (directoryUuid.isEmpty) {
         statement = connection.prepareStatement(
-          "SELECT uuid, owner_uuid, parent_uuid, archive_uuid, volume, name, is_shared FROM files WHERE owner_uuid = ? AND parent_uuid IS NULL AND name = ? Limit 1"
+          """
+            |SELECT uuid, owner_uuid, parent_uuid, archive_uuid, volume, name, is_shared
+            |FROM files WHERE owner_uuid = ?
+            |AND parent_uuid IS NULL
+            |AND name = ? 
+            |Limit 1
+            |""".stripMargin
         )
 
         statement.setObject( 1, ownerUuid )
         statement.setString( 2, fileName )
       } else {
         statement = connection.prepareStatement(
-          "SELECT uuid, owner_uuid, parent_uuid, archive_uuid, volume, name FROM files WHERE owner_uuid = ? AND parent_uuid = ? AND name = ? Limit 1"
+          """
+            |SELECT uuid, owner_uuid, parent_uuid, archive_uuid, volume, name, is_shared FROM files
+            |WHERE owner_uuid = ?
+            |AND parent_uuid = ?
+            |AND name = ?
+            |Limit 1
+            |""".stripMargin
         )
 
         statement.setObject( 1, ownerUuid )
