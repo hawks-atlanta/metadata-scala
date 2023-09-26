@@ -260,7 +260,8 @@ class MetadataControllers {
             "name"        -> fileMeta.name,
             "extension"   -> ujson.Null,
             "volume"      -> fileMeta.volume,
-            "size"        -> 0
+            "size"        -> 0,
+            "is_shared"   -> fileMeta.isShared
           ),
           statusCode = 200
         )
@@ -276,7 +277,8 @@ class MetadataControllers {
             "name"        -> fileMeta.name,
             "extension"   -> archivesMeta.extension,
             "volume"      -> fileMeta.volume,
-            "size"        -> archivesMeta.size
+            "size"        -> archivesMeta.size,
+            "is_shared"   -> fileMeta.isShared
           ),
           statusCode = 200
         )

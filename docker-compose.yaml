@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   postgres-db:
-    image: postgres:latest
+    image: postgres:alpine3.18
     container_name: postgres-db
     restart: on-failure
     ports:
@@ -15,7 +15,7 @@ services:
       - ./volumes/postgres:/var/lib/postgresql/data
 
   postgres-admin:
-    image: dpage/pgadmin4:snapshot
+    image: dpage/pgadmin4:7.6
     container_name: postgres-admin
     ports:
       - "5050:80"
