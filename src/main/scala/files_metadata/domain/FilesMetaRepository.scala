@@ -5,7 +5,9 @@ import java.util.UUID
 
 trait FilesMetaRepository {
   // --- Create ---
-  def saveFileMeta( archiveMeta: ArchivesMeta, fileMeta: FileMeta ): UUID
+  def saveArchiveMeta( archiveMeta: ArchivesMeta, fileMeta: FileMeta ): UUID
+
+  def saveDirectoryMeta( fileMeta: FileMeta ): UUID
 
   def shareFile( fileUUID: UUID, userUUID: UUID ): Unit
 
@@ -21,7 +23,7 @@ trait FilesMetaRepository {
 
   def getArchiveMeta( uuid: UUID ): ArchivesMeta
 
-  def getFilesSharedWithUserMeta( userUuid: UUID ): Seq[FileMeta]
+  def getFilesSharedWithUserMeta( userUuid: UUID ): Seq[FileExtendedMeta]
 
   def getUsersFileWasSharedWith( fileUuid: UUID ): Seq[UUID]
 
@@ -42,6 +44,10 @@ trait FilesMetaRepository {
   def updateArchiveStatus( archiveUUID: UUID, ready: Boolean ): Unit
 
   def updateFileVolume( fileUUID: UUID, volume: String ): Unit
+
+  def updateFileName( fileUUID: UUID, newName: String ): Unit
+
+  def updateFileParent( fileUUID: UUID, parentUUID: Option[UUID] ): Unit
 
   // --- Delete ---
   def deleteFileMeta( ownerUuid: UUID, uuid: UUID ): Unit

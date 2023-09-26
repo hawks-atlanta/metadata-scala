@@ -1,7 +1,6 @@
 package org.hawksatlanta.metadata
 package files_metadata
 
-import java.security.MessageDigest
 import java.util
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.UUID
@@ -21,7 +20,6 @@ object FilesTestsUtils {
   }
 
   // -- Save files --
-
   def SaveFile( payload: util.HashMap[String, Any] ): Response = {
     `given`()
       .port( 8080 )
@@ -40,23 +38,14 @@ object FilesTestsUtils {
       else null
 
     val randomUUID: UUID = UUID.randomUUID()
-    val hash = String.format(
-      "%064x",
-      new java.math.BigInteger(
-        1,
-        MessageDigest
-          .getInstance( "SHA-256" )
-          .digest( randomUUID.toString.getBytes( "UTF-8" ) )
-      )
-    )
 
     val filePayload = new util.HashMap[String, Any]()
     filePayload.put( "userUUID", ownerUUID.toString )
     filePayload.put( "parentUUID", parentUUID )
     filePayload.put( "fileName", randomUUID.toString )
+    filePayload.put( "fileExtension", "txt" )
     filePayload.put( "fileType", "archive" )
     filePayload.put( "fileSize", 15 )
-    filePayload.put( "hashSum", hash )
 
     filePayload
   }
@@ -75,9 +64,9 @@ object FilesTestsUtils {
     directoryPayload.put( "userUUID", ownerUUID.toString )
     directoryPayload.put( "parentUUID", parentUUID )
     directoryPayload.put( "fileName", randomUUID.toString )
+    directoryPayload.put( "fileExtension", null )
     directoryPayload.put( "fileType", "directory" )
     directoryPayload.put( "fileSize", 0 )
-    directoryPayload.put( "hashSum", "" )
 
     directoryPayload
   }
@@ -139,6 +128,54 @@ object FilesTestsUtils {
       .put(
         s"${ UpdateReadyFileTestsData.API_PREFIX }/${ fileUUID }"
       )
+  }
+
+  def generateReadyFilePayload(): util.HashMap[String, Any] = {
+    val readyFilePayload = new util.HashMap[String, Any]()
+    readyFilePayload.put( "volume", "volume_x" )
+    readyFilePayload
+  }
+
+  def UpdateFileName(
+      userUUID: String,
+      fileUUID: String,
+      payload: util.HashMap[String, Any]
+  ): Response = {
+    `given`()
+      .port( 8080 )
+      .contentType( "application/json" )
+      .body( payload )
+      .when()
+      .put(
+        s"${ RenameFileTestsData.API_PREFIX }/${ userUUID }/${ fileUUID }"
+      )
+  }
+
+  def generateRenameFilePayload(): util.HashMap[String, Any] = {
+    val renameFilePayload = new util.HashMap[String, Any]()
+    renameFilePayload.put( "name", UUID.randomUUID().toString )
+    renameFilePayload
+  }
+
+  def MoveFile(
+      userUUID: String,
+      fileUUID: String,
+      payload: util.HashMap[String, Any]
+  ): Response = {
+    `given`()
+      .port( 8080 )
+      .contentType( "application/json" )
+      .body( payload )
+      .when()
+      .put(
+        s"${ MoveFileTestsData.API_PREFIX }/${ userUUID }/${ fileUUID }"
+      )
+  }
+
+  def generateMoveFilePayload( parentUUID: UUID ): util.HashMap[String, Any] = {
+    val moveFilePayload = new util.HashMap[String, Any]()
+    moveFilePayload.put( "parentUUID", parentUUID.toString )
+    moveFilePayload
   }
 
   // -- Get files metadata --

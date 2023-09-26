@@ -287,13 +287,13 @@ paths:
               schema:
                 $ref: "#/components/schemas/error_response"
 
-  /files/share/{owner_uuid}/{file_uuid}:
+  /files/share/{user_uuid}/{file_uuid}:
     post:
       tags: ["File"]
       description: Share the given file with the given user
       parameters:
         - in: path
-          name: owner_uuid
+          name: user_uuid
           schema:
             type: string
             example: "658b4e63-b5ac-46a7-ac43-efb6a1415130"
@@ -337,13 +337,13 @@ paths:
               schema:
                 $ref: "#/components/schemas/error_response"
 
-  /files/unshare/{owner_uuid}/{file_uuid}:
+  /files/unshare/{user_uuid}/{file_uuid}:
     post:
       tags: ["File"]
       description: Unshare the given file with the given user
       parameters:
         - in: path
-          name: owner_uuid
+          name: user_uuid
           schema:
             type: string
             example: "658b4e63-b5ac-46a7-ac43-efb6a1415130"
@@ -423,6 +423,112 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/error_response"
+  /files/rename/{user_uuid}/{file_uuid}:
+    put:
+      tags: ["File"]
+      description: Rename the given file.
+      parameters:
+        - in: path
+          name: user_uuid
+          schema:
+            type: string
+            example: "658b4e63-b5ac-46a7-ac43-efb6a1415130"
+          required: true
+        - in: path
+          name: file_uuid
+          schema:
+            type: string
+            example: "b96bdc16-8f27-44aa-9758-b4e5f13060fe"
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "renamed"
+      responses:
+        "204":
+          description: No content. The name of the file was updated.
+        "403":
+          description: The file is not owned by the user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
+        "404":
+          description: Not found. No file with the given file_uuid was found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
+        "409":
+          description: There is another file in the same folder with the same name.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
+  /files/move/{user_uuid}/{file_uuid}:
+    put:
+      tags: ["File"]
+      description: Move the given file to the given directory.
+      parameters:
+        - in: path
+          name: user_uuid
+          schema:
+            type: string
+            example: "658b4e63-b5ac-46a7-ac43-efb6a1415130"
+          required: true
+        - in: path
+          name: file_uuid
+          schema:
+            type: string
+            example: "b96bdc16-8f27-44aa-9758-b4e5f13060fe"
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                parentUUID:
+                  type: string
+                  example: "5ad724f0-4091-453a-914a-c2d11d69d1e3"
+      responses:
+        "204":
+          description: No content. The parent of the file was updated.
+        "403":
+          description: The file is not owned by the user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
+        "404":
+          description: Not found. No file with the given file_uuid was found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
+        "409":
+          description: There is another file in the same folder with the same name.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
 
 components:
   schemas:
@@ -436,10 +542,13 @@ components:
           type: string
           enum: ["archive", "directory"]
           description: "Whether the file is a directory or an archive"
-          example: "file"
+          example: "archive"
         fileName:
           type: string
           example: "filename"
+        fileExtension:
+          type: string
+          example: "pdf"
 
     metadata:
       type: object
@@ -447,12 +556,15 @@ components:
         archiveUUID:
           type: string
           example: "0b82495a-350b-4f4f-95ce-0119998466d4"
+        name:
+          type: string
+          example: "filename"
+        extension:
+          type: string
+          example: "pdf"
         volume:
           type: string
           example: "VOLUME_1"
-        hashSum:
-          type: string
-          example: "56d50f755d5dbca915cf93779d3b51d6562e6183"
         size:
           type: number
           example: 3072
@@ -466,18 +578,17 @@ components:
         parentUUID:
           type: string
           example: "5ad724f0-4091-453a-914a-c2d11d69d1e3"
-        hashSum:
-          type: string
-          description: "SHA256 hash of the file"
-          example: "56d50f755d5dbca915cf93779d3b51d6562e6183"
         fileType:
           type: string
-          enum: ["file", "directory"]
+          enum: ["archive", "directory"]
           description: "Whether the file is a directory or an archive"
-          example: "file"
+          example: "archive"
         fileName:
           type: string
           example: "filename"
+        fileExtension:
+          type: string
+          example: "pdf"
         fileSize:
           type: number
           description: "Size in KB"

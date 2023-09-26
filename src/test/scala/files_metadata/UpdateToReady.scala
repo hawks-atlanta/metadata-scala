@@ -18,11 +18,7 @@ object UpdateReadyFileTestsData {
   var savedDirectoryUUID: UUID                = _
 
   def getPayloadCopy(): java.util.HashMap[String, Any] = {
-    if (payload == null) {
-      payload = new java.util.HashMap[String, Any]()
-      payload.put( "volume", "volume_x" )
-    }
-
+    if (payload == null) payload = FilesTestsUtils.generateReadyFilePayload()
     payload.clone().asInstanceOf[java.util.HashMap[String, Any]]
   }
 }

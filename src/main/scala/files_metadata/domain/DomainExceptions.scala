@@ -36,4 +36,7 @@ object DomainExceptions {
 
   case class FileAlreadyMarkedAsReadyException( override val message: String )
       extends BaseDomainException( message, 409 )
+
+  case class ParentIsNotADirectoryException( override val message: String )
+      extends BaseDomainException( message, 400 )
 }

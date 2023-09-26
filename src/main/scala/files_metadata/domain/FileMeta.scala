@@ -9,7 +9,8 @@ case class FileMeta(
     parentUuid: Option[UUID],
     archiveUuid: Option[UUID],
     volume: String,
-    name: String
+    name: String,
+    isShared: Boolean
 )
 
 object FileMeta {
@@ -24,7 +25,8 @@ object FileMeta {
       parentUuid = parentUuid,
       archiveUuid = null,
       volume = null,
-      name = name
+      name = name,
+      isShared = false
     )
   }
 }
