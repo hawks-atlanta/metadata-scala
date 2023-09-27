@@ -202,7 +202,10 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
           |uuid IN (
           | SELECT file_uuid FROM shared_files WHERE user_uuid = ?
           |)
-          |AND volume IS NOT NULL
+          |AND (
+          | archive_uuid is NULL
+          | OR volume IS NOT NULL
+          |)
           | """.stripMargin
       )
       statement.setObject( 1, userUuid )
