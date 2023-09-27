@@ -12,7 +12,7 @@ import org.scalatestplus.junit.JUnitSuite
 object GetFileMetadataTestsData {
   val API_PREFIX: String  = "/api/v1/files/metadata"
   val OWNER_UUID: UUID    = UUID.randomUUID()
-  val VOLUME_NAME: String = "volume_x"
+  val VOLUME_NAME: String = "1"
 
   var savedFileUUID: UUID      = _
   var savedDirectoryUUID: UUID = _
@@ -41,17 +41,12 @@ class GetFileMetadataTests extends JUnitSuite {
     )
   }
 
-  def markFilesAsReady(): Unit = {
+  def markFileAsReady(): Unit = {
     val updatePayload = new java.util.HashMap[String, Any]()
     updatePayload.put( "volume", GetFileMetadataTestsData.VOLUME_NAME )
 
     FilesTestsUtils.UpdateReadyFile(
       GetFileMetadataTestsData.savedFileUUID.toString,
-      updatePayload
-    )
-
-    FilesTestsUtils.UpdateReadyFile(
-      GetFileMetadataTestsData.savedDirectoryUUID.toString,
       updatePayload
     )
   }
@@ -84,7 +79,7 @@ class GetFileMetadataTests extends JUnitSuite {
 
   @Test
   def fileMetadataWithReadyFileUUID(): Unit = {
-    markFilesAsReady()
+    markFileAsReady()
 
     // Get the file
     val response = FilesTestsUtils.GetFileMetadata(
@@ -108,7 +103,7 @@ class GetFileMetadataTests extends JUnitSuite {
       directoryResponse
         .body()
         .jsonPath()
-        .getString( "volume" ) == GetFileMetadataTestsData.VOLUME_NAME
+        .getString( "volume" ) == null
     )
     assert(
       directoryResponse
