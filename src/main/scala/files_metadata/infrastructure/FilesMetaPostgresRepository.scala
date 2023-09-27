@@ -407,39 +407,28 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
     }
   }
 
-  override def updateArchiveStatus(
-      archiveUUID: UUID,
-      ready: Boolean
-  ): Unit = {
-    val connection: Connection = pool.getConnection()
-
-    try {
-      val statement = connection.prepareStatement(
-        "UPDATE archives SET ready = ? WHERE uuid = ?"
-      )
-      statement.setBoolean( 1, ready )
-      statement.setObject( 2, archiveUUID )
-
-      statement.executeUpdate()
-    } finally {
-      connection.close()
-    }
-  }
-
-  def updateFileVolume(
-      fileUUID: UUID,
+  override def updateArchiveToReady(
+      file: FileMeta,
       volume: String
   ): Unit = {
     val connection: Connection = pool.getConnection()
+    connection.setAutoCommit( false )
 
     try {
-      val statement = connection.prepareStatement(
+      val updateArchiveStatement = connection.prepareStatement(
+        "UPDATE archives SET ready = true WHERE uuid = ?"
+      )
+      updateArchiveStatement.setObject( 1, file.archiveUuid.get )
+      updateArchiveStatement.executeUpdate()
+
+      val updateFileStatement = connection.prepareStatement(
         "UPDATE files SET volume = ? WHERE uuid = ?"
       )
-      statement.setString( 1, volume )
-      statement.setObject( 2, fileUUID )
+      updateFileStatement.setString( 1, volume )
+      updateFileStatement.setObject( 2, file.uuid )
+      updateFileStatement.executeUpdate()
 
-      statement.executeUpdate()
+      connection.commit()
     } finally {
       connection.close()
     }
