@@ -17,7 +17,6 @@ import files_metadata.infrastructure.requests.RenameReqSchema
 import files_metadata.infrastructure.requests.ShareReqSchema
 import shared.infrastructure.CommonValidator
 import ujson.Obj
-import ujson.Value.JsonableString
 import upickle.default.read
 
 class MetadataControllers {
