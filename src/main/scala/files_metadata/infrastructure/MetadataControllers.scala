@@ -17,6 +17,7 @@ import files_metadata.infrastructure.requests.RenameReqSchema
 import files_metadata.infrastructure.requests.ShareReqSchema
 import shared.infrastructure.CommonValidator
 import ujson.Obj
+import ujson.Value.JsonableString
 import upickle.default.read
 
 class MetadataControllers {
@@ -57,6 +58,13 @@ class MetadataControllers {
           ),
           statusCode = 500
         )
+    }
+  }
+
+  private def parseNullableValueToJSON( value: Any ): ujson.Value = {
+    value match {
+      case v: ujson.Value => v
+      case _              => ujson.Null
     }
   }
 
@@ -277,7 +285,7 @@ class MetadataControllers {
           ujson.Obj(
             "archiveUUID" -> fileMeta.archiveUuid.get.toString,
             "name"        -> fileMeta.name,
-            "extension"   -> archivesMeta.extension,
+            "extension"   -> parseNullableValueToJSON( archivesMeta.extension ),
             "volume"      -> fileMeta.volume,
             "size"        -> archivesMeta.size,
             "is_shared"   -> fileMeta.isShared
@@ -373,7 +381,7 @@ class MetadataControllers {
               "uuid"      -> fileMeta.uuid.toString,
               "fileType"  -> "archive",
               "name"      -> fileMeta.name,
-              "extension" -> fileMeta.extension
+              "extension" -> parseNullableValueToJSON( fileMeta.extension )
             )
           }
         } )
