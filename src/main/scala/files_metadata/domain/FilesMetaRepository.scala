@@ -41,9 +41,7 @@ trait FilesMetaRepository {
   def canUserReadFile( userUuid: UUID, fileUuid: UUID ): Boolean
 
   // --- Update ---
-  def updateArchiveStatus( archiveUUID: UUID, ready: Boolean ): Unit
-
-  def updateFileVolume( fileUUID: UUID, volume: String ): Unit
+  def updateArchiveToReady( file: FileMeta, volume: String ): Unit
 
   def updateFileName( fileUUID: UUID, newName: String ): Unit
 

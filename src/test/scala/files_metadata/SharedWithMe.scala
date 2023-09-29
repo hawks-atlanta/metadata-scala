@@ -40,12 +40,7 @@ class GetSharedWithUser extends JUnitSuite {
     GetShareWithUserTestsData.savedFileUUID =
       UUID.fromString( saveFileResponse.jsonPath().get( "uuid" ) )
 
-    // Mark the file and the directory as ready
-    FilesTestsUtils.UpdateReadyFile(
-      GetShareWithUserTestsData.savedDirectoryUUID.toString,
-      FilesTestsUtils.generateReadyFilePayload()
-    )
-
+    // Mark the file as ready
     FilesTestsUtils.UpdateReadyFile(
       GetShareWithUserTestsData.savedFileUUID.toString,
       FilesTestsUtils.generateReadyFilePayload()
