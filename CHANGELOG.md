@@ -40,6 +40,3 @@
 ### Features
 
 * Rename files ([#63](https://github.com/hawks-atlanta/metadata-scala/issues/63)) ([6a91d21](https://github.com/hawks-atlanta/metadata-scala/commit/6a91d2119e034c70c3381b2475da9434d77f02b7)), closes [#64](https://github.com/hawks-atlanta/metadata-scala/issues/64)
-
-
-
