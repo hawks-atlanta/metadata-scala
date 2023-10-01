@@ -6,7 +6,7 @@ import java.sql.PreparedStatement
 import java.util.UUID
 
 import com.zaxxer.hikari.HikariDataSource
-import files_metadata.domain.ArchivesMeta
+import files_metadata.domain.ArchiveMeta
 import files_metadata.domain.DomainExceptions
 import files_metadata.domain.FileExtendedMeta
 import files_metadata.domain.FileMeta
@@ -49,7 +49,7 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
   }
 
   override def saveArchiveMeta(
-      archivesMeta: ArchivesMeta,
+      archivesMeta: ArchiveMeta,
       fileMeta: FileMeta
   ): UUID = {
     val connection: Connection = pool.getConnection()
@@ -162,7 +162,7 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
     }
   }
 
-  override def getArchiveMeta( uuid: UUID ): ArchivesMeta = {
+  override def getArchiveMeta( uuid: UUID ): ArchiveMeta = {
     val connection: Connection = pool.getConnection()
 
     try {
@@ -178,7 +178,7 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
         )
       }
 
-      ArchivesMeta(
+      ArchiveMeta(
         uuid = UUID.fromString( result.getString( "uuid" ) ),
         extension = result.getString( "extension" ),
         size = result.getLong( "size" ),

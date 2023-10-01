@@ -3,7 +3,7 @@ package files_metadata.application
 
 import java.util.UUID
 
-import files_metadata.domain.ArchivesMeta
+import files_metadata.domain.ArchiveMeta
 import files_metadata.domain.DomainExceptions
 import files_metadata.domain.FileExtendedMeta
 import files_metadata.domain.FileMeta
@@ -41,7 +41,7 @@ class FilesMetaUseCases {
   }
 
   def saveArchiveMetadata(
-      archiveMeta: ArchivesMeta,
+      archiveMeta: ArchiveMeta,
       fileMeta: FileMeta
   ): UUID = {
     ensureFileCanBeCreated( fileMeta = fileMeta )
@@ -115,7 +115,7 @@ class FilesMetaUseCases {
     repository.getFileMeta( fileUUID )
   }
 
-  def getArchiveMetadata( archiveUUID: UUID ): ArchivesMeta = {
+  def getArchiveMetadata( archiveUUID: UUID ): ArchiveMeta = {
     repository.getArchiveMeta( archiveUUID )
   }
 

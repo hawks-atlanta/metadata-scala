@@ -6,7 +6,7 @@ import java.util.UUID
 import com.wix.accord.validate
 import com.wix.accord.Validator
 import files_metadata.application.FilesMetaUseCases
-import files_metadata.domain.ArchivesMeta
+import files_metadata.domain.ArchiveMeta
 import files_metadata.domain.BaseDomainException
 import files_metadata.domain.FileMeta
 import files_metadata.domain.FilesMetaRepository
@@ -107,7 +107,7 @@ class MetadataControllers {
       }
 
       // Save the metadata
-      val receivedArchiveMeta = ArchivesMeta.createNewArchive(
+      val receivedArchiveMeta = ArchiveMeta.createNewArchive(
         decoded.fileExtension,
         decoded.fileSize
       )
