@@ -1,3 +1,12 @@
+## [0.10.3](https://github.com/hawks-atlanta/metadata-scala/compare/v0.10.2...v0.10.3) (2023-10-01)
+
+
+### Bug Fixes
+
+* Parse null-able extension field ([#75](https://github.com/hawks-atlanta/metadata-scala/issues/75)) ([9ae4d0d](https://github.com/hawks-atlanta/metadata-scala/commit/9ae4d0da4f1fb0720de33715f89686286e6597ef))
+
+
+
 ## [0.10.2](https://github.com/hawks-atlanta/metadata-scala/compare/v0.10.1...v0.10.2) (2023-09-29)
 
 
@@ -31,15 +40,6 @@
 ### Features
 
 * Rename files ([#63](https://github.com/hawks-atlanta/metadata-scala/issues/63)) ([6a91d21](https://github.com/hawks-atlanta/metadata-scala/commit/6a91d2119e034c70c3381b2475da9434d77f02b7)), closes [#64](https://github.com/hawks-atlanta/metadata-scala/issues/64)
-
-
-
-## [0.8.1](https://github.com/hawks-atlanta/metadata-scala/compare/v0.8.0...v0.8.1) (2023-09-15)
-
-
-### Bug Fixes
-
-* Production migrations ([#61](https://github.com/hawks-atlanta/metadata-scala/issues/61)) ([db1f85c](https://github.com/hawks-atlanta/metadata-scala/commit/db1f85c28a2b64000e81341ce4f880bbcc748da3))
 
 
 
