@@ -60,6 +60,13 @@ class MetadataControllers {
     }
   }
 
+  private def parseNullableValueToJSON( value: Any ): ujson.Value = {
+    value match {
+      case v: ujson.Value => v
+      case _              => ujson.Null
+    }
+  }
+
   def SaveMetadataController(
       request: cask.Request
   ): cask.Response[Obj] = {
@@ -277,7 +284,7 @@ class MetadataControllers {
           ujson.Obj(
             "archiveUUID" -> fileMeta.archiveUuid.get.toString,
             "name"        -> fileMeta.name,
-            "extension"   -> archivesMeta.extension,
+            "extension"   -> parseNullableValueToJSON( archivesMeta.extension ),
             "volume"      -> fileMeta.volume,
             "size"        -> archivesMeta.size,
             "is_shared"   -> fileMeta.isShared
@@ -373,7 +380,7 @@ class MetadataControllers {
               "uuid"      -> fileMeta.uuid.toString,
               "fileType"  -> "archive",
               "name"      -> fileMeta.name,
-              "extension" -> fileMeta.extension
+              "extension" -> parseNullableValueToJSON( fileMeta.extension )
             )
           }
         } )
