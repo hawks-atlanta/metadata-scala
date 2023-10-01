@@ -6,7 +6,7 @@ import java.util.UUID
 import com.wix.accord.validate
 import com.wix.accord.Validator
 import files_metadata.application.FilesMetaUseCases
-import files_metadata.domain.ArchivesMeta
+import files_metadata.domain.ArchiveMeta
 import files_metadata.domain.BaseDomainException
 import files_metadata.domain.FileMeta
 import files_metadata.domain.FilesMetaRepository
@@ -60,9 +60,16 @@ class MetadataControllers {
     }
   }
 
+  private def parseNullableValueToJSON( value: Any ): ujson.Value = {
+    value match {
+      case v: ujson.Value => v
+      case _              => ujson.Null
+    }
+  }
+
   def SaveMetadataController(
-                              request: cask.Request
-                            ): cask.Response[Obj] = {
+      request: cask.Request
+  ): cask.Response[Obj] = {
     try {
       // Decode the JSON payload
       val decoded: CreationReqSchema = read[CreationReqSchema](
@@ -100,7 +107,7 @@ class MetadataControllers {
       }
 
       // Save the metadata
-      val receivedArchiveMeta = ArchivesMeta.createNewArchive(
+      val receivedArchiveMeta = ArchiveMeta.createNewArchive(
         decoded.fileExtension,
         decoded.fileSize
       )
@@ -142,10 +149,10 @@ class MetadataControllers {
   }
 
   def ShareFileController(
-                           request: cask.Request,
-                           ownerUUID: String,
-                           fileUUID: String
-                         ): cask.Response[Obj] = {
+      request: cask.Request,
+      ownerUUID: String,
+      fileUUID: String
+  ): cask.Response[Obj] = {
     try {
       val decoded: ShareReqSchema = read[ShareReqSchema](
         request.text()
@@ -185,10 +192,10 @@ class MetadataControllers {
   }
 
   def CanReadFileController(
-                             request: cask.Request,
-                             userUUID: String,
-                             fileUUID: String
-                           ): cask.Response[Obj] = {
+      request: cask.Request,
+      userUUID: String,
+      fileUUID: String
+  ): cask.Response[Obj] = {
     try {
       val isUserUUIDValid = CommonValidator.validateUUID( userUUID )
       val isFileUUIDValid = CommonValidator.validateUUID( fileUUID )
@@ -224,9 +231,9 @@ class MetadataControllers {
   }
 
   def GetFileMetadataController(
-                                 request: cask.Request,
-                                 fileUUID: String
-                               ): cask.Response[Obj] = {
+      request: cask.Request,
+      fileUUID: String
+  ): cask.Response[Obj] = {
     try {
       val isFileUUIDValid = CommonValidator.validateUUID( fileUUID )
       if (!isFileUUIDValid) {
@@ -243,7 +250,9 @@ class MetadataControllers {
         fileUUID = UUID.fromString( fileUUID )
       )
 
-      if (fileMeta.volume == null) {
+      val isFile      = fileMeta.archiveUuid.isDefined
+      val notSavedYet = fileMeta.volume == null
+      if (isFile && notSavedYet) {
         return cask.Response(
           ujson.Obj(
             "message" -> "The file is not ready yet"
@@ -256,12 +265,12 @@ class MetadataControllers {
         // Directories metadata
         cask.Response(
           ujson.Obj(
-            "archiveUUID" -> ujson.Null, // Needs to be a "custom" null value
             "name"        -> fileMeta.name,
+            "is_shared"   -> fileMeta.isShared,
+            "archiveUUID" -> ujson.Null,
             "extension"   -> ujson.Null,
-            "volume"      -> fileMeta.volume,
-            "size"        -> 0,
-            "is_shared"   -> fileMeta.isShared
+            "volume"      -> ujson.Null,
+            "size"        -> 0
           ),
           statusCode = 200
         )
@@ -275,7 +284,7 @@ class MetadataControllers {
           ujson.Obj(
             "archiveUUID" -> fileMeta.archiveUuid.get.toString,
             "name"        -> fileMeta.name,
-            "extension"   -> archivesMeta.extension,
+            "extension"   -> parseNullableValueToJSON( archivesMeta.extension ),
             "volume"      -> fileMeta.volume,
             "size"        -> archivesMeta.size,
             "is_shared"   -> fileMeta.isShared
@@ -289,9 +298,9 @@ class MetadataControllers {
   }
 
   def MarkFileAsReadyController(
-                                 request: cask.Request,
-                                 fileUUID: String
-                               ): cask.Response[Obj] = {
+      request: cask.Request,
+      fileUUID: String
+  ): cask.Response[Obj] = {
     try {
       val isFileUUIDValid = CommonValidator.validateUUID( fileUUID )
       if (!isFileUUIDValid) {
@@ -338,9 +347,9 @@ class MetadataControllers {
   }
 
   def GetSharedWithMeController(
-                                 request: cask.Request,
-                                 userUUID: String
-                               ): cask.Response[Obj] = {
+      request: cask.Request,
+      userUUID: String
+  ): cask.Response[Obj] = {
     try {
       val isUserUUIDValid = CommonValidator.validateUUID( userUUID )
       if (!isUserUUIDValid) {
@@ -371,7 +380,7 @@ class MetadataControllers {
               "uuid"      -> fileMeta.uuid.toString,
               "fileType"  -> "archive",
               "name"      -> fileMeta.name,
-              "extension" -> fileMeta.extension
+              "extension" -> parseNullableValueToJSON( fileMeta.extension )
             )
           }
         } )
@@ -390,9 +399,9 @@ class MetadataControllers {
   }
 
   def GetSharedWithWhoController(
-                                  request: cask.Request,
-                                  fileUUID: String
-                                ): cask.Response[Obj] = {
+      request: cask.Request,
+      fileUUID: String
+  ): cask.Response[Obj] = {
     try {
       val isFileUUIDValid = CommonValidator.validateUUID( fileUUID )
       if (!isFileUUIDValid) {
@@ -425,10 +434,10 @@ class MetadataControllers {
   }
 
   def RenameFileController(
-                            request: cask.Request,
-                            userUUID: String,
-                            fileUUID: String
-                          ): cask.Response[Obj] = {
+      request: cask.Request,
+      userUUID: String,
+      fileUUID: String
+  ): cask.Response[Obj] = {
     try {
       val isFileUUIDValid = CommonValidator.validateUUID( fileUUID )
       val isUserUUIDValid = CommonValidator.validateUUID( userUUID )
@@ -477,10 +486,10 @@ class MetadataControllers {
   }
 
   def MoveFileController(
-                          request: cask.Request,
-                          userUUID: String,
-                          fileUUID: String
-                        ): cask.Response[Obj] = {
+      request: cask.Request,
+      userUUID: String,
+      fileUUID: String
+  ): cask.Response[Obj] = {
     try {
       val isFileUUIDValid = CommonValidator.validateUUID( fileUUID )
       val isUserUUIDValid = CommonValidator.validateUUID( userUUID )

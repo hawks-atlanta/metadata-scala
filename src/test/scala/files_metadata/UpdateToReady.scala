@@ -101,7 +101,7 @@ class UpdateReadyFile extends JUnitSuite {
       UpdateReadyFileTestsData.getPayloadCopy()
     )
 
-    assert( updateDirectoryResponse.statusCode() == 204 )
+    assert( updateDirectoryResponse.statusCode() == 409 )
   }
 
   @Test
@@ -113,13 +113,5 @@ class UpdateReadyFile extends JUnitSuite {
     )
 
     assert( updateFileResponse.statusCode() == 409 )
-
-    // Try to mark the directory as ready again
-    val updateDirectoryResponse = FilesTestsUtils.UpdateReadyFile(
-      UpdateReadyFileTestsData.savedDirectoryUUID.toString,
-      UpdateReadyFileTestsData.getPayloadCopy()
-    )
-
-    assert( updateDirectoryResponse.statusCode() == 409 )
   }
 }

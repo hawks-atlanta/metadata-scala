@@ -6,7 +6,7 @@ import java.sql.PreparedStatement
 import java.util.UUID
 
 import com.zaxxer.hikari.HikariDataSource
-import files_metadata.domain.ArchivesMeta
+import files_metadata.domain.ArchiveMeta
 import files_metadata.domain.DomainExceptions
 import files_metadata.domain.FileExtendedMeta
 import files_metadata.domain.FileMeta
@@ -49,7 +49,7 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
   }
 
   override def saveArchiveMeta(
-      archivesMeta: ArchivesMeta,
+      archivesMeta: ArchiveMeta,
       fileMeta: FileMeta
   ): UUID = {
     val connection: Connection = pool.getConnection()
@@ -162,7 +162,7 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
     }
   }
 
-  override def getArchiveMeta( uuid: UUID ): ArchivesMeta = {
+  override def getArchiveMeta( uuid: UUID ): ArchiveMeta = {
     val connection: Connection = pool.getConnection()
 
     try {
@@ -178,7 +178,7 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
         )
       }
 
-      ArchivesMeta(
+      ArchiveMeta(
         uuid = UUID.fromString( result.getString( "uuid" ) ),
         extension = result.getString( "extension" ),
         size = result.getLong( "size" ),
@@ -202,7 +202,10 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
           |uuid IN (
           | SELECT file_uuid FROM shared_files WHERE user_uuid = ?
           |)
-          |AND volume IS NOT NULL
+          |AND (
+          | archive_uuid is NULL
+          | OR volume IS NOT NULL
+          |)
           | """.stripMargin
       )
       statement.setObject( 1, userUuid )
@@ -407,39 +410,28 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
     }
   }
 
-  override def updateArchiveStatus(
-      archiveUUID: UUID,
-      ready: Boolean
-  ): Unit = {
-    val connection: Connection = pool.getConnection()
-
-    try {
-      val statement = connection.prepareStatement(
-        "UPDATE archives SET ready = ? WHERE uuid = ?"
-      )
-      statement.setBoolean( 1, ready )
-      statement.setObject( 2, archiveUUID )
-
-      statement.executeUpdate()
-    } finally {
-      connection.close()
-    }
-  }
-
-  def updateFileVolume(
-      fileUUID: UUID,
+  override def updateArchiveToReady(
+      file: FileMeta,
       volume: String
   ): Unit = {
     val connection: Connection = pool.getConnection()
+    connection.setAutoCommit( false )
 
     try {
-      val statement = connection.prepareStatement(
+      val updateArchiveStatement = connection.prepareStatement(
+        "UPDATE archives SET ready = true WHERE uuid = ?"
+      )
+      updateArchiveStatement.setObject( 1, file.archiveUuid.get )
+      updateArchiveStatement.executeUpdate()
+
+      val updateFileStatement = connection.prepareStatement(
         "UPDATE files SET volume = ? WHERE uuid = ?"
       )
-      statement.setString( 1, volume )
-      statement.setObject( 2, fileUUID )
+      updateFileStatement.setString( 1, volume )
+      updateFileStatement.setObject( 2, file.uuid )
+      updateFileStatement.executeUpdate()
 
-      statement.executeUpdate()
+      connection.commit()
     } finally {
       connection.close()
     }
