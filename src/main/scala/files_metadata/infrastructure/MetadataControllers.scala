@@ -67,6 +67,82 @@ class MetadataControllers {
     }
   }
 
+  def ListFilesController(
+      userUUID: String,
+      parentUUID: Option[String]
+  ): cask.Response[Obj] = {
+    try {
+      // Validate the parent UUID if it's given
+      if (parentUUID.isDefined) {
+        val isParentUUIDValid = CommonValidator.validateUUID( parentUUID.get )
+        if (!isParentUUIDValid) {
+          return cask.Response(
+            ujson.Obj(
+              "error"   -> true,
+              "message" -> "Directory UUID is not valid"
+            ),
+            statusCode = 400
+          )
+        }
+      }
+
+      // Validate the user UUID
+      val isUserUUIDValid = CommonValidator.validateUUID( userUUID )
+      if (!isUserUUIDValid) {
+        return cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "User UUID is not valid"
+          ),
+          statusCode = 400
+        )
+      }
+
+      // Get the files metadata
+      val parsedParentUUID: Option[UUID] =
+        if (parentUUID.isDefined) Some( UUID.fromString( parentUUID.get ) )
+        else None
+
+      val filesMeta = useCases.listFiles(
+        userUUID = UUID.fromString( userUUID ),
+        parentUUID = parsedParentUUID
+      )
+
+      // Parse the response
+      val responseArray = ujson.Arr.from(
+        filesMeta.map( fileMeta => {
+          val isDirectory = fileMeta.archiveUuid.isEmpty
+          if (isDirectory) {
+            ujson.Obj(
+              "uuid"      -> fileMeta.uuid.toString,
+              "fileType"  -> "directory",
+              "name"      -> fileMeta.name,
+              "extension" -> ujson.Null,
+              "isShared"  -> fileMeta.isShared
+            )
+          } else {
+            ujson.Obj(
+              "uuid"      -> fileMeta.uuid.toString,
+              "fileType"  -> "archive",
+              "name"      -> fileMeta.name,
+              "extension" -> parseNullableValueToJSON( fileMeta.extension ),
+              "isShared"  -> fileMeta.isShared
+            )
+          }
+        } )
+      )
+
+      cask.Response(
+        ujson.Obj(
+          "files" -> responseArray
+        ),
+        statusCode = 200
+      )
+    } catch {
+      case e: Exception => _handleException( e )
+    }
+  }
+
   def SaveMetadataController(
       request: cask.Request
   ): cask.Response[Obj] = {
