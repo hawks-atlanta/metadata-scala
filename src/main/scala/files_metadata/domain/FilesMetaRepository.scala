@@ -12,12 +12,10 @@ trait FilesMetaRepository {
   def shareFile( fileUUID: UUID, userUUID: UUID ): Unit
 
   // --- Read ---
-  def getFilesMetaInRoot( ownerUuid: UUID ): Seq[FileMeta]
-
   def getFilesMetaInDirectory(
       ownerUuid: UUID,
-      directoryUuid: UUID
-  ): Seq[FileMeta]
+      directoryUuid: Option[UUID]
+  ): Seq[FileExtendedMeta]
 
   def getFileMeta( uuid: UUID ): FileMeta
 
