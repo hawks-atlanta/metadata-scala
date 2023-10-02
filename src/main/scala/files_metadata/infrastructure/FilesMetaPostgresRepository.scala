@@ -197,7 +197,10 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
           |SELECT uuid, owner_uuid, parent_uuid, archive_uuid, volume, name, extension, size, is_shared
           |FROM files_view WHERE
           |parent_uuid = ?
-          |AND ready = true
+          |AND (
+          | ready = true
+          | OR archive_uuid IS NULL
+          | )
           |""".stripMargin
       )
       statement.setObject( 1, directoryUuid )
