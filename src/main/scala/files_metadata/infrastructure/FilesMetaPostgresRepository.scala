@@ -138,7 +138,7 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
     try {
       val statement = connection.prepareStatement(
         """
-          |SELECT uuid, owner_uuid, parent_uuid, archive_uuid, volume, name, extension, size, is_shared
+          |SELECT uuid, owner_uuid, archive_uuid, volume, name, extension, size, is_shared
           |FROM files_view WHERE
           |owner_uuid = ?
           |AND parent_uuid IS NULL
@@ -155,12 +155,9 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
 
       // Parse the rows into Domain objects
       while (result.next()) {
-        val parentUUIDString  = result.getString( "parent_uuid" )
         val archiveUUIDString = result.getString( "archive_uuid" )
 
-        val parentUUID =
-          if (parentUUIDString == null) None
-          else Some( UUID.fromString( parentUUIDString ) )
+        val parentUUID = None
 
         val archiveUUID =
           if (archiveUUIDString == null) None
@@ -194,7 +191,7 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
     try {
       val statement = connection.prepareStatement(
         """
-          |SELECT uuid, owner_uuid, parent_uuid, archive_uuid, volume, name, extension, size, is_shared
+          |SELECT uuid, owner_uuid, archive_uuid, volume, name, extension, size, is_shared
           |FROM files_view WHERE
           |parent_uuid = ?
           |AND (
@@ -210,12 +207,9 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
 
       // Parse the rows into Domain objects
       while (result.next()) {
-        val parentUUIDString  = result.getString( "parent_uuid" )
         val archiveUUIDString = result.getString( "archive_uuid" )
 
-        val parentUUID =
-          if (parentUUIDString == null) None
-          else Some( UUID.fromString( parentUUIDString ) )
+        val parentUUID = Some( directoryUuid )
 
         val archiveUUID =
           if (archiveUUIDString == null) None
