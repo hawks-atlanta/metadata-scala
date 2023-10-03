@@ -40,6 +40,33 @@ class FilesMetaUseCases {
     }
   }
 
+  def listFiles(
+      userUUID: UUID,
+      parentUUID: Option[UUID]
+  ): Seq[FileExtendedMeta] = {
+    if (parentUUID.isDefined) {
+      // Check the parent exists
+      val parentMeta = repository.getFileMeta( parentUUID.get )
+
+      // Check the parent is a directory
+      val parentIsDirectory = parentMeta.archiveUuid.isEmpty
+      if (!parentIsDirectory) {
+        throw DomainExceptions.ParentIsNotADirectoryException(
+          "The parent is not a directory"
+        )
+      }
+
+      // Check the user has access to the parent
+      if (!canReadFile( userUUID, parentUUID.get )) {
+        throw DomainExceptions.CannotReadFileException(
+          "You do not have access to the parent directory"
+        )
+      }
+    }
+
+    repository.getFilesMetaInDirectory( userUUID, parentUUID )
+  }
+
   def saveArchiveMetadata(
       archiveMeta: ArchiveMeta,
       fileMeta: FileMeta
