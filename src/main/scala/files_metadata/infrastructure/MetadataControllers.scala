@@ -69,11 +69,9 @@ class MetadataControllers {
     }
   }
 
-  private def parseNullableValueToJSON( value: Any ): ujson.Value = {
-    value match {
-      case v: ujson.Value => v
-      case _              => ujson.Null
-    }
+  private def parseNullableStringToJSON( value: String ): ujson.Value = {
+    if (value == null) ujson.Null
+    else ujson.Str( value )
   }
 
   def ListFilesController(
@@ -134,7 +132,7 @@ class MetadataControllers {
               "uuid"      -> fileMeta.uuid.toString,
               "fileType"  -> "archive",
               "name"      -> fileMeta.name,
-              "extension" -> parseNullableValueToJSON( fileMeta.extension ),
+              "extension" -> parseNullableStringToJSON( fileMeta.extension ),
               "isShared"  -> fileMeta.isShared
             )
           }
@@ -369,7 +367,7 @@ class MetadataControllers {
           ujson.Obj(
             "archiveUUID" -> fileMeta.archiveUuid.get.toString,
             "name"        -> fileMeta.name,
-            "extension"   -> parseNullableValueToJSON( archivesMeta.extension ),
+            "extension"   -> parseNullableStringToJSON( archivesMeta.extension ),
             "volume"      -> fileMeta.volume,
             "size"        -> archivesMeta.size,
             "is_shared"   -> fileMeta.isShared
@@ -465,7 +463,7 @@ class MetadataControllers {
               "uuid"      -> fileMeta.uuid.toString,
               "fileType"  -> "archive",
               "name"      -> fileMeta.name,
-              "extension" -> parseNullableValueToJSON( fileMeta.extension )
+              "extension" -> parseNullableStringToJSON( fileMeta.extension )
             )
           }
         } )
