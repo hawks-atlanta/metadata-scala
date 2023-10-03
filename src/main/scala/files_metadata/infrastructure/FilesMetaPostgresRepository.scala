@@ -115,12 +115,125 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
     }
   }
 
-  override def getFilesMetaInRoot( ownerUuid: UUID ): Seq[FileMeta] = ???
-
   override def getFilesMetaInDirectory(
       ownerUuid: UUID,
+      directoryUuid: Option[UUID]
+  ): Seq[FileExtendedMeta] = {
+    try {
+      if (directoryUuid.isEmpty) {
+        getFilesInRoot( ownerUuid )
+      } else {
+        getFilesInParentDirectory( directoryUuid.get )
+      }
+    } catch {
+      case exception: Exception => throw exception
+    }
+  }
+
+  def getFilesInRoot(
+      ownerUuid: UUID
+  ): Seq[FileExtendedMeta] = {
+    val connection: Connection = pool.getConnection()
+
+    try {
+      val statement = connection.prepareStatement(
+        """
+          |SELECT uuid, owner_uuid, archive_uuid, volume, name, extension, size, is_shared
+          |FROM files_view WHERE
+          |owner_uuid = ?
+          |AND parent_uuid IS NULL
+          |AND (
+          | ready = true
+          | OR archive_uuid IS NULL
+          |)
+          |""".stripMargin
+      )
+      statement.setObject( 1, ownerUuid )
+
+      val result                           = statement.executeQuery()
+      var filesMeta: Seq[FileExtendedMeta] = Seq()
+
+      // Parse the rows into Domain objects
+      while (result.next()) {
+        val archiveUUIDString = result.getString( "archive_uuid" )
+
+        val parentUUID = None
+
+        val archiveUUID =
+          if (archiveUUIDString == null) None
+          else Some( UUID.fromString( archiveUUIDString ) )
+
+        filesMeta = filesMeta :+ FileExtendedMeta(
+          uuid = UUID.fromString( result.getString( "uuid" ) ),
+          ownerUuid = UUID.fromString( result.getString( "owner_uuid" ) ),
+          parentUuid = parentUUID,
+          archiveUuid = archiveUUID,
+          volume = result.getString( "volume" ),
+          name = result.getString( "name" ),
+          extension = result.getString( "extension" ),
+          size = result.getLong( "size" ),
+          isReady = true,
+          isShared = result.getBoolean( "is_shared" )
+        )
+      }
+
+      filesMeta
+    } finally {
+      connection.close()
+    }
+  }
+
+  def getFilesInParentDirectory(
       directoryUuid: UUID
-  ): Seq[FileMeta] = ???
+  ) = {
+    val connection: Connection = pool.getConnection()
+
+    try {
+      val statement = connection.prepareStatement(
+        """
+          |SELECT uuid, owner_uuid, archive_uuid, volume, name, extension, size, is_shared
+          |FROM files_view WHERE
+          |parent_uuid = ?
+          |AND (
+          | ready = true
+          | OR archive_uuid IS NULL
+          | )
+          |""".stripMargin
+      )
+      statement.setObject( 1, directoryUuid )
+
+      val result                           = statement.executeQuery()
+      var filesMeta: Seq[FileExtendedMeta] = Seq()
+
+      // Parse the rows into Domain objects
+      while (result.next()) {
+        val archiveUUIDString = result.getString( "archive_uuid" )
+
+        val parentUUID = Some( directoryUuid )
+
+        val archiveUUID =
+          if (archiveUUIDString == null) None
+          else Some( UUID.fromString( archiveUUIDString ) )
+
+        filesMeta = filesMeta :+ FileExtendedMeta(
+          uuid = UUID.fromString( result.getString( "uuid" ) ),
+          ownerUuid = UUID.fromString( result.getString( "owner_uuid" ) ),
+          parentUuid = parentUUID,
+          archiveUuid = archiveUUID,
+          volume = result.getString( "volume" ),
+          name = result.getString( "name" ),
+          extension = result.getString( "extension" ),
+          size = result.getLong( "size" ),
+          isReady = true,
+          isShared = result.getBoolean( "is_shared" )
+        )
+      }
+
+      filesMeta
+    } finally {
+      connection.close()
+    }
+  }
 
   override def getFileMeta( uuid: UUID ): FileMeta = {
     val connection: Connection = pool.getConnection()
@@ -197,14 +310,14 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
     try {
       val statement = connection.prepareStatement(
         """
-          |SELECT uuid, owner_uuid, parent_uuid, archive_uuid, volume, name, extension, size
+          |SELECT uuid, owner_uuid, parent_uuid, archive_uuid, volume, name, extension, size, is_shared
           |FROM files_view WHERE
           |uuid IN (
           | SELECT file_uuid FROM shared_files WHERE user_uuid = ?
           |)
           |AND (
-          | archive_uuid is NULL
-          | OR volume IS NOT NULL
+          | ready = true
+          | OR archive_uuid IS NULL
           |)
           | """.stripMargin
       )
@@ -235,7 +348,8 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
           name = result.getString( "name" ),
           extension = result.getString( "extension" ),
           size = result.getLong( "size" ),
-          ready = true
+          isReady = true,
+          isShared = result.getBoolean( "is_shared" )
         )
       }
 

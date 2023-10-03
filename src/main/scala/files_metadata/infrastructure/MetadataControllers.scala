@@ -1,6 +1,7 @@
 package org.hawksatlanta.metadata
 package files_metadata.infrastructure
 
+import java.util.Date
 import java.util.UUID
 
 import com.wix.accord.validate
@@ -31,7 +32,8 @@ class MetadataControllers {
 
   private def _handleException( exception: Exception ): cask.Response[Obj] = {
     exception match {
-      case _: upickle.core.AbortException | _: ujson.IncompleteParseException =>
+      case _: upickle.core.AbortException | _: ujson.IncompleteParseException |
+          _: ujson.ParseException =>
         cask.Response(
           ujson.Obj(
             "error"   -> true,
@@ -49,7 +51,14 @@ class MetadataControllers {
           statusCode = e.statusCode
         )
 
-      case _: Exception =>
+      case e: Exception =>
+        // Log the error
+        val currentDate = new Date()
+        println(
+          s"[${ currentDate.toString }] The following error was caught: $e"
+        )
+
+        // Send a response
         cask.Response(
           ujson.Obj(
             "error"   -> true,
@@ -60,10 +69,84 @@ class MetadataControllers {
     }
   }
 
-  private def parseNullableValueToJSON( value: Any ): ujson.Value = {
-    value match {
-      case v: ujson.Value => v
-      case _              => ujson.Null
+  private def parseNullableStringToJSON( value: String ): ujson.Value = {
+    if (value == null) ujson.Null
+    else ujson.Str( value )
+  }
+
+  def ListFilesController(
+      userUUID: String,
+      parentUUID: Option[String]
+  ): cask.Response[Obj] = {
+    try {
+      // Validate the parent UUID if it's given
+      if (parentUUID.isDefined) {
+        val isParentUUIDValid = CommonValidator.validateUUID( parentUUID.get )
+        if (!isParentUUIDValid) {
+          return cask.Response(
+            ujson.Obj(
+              "error"   -> true,
+              "message" -> "Directory UUID is not valid"
+            ),
+            statusCode = 400
+          )
+        }
+      }
+
+      // Validate the user UUID
+      val isUserUUIDValid = CommonValidator.validateUUID( userUUID )
+      if (!isUserUUIDValid) {
+        return cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "User UUID is not valid"
+          ),
+          statusCode = 400
+        )
+      }
+
+      // Get the files metadata
+      val parsedParentUUID: Option[UUID] =
+        if (parentUUID.isDefined) Some( UUID.fromString( parentUUID.get ) )
+        else None
+
+      val filesMeta = useCases.listFiles(
+        userUUID = UUID.fromString( userUUID ),
+        parentUUID = parsedParentUUID
+      )
+
+      // Parse the response
+      val responseArray = ujson.Arr.from(
+        filesMeta.map( fileMeta => {
+          val isDirectory = fileMeta.archiveUuid.isEmpty
+          if (isDirectory) {
+            ujson.Obj(
+              "uuid"      -> fileMeta.uuid.toString,
+              "fileType"  -> "directory",
+              "name"      -> fileMeta.name,
+              "extension" -> ujson.Null,
+              "isShared"  -> fileMeta.isShared
+            )
+          } else {
+            ujson.Obj(
+              "uuid"      -> fileMeta.uuid.toString,
+              "fileType"  -> "archive",
+              "name"      -> fileMeta.name,
+              "extension" -> parseNullableStringToJSON( fileMeta.extension ),
+              "isShared"  -> fileMeta.isShared
+            )
+          }
+        } )
+      )
+
+      cask.Response(
+        ujson.Obj(
+          "files" -> responseArray
+        ),
+        statusCode = 200
+      )
+    } catch {
+      case e: Exception => _handleException( e )
     }
   }
 
@@ -284,7 +367,7 @@ class MetadataControllers {
           ujson.Obj(
             "archiveUUID" -> fileMeta.archiveUuid.get.toString,
             "name"        -> fileMeta.name,
-            "extension"   -> parseNullableValueToJSON( archivesMeta.extension ),
+            "extension"   -> parseNullableStringToJSON( archivesMeta.extension ),
             "volume"      -> fileMeta.volume,
             "size"        -> archivesMeta.size,
             "is_shared"   -> fileMeta.isShared
@@ -380,7 +463,7 @@ class MetadataControllers {
               "uuid"      -> fileMeta.uuid.toString,
               "fileType"  -> "archive",
               "name"      -> fileMeta.name,
-              "extension" -> parseNullableValueToJSON( fileMeta.extension )
+              "extension" -> parseNullableStringToJSON( fileMeta.extension )
             )
           }
         } )

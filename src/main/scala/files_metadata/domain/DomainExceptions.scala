@@ -25,6 +25,9 @@ object DomainExceptions {
   case class FileNotOwnedException( override val message: String )
       extends BaseDomainException( message, 403 )
 
+  case class CannotReadFileException( override val message: String )
+      extends BaseDomainException( message, 403 )
+
   case class ArchiveNotSavedException( override val message: String )
       extends BaseDomainException( message, 500 )
 

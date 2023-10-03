@@ -19,6 +19,26 @@ object FilesTestsUtils {
     }
   }
 
+  // -- List files ---
+  def ListFilesInRootDirectory( userUUID: String ): Response = {
+    `given`()
+      .port( 8080 )
+      .when()
+      .get( s"${ ListFilesInDirectoresTestsData.API_PREFIX }/${ userUUID }" )
+  }
+
+  def ListFilesInDirectory(
+      userUUID: String,
+      directoryUUID: String
+  ): Response = {
+    `given`()
+      .port( 8080 )
+      .when()
+      .get(
+        s"${ ListFilesInDirectoresTestsData.API_PREFIX }/${ userUUID }?parentUUID=${ directoryUUID }"
+      )
+  }
+
   // -- Save files --
   def SaveFile( payload: util.HashMap[String, Any] ): Response = {
     `given`()
