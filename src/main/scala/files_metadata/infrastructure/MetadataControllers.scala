@@ -32,7 +32,8 @@ class MetadataControllers {
 
   private def _handleException( exception: Exception ): cask.Response[Obj] = {
     exception match {
-      case _: upickle.core.AbortException | _: ujson.IncompleteParseException =>
+      case _: upickle.core.AbortException | _: ujson.IncompleteParseException |
+          _: ujson.ParseException =>
         cask.Response(
           ujson.Obj(
             "error"   -> true,
