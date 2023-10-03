@@ -1,3 +1,12 @@
+## [0.10.4](https://github.com/hawks-atlanta/metadata-scala/compare/v0.10.3...v0.10.4) (2023-10-03)
+
+
+### Bug Fixes
+
+* Update controllers error handler ([#80](https://github.com/hawks-atlanta/metadata-scala/issues/80)) ([30dbcff](https://github.com/hawks-atlanta/metadata-scala/commit/30dbcff56fd1f4dca2005ee65521bd939d98bb87))
+
+
+
 ## [0.10.3](https://github.com/hawks-atlanta/metadata-scala/compare/v0.10.2...v0.10.3) (2023-10-01)
 
 
@@ -34,9 +43,3 @@
 
 
 
-# [0.9.0](https://github.com/hawks-atlanta/metadata-scala/compare/v0.8.1...v0.9.0) (2023-09-18)
-
-
-### Features
-
-* Rename files ([#63](https://github.com/hawks-atlanta/metadata-scala/issues/63)) ([6a91d21](https://github.com/hawks-atlanta/metadata-scala/commit/6a91d2119e034c70c3381b2475da9434d77f02b7)), closes [#64](https://github.com/hawks-atlanta/metadata-scala/issues/64)
