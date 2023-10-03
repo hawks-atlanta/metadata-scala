@@ -1,6 +1,7 @@
 package org.hawksatlanta.metadata
 package files_metadata.infrastructure
 
+import java.util.Date
 import java.util.UUID
 
 import com.wix.accord.validate
@@ -49,7 +50,14 @@ class MetadataControllers {
           statusCode = e.statusCode
         )
 
-      case _: Exception =>
+      case e: Exception =>
+        // Log the error
+        val currentDate = new Date()
+        println(
+          s"[${ currentDate.toString }] The following error was caught: $e"
+        )
+
+        // Send a response
         cask.Response(
           ujson.Obj(
             "error"   -> true,
