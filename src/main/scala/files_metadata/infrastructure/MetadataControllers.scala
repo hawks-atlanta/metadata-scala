@@ -1,7 +1,6 @@
 package org.hawksatlanta.metadata
 package files_metadata.infrastructure
 
-import java.util.Date
 import java.util.UUID
 
 import com.wix.accord.validate
@@ -271,7 +270,6 @@ class MetadataControllers {
   }
 
   def CanReadFileController(
-      request: cask.Request,
       userUUID: String,
       fileUUID: String
   ): cask.Response[Obj] = {
@@ -310,7 +308,6 @@ class MetadataControllers {
   }
 
   def GetFileMetadataController(
-      request: cask.Request,
       fileUUID: String
   ): cask.Response[Obj] = {
     try {
@@ -426,7 +423,6 @@ class MetadataControllers {
   }
 
   def GetSharedWithMeController(
-      request: cask.Request,
       userUUID: String
   ): cask.Response[Obj] = {
     try {
@@ -478,7 +474,6 @@ class MetadataControllers {
   }
 
   def GetSharedWithWhoController(
-      request: cask.Request,
       fileUUID: String
   ): cask.Response[Obj] = {
     try {
