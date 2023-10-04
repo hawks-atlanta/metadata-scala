@@ -3,7 +3,7 @@ package files_metadata.infrastructure.requests
 
 import com.wix.accord.dsl._
 import com.wix.accord.Validator
-import org.hawksatlanta.metadata.shared.infrastructure.CommonValidator
+import shared.infrastructure.CommonValidator
 
 case class MoveReqSchema(
     parentUUID: String
