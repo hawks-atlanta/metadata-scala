@@ -1,6 +1,7 @@
 package org.hawksatlanta.metadata
 package files_metadata.infrastructure
 
+import org.hawksatlanta.metadata.shared.infrastructure.StdoutLogger
 import ujson.Obj
 
 case class MetadataRoutes() extends cask.Routes {
@@ -9,87 +10,129 @@ case class MetadataRoutes() extends cask.Routes {
   private val controllers = new MetadataControllers()
   controllers._init()
 
-  @cask.get( s"${ basePath }/list/:userUUID" )
+  private val listMetadataEndpoint = s"${ basePath }/list/:userUUID"
+  @cask.get( listMetadataEndpoint )
   def ListMetadataHandler(
       userUUID: String,
       parentUUID: Option[String] = None
   ): cask.Response[Obj] = {
-    controllers.ListFilesController( userUUID, parentUUID )
+    StdoutLogger.logAndReturnEndpointResponse(
+      listMetadataEndpoint,
+      controllers.ListFilesController( userUUID, parentUUID )
+    )
   }
 
-  @cask.post( s"${ basePath }" )
+  private val saveMetadataEndpoint = s"${ basePath }"
+  @cask.post( saveMetadataEndpoint )
   def SaveMetadataHandler(
       request: cask.Request
   ): cask.Response[Obj] = {
-    controllers.SaveMetadataController( request )
+    StdoutLogger.logAndReturnEndpointResponse(
+      saveMetadataEndpoint,
+      controllers.SaveMetadataController( request )
+    )
   }
 
-  @cask.post( s"${ basePath }/share/:ownerUUID/:fileUUID" )
+  private val shareMetadataEndpoint =
+    s"${ basePath }/share/:ownerUUID/:fileUUID"
+  @cask.post( shareMetadataEndpoint )
   def ShareMetadataHandler(
       request: cask.Request,
       ownerUUID: String,
       fileUUID: String
   ): cask.Response[Obj] = {
-    controllers.ShareFileController( request, ownerUUID, fileUUID )
+    StdoutLogger.logAndReturnEndpointResponse(
+      shareMetadataEndpoint,
+      controllers.ShareFileController( request, ownerUUID, fileUUID )
+    )
   }
 
-  @cask.get( s"${ basePath }/can_read/:userUUID/:fileUUID" )
+  private val canReadMetadataEndpoint =
+    s"${ basePath }/can_read/:userUUID/:fileUUID"
+  @cask.get( canReadMetadataEndpoint )
   def CanReadMetadataHandler(
       request: cask.Request,
       userUUID: String,
       fileUUID: String
   ): cask.Response[Obj] = {
-    controllers.CanReadFileController( request, userUUID, fileUUID )
+    StdoutLogger.logAndReturnEndpointResponse(
+      canReadMetadataEndpoint,
+      controllers.CanReadFileController( request, userUUID, fileUUID )
+    )
   }
 
-  @cask.put( s"${ basePath }/ready/:fileUUID" )
+  private val markFileAsReadyEndpoint = s"${ basePath }/ready/:fileUUID"
+  @cask.put( markFileAsReadyEndpoint )
   def ReadyMetadataHandler(
       request: cask.Request,
       fileUUID: String
   ): cask.Response[Obj] = {
-    controllers.MarkFileAsReadyController( request, fileUUID )
+    StdoutLogger.logAndReturnEndpointResponse(
+      markFileAsReadyEndpoint,
+      controllers.MarkFileAsReadyController( request, fileUUID )
+    )
   }
 
-  @cask.get( s"${ basePath }/metadata/:fileUUID" )
+  private val getMetadataEndpoint = s"${ basePath }/metadata/:fileUUID"
+  @cask.get( getMetadataEndpoint )
   def GetFileMetadataHandler(
       request: cask.Request,
       fileUUID: String
   ): cask.Response[Obj] = {
-    controllers.GetFileMetadataController( request, fileUUID )
+    StdoutLogger.logAndReturnEndpointResponse(
+      getMetadataEndpoint,
+      controllers.GetFileMetadataController( request, fileUUID )
+    )
   }
 
-  @cask.get( s"${ basePath }/shared_with_me/:userUUID" )
+  val getFilesSharedWithUserEndpoint = s"${ basePath }/shared_with_me/:userUUID"
+  @cask.get( getFilesSharedWithUserEndpoint )
   def GetSharedWithMeHandler(
       request: cask.Request,
       userUUID: String
   ): cask.Response[Obj] = {
-    controllers.GetSharedWithMeController( request, userUUID )
+    StdoutLogger.logAndReturnEndpointResponse(
+      getFilesSharedWithUserEndpoint,
+      controllers.GetSharedWithMeController( request, userUUID )
+    )
   }
 
-  @cask.get( s"${ basePath }/shared_with_who/:fileUUID" )
+  val getSharedWithWhoEndpoint = s"${ basePath }/shared_with_who/:fileUUID"
+  @cask.get( getSharedWithWhoEndpoint )
   def GetSharedWithWhoHandler(
       request: cask.Request,
       fileUUID: String
   ): cask.Response[Obj] = {
-    controllers.GetSharedWithWhoController( request, fileUUID )
+    StdoutLogger.logAndReturnEndpointResponse(
+      getSharedWithWhoEndpoint,
+      controllers.GetSharedWithWhoController( request, fileUUID )
+    )
   }
 
-  @cask.put( s"${ basePath }/rename/:userUUID/:fileUUID" )
+  val renameFileEndpoint = s"${ basePath }/rename/:userUUID/:fileUUID"
+  @cask.put( renameFileEndpoint )
   def RenameFileHandler(
       request: cask.Request,
       userUUID: String,
       fileUUID: String
   ): cask.Response[Obj] = {
-    controllers.RenameFileController( request, userUUID, fileUUID )
+    StdoutLogger.logAndReturnEndpointResponse(
+      renameFileEndpoint,
+      controllers.RenameFileController( request, userUUID, fileUUID )
+    )
   }
 
-  @cask.put( s"${ basePath }/move/:userUUID/:fileUUID" )
+  private val moveFileEndpoint = s"${ basePath }/move/:userUUID/:fileUUID"
+  @cask.put( moveFileEndpoint )
   def MoveFileHandler(
       request: cask.Request,
       userUUID: String,
       fileUUID: String
   ): cask.Response[Obj] = {
-    controllers.MoveFileController( request, userUUID, fileUUID )
+    StdoutLogger.logAndReturnEndpointResponse(
+      moveFileEndpoint,
+      controllers.MoveFileController( request, userUUID, fileUUID )
+    )
   }
 
   initialize()

@@ -17,6 +17,7 @@ import files_metadata.infrastructure.requests.MoveReqSchema
 import files_metadata.infrastructure.requests.RenameReqSchema
 import files_metadata.infrastructure.requests.ShareReqSchema
 import shared.infrastructure.CommonValidator
+import shared.infrastructure.StdoutLogger
 import ujson.Obj
 import upickle.default.read
 
@@ -52,13 +53,8 @@ class MetadataControllers {
         )
 
       case e: Exception =>
-        // Log the error
-        val currentDate = new Date()
-        println(
-          s"[${ currentDate.toString }] The following error was caught: $e"
-        )
+        StdoutLogger.logCaughtException( e )
 
-        // Send a response
         cask.Response(
           ujson.Obj(
             "error"   -> true,
