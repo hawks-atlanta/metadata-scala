@@ -23,7 +23,7 @@ object StdoutLogger {
   ): Unit = {
     val currentDate = new Date()
 
-    val logMessage = s"[$currentDate] [Error] => ${ exception }"
+    val logMessage = s"[$currentDate] [Error] => $exception"
     println( logMessage )
   }
 }
