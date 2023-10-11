@@ -228,4 +228,33 @@ class FilesMetaUseCases {
 
     repository.updateFileParent( fileUUID, newParentUUID )
   }
+
+  def unShareFile(
+      ownerUUID: UUID,
+      fileUUID: UUID,
+      otherUserUUID: UUID
+  ): Unit = {
+    val fileMeta = repository.getFileMeta(fileUUID)
+
+    if (fileMeta.ownerUuid != ownerUUID) {
+      throw DomainExceptions.FileNotOwnedException(
+        "The user does not own the file"
+      )
+    }
+    if (ownerUUID == otherUserUUID) {
+      throw DomainExceptions.FileNotOwnedException(
+        "The user and the other user are the same"
+      )
+    }
+
+    if (
+      !repository.isFileDirectlySharedWithUser(fileUUID, otherUserUUID)
+    ) {
+      throw DomainExceptions.FileAlreadySharedException(
+        "The file is already unshared with the user"
+      )
+    }
+
+    repository.unShareFile(fileUUID, otherUserUUID)
+  }
 }
