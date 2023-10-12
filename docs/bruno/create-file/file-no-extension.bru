@@ -1,0 +1,26 @@
+meta {
+  name: file-no-extension
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{BASE_URL}}/files
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "userUUID": "5c8e5e9d-7d82-450f-9fe3-43fc73aa5a39",
+    "parentUUID": null, 
+    "fileType": "archive", 
+    "fileName": "rare", 
+    "fileExtension": null,
+    "fileSize": 15
+  }
+}

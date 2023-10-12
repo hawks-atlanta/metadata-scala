@@ -1,0 +1,26 @@
+meta {
+  name: file-in-folder
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{BASE_URL}}/files
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "userUUID": "5c8e5e9d-7d82-450f-9fe3-43fc73aa5a39",
+    "parentUUID": "32693db3-cc27-470b-b54e-442e7184b3fd", 
+    "fileType": "archive", 
+    "fileName": "distributed-systems-notes",
+    "fileExtension": "md",
+    "fileSize": 24
+  }
+}
