@@ -1,0 +1,27 @@
+meta {
+  name: file-in-root
+  type: http
+  seq: 10
+}
+
+post {
+  url: {{BASE_URL}}/files
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  User-Agent: insomnia/2023.5.8
+}
+
+body:json {
+  {
+    "userUUID": "5c8e5e9d-7d82-450f-9fe3-43fc73aa5a39",
+    "parentUUID": null, 
+    "fileType": "archive", 
+    "fileName": "tasks", 
+    "fileExtension": "md",
+    "fileSize": 15
+  }
+}

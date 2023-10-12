@@ -1,0 +1,22 @@
+meta {
+  name: rename-file
+  type: http
+  seq: 2
+}
+
+put {
+  url: {{BASE_URL}}/files/rename/5c8e5e9d-7d82-450f-9fe3-43fc73aa5a39/89c2ff2e-836a-4a40-85da-d52cd91450bb
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  User-Agent: insomnia/2023.5.8
+}
+
+body:json {
+  {
+    "name": "renamed"
+  }
+}
