@@ -15,7 +15,7 @@ tags:
 paths:
   /files/list/{user_uuid}:
     get:
-      tags: ["File"]
+      tags: [ "File" ]
       description: List files in the given directory. List the user's root directory by default when the parentUUID query parameter is not provided.
       parameters:
         - in: path
@@ -60,7 +60,7 @@ paths:
 
   /files:
     post:
-      tags: ["File"]
+      tags: [ "File" ]
       description: Save the metadata for a new file or directory.
       requestBody:
         content:
@@ -105,7 +105,7 @@ paths:
 
   /files/shared_with_me/{user_uuid}:
     get:
-      tags: ["File"]
+      tags: [ "File" ]
       description: List the files shared with the given user.
       parameters:
         - in: path
@@ -132,7 +132,7 @@ paths:
 
   /files/can_read/{user_uuid}/{file_uuid}:
     get:
-      tags: ["File"]
+      tags: [ "File" ]
       description: Check if the given user can read the given file.
       parameters:
         - in: path
@@ -171,7 +171,7 @@ paths:
 
   /files/metadata/{file_uuid}:
     get:
-      tags: ["File"]
+      tags: [ "File" ]
       description: Get the metadata of the given file. This endpoint is suposed to only be used by the gateway service to obtain the location (files/volume/archive_uuid) of the file.
       parameters:
         - in: path
@@ -214,7 +214,7 @@ paths:
 
   /files/shared_with_who/{file_uuid}:
     get:
-      tags: ["File"]
+      tags: [ "File" ]
       parameters:
         - in: path
           name: file_uuid
@@ -250,7 +250,7 @@ paths:
 
   /files/{user_uuid}/{file_uuid}:
     delete:
-      tags: ["File"]
+      tags: [ "File" ]
       description: Delete the metadata of the given file.
       parameters:
         - in: path
@@ -289,7 +289,7 @@ paths:
 
   /files/share/{user_uuid}/{file_uuid}:
     post:
-      tags: ["File"]
+      tags: [ "File" ]
       description: Share the given file with the given user
       parameters:
         - in: path
@@ -339,7 +339,7 @@ paths:
 
   /files/unshare/{user_uuid}/{file_uuid}:
     post:
-      tags: ["File"]
+      tags: [ "File" ]
       description: Unshare the given file with the given user
       parameters:
         - in: path
@@ -383,7 +383,7 @@ paths:
 
   /files/ready/{file_uuid}:
     put:
-      tags: ["File"]
+      tags: [ "File" ]
       description: Mark the given file as ready (Stored in the filesystem).
       parameters:
         - in: path
@@ -425,7 +425,7 @@ paths:
                 $ref: "#/components/schemas/error_response"
   /files/rename/{user_uuid}/{file_uuid}:
     put:
-      tags: ["File"]
+      tags: [ "File" ]
       description: Rename the given file.
       parameters:
         - in: path
@@ -478,7 +478,7 @@ paths:
                 $ref: "#/components/schemas/error_response"
   /files/move/{user_uuid}/{file_uuid}:
     put:
-      tags: ["File"]
+      tags: [ "File" ]
       description: Move the given file to the given directory.
       parameters:
         - in: path
@@ -540,7 +540,7 @@ components:
           example: "b96bdc16-8f27-44aa-9758-b4e5f13060fe"
         fileType:
           type: string
-          enum: ["archive", "directory"]
+          enum: [ "archive", "directory" ]
           description: "Whether the file is a directory or an archive"
           example: "archive"
         fileName:
@@ -549,6 +549,9 @@ components:
         fileExtension:
           type: string
           example: "pdf"
+        fileSize:
+          type: number
+          example: 1024
 
     metadata:
       type: object
@@ -580,7 +583,7 @@ components:
           example: "5ad724f0-4091-453a-914a-c2d11d69d1e3"
         fileType:
           type: string
-          enum: ["archive", "directory"]
+          enum: [ "archive", "directory" ]
           description: "Whether the file is a directory or an archive"
           example: "archive"
         fileName:
