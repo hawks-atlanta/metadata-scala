@@ -11,7 +11,7 @@ case class FileExtendedMeta(
     volume: String,
     name: String,
     extension: String,
-    size: Long,
+    size: Int,
     isReady: Boolean,
     isShared: Boolean
 )

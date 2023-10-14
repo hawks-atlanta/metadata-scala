@@ -12,7 +12,7 @@ case class CreationReqSchema(
     fileType: String,
     fileName: String,
     fileExtension: String,
-    fileSize: Long
+    fileSize: Int
 )
 
 object CreationReqSchema {
@@ -46,7 +46,7 @@ object CreationReqSchema {
               .and( request.fileExtension.has( size <= 16 ) )
           )
         request.fileName.has( size <= 128 )
-        request.fileSize should be > 0L
+        request.fileSize should be > 0
       }
     }
 
@@ -67,7 +67,7 @@ object CreationReqSchema {
         request.fileName.is( notEmpty )
         request.fileName.has( size <= 128 )
         request.fileExtension.is( aNull )
-        request.fileSize.is( equalTo( 0L ) ) // File size is 0 for a directory
+        request.fileSize.is( equalTo( 0 ) ) // File size is 0 for a directory
       }
     }
 }

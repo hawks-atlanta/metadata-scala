@@ -171,7 +171,7 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
           volume = result.getString( "volume" ),
           name = result.getString( "name" ),
           extension = result.getString( "extension" ),
-          size = result.getLong( "size" ),
+          size = result.getInt( "size" ),
           isReady = true,
           isShared = result.getBoolean( "is_shared" )
         )
@@ -223,7 +223,7 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
           volume = result.getString( "volume" ),
           name = result.getString( "name" ),
           extension = result.getString( "extension" ),
-          size = result.getLong( "size" ),
+          size = result.getInt( "size" ),
           isReady = true,
           isShared = result.getBoolean( "is_shared" )
         )
@@ -294,7 +294,7 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
       ArchiveMeta(
         uuid = UUID.fromString( result.getString( "uuid" ) ),
         extension = result.getString( "extension" ),
-        size = result.getLong( "size" ),
+        size = result.getInt( "size" ),
         ready = result.getBoolean( "ready" )
       )
     } finally {
@@ -347,7 +347,7 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
           volume = result.getString( "volume" ),
           name = result.getString( "name" ),
           extension = result.getString( "extension" ),
-          size = result.getLong( "size" ),
+          size = result.getInt( "size" ),
           isReady = true,
           isShared = result.getBoolean( "is_shared" )
         )
