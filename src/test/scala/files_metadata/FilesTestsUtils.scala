@@ -24,7 +24,7 @@ object FilesTestsUtils {
     `given`()
       .port( 8080 )
       .when()
-      .get( s"${ ListFilesInDirectoresTestsData.API_PREFIX }/${ userUUID }" )
+      .get( s"${ ListFilesInDirectoriesTestsData.API_PREFIX }/$userUUID" )
   }
 
   def ListFilesInDirectory(
@@ -35,7 +35,7 @@ object FilesTestsUtils {
       .port( 8080 )
       .when()
       .get(
-        s"${ ListFilesInDirectoresTestsData.API_PREFIX }/${ userUUID }?parentUUID=${ directoryUUID }"
+        s"${ ListFilesInDirectoriesTestsData.API_PREFIX }/$userUUID?parentUUID=$directoryUUID"
       )
   }
 
@@ -104,7 +104,7 @@ object FilesTestsUtils {
       .body( payload )
       .when()
       .post(
-        s"${ ShareFileTestsData.API_PREFIX }/${ ownerUUID }/${ fileUUID }"
+        s"${ ShareFileTestsData.API_PREFIX }/$ownerUUID/$fileUUID"
       )
   }
 
@@ -121,7 +121,7 @@ object FilesTestsUtils {
       .port( 8080 )
       .when()
       .get(
-        s"${ GetShareWithUserTestsData.API_PREFIX }/${ userUUID }"
+        s"${ GetShareWithUserTestsData.API_PREFIX }/$userUUID"
       )
   }
 
@@ -130,7 +130,7 @@ object FilesTestsUtils {
       .port( 8080 )
       .when()
       .get(
-        s"${ GetShareWithWhoTestsData.API_PREFIX }/${ fileUUID }"
+        s"${ GetShareWithWhoTestsData.API_PREFIX }/$fileUUID"
       )
   }
 
@@ -146,7 +146,7 @@ object FilesTestsUtils {
       .body( payload )
       .when()
       .put(
-        s"${ UpdateReadyFileTestsData.API_PREFIX }/${ fileUUID }"
+        s"${ UpdateReadyFileTestsData.API_PREFIX }/$fileUUID"
       )
   }
 
@@ -167,7 +167,7 @@ object FilesTestsUtils {
       .body( payload )
       .when()
       .put(
-        s"${ RenameFileTestsData.API_PREFIX }/${ userUUID }/${ fileUUID }"
+        s"${ RenameFileTestsData.API_PREFIX }/$userUUID/$fileUUID"
       )
   }
 
@@ -188,7 +188,7 @@ object FilesTestsUtils {
       .body( payload )
       .when()
       .put(
-        s"${ MoveFileTestsData.API_PREFIX }/${ userUUID }/${ fileUUID }"
+        s"${ MoveFileTestsData.API_PREFIX }/$userUUID/$fileUUID"
       )
   }
 
@@ -205,7 +205,7 @@ object FilesTestsUtils {
       .port( 8080 )
       .when()
       .get(
-        s"${ GetFileMetadataTestsData.API_PREFIX }/${ fileUUID }"
+        s"${ GetFileMetadataTestsData.API_PREFIX }/$fileUUID"
       )
   }
 

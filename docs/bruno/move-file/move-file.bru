@@ -1,0 +1,21 @@
+meta {
+  name: move-file
+  type: http
+  seq: 2
+}
+
+put {
+  url: {{BASE_URL}}/files/move/5c8e5e9d-7d82-450f-9fe3-43fc73aa5a39/0cbd00a1-fc6c-43b3-96d6-9bb52b739290
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "parentUUID": "bc421da0-684c-497f-bfd6-224305c04655"
+  }
+}

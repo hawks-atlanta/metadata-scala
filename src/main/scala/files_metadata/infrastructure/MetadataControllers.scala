@@ -1,7 +1,6 @@
 package org.hawksatlanta.metadata
 package files_metadata.infrastructure
 
-import java.util.Date
 import java.util.UUID
 
 import com.wix.accord.validate
@@ -17,6 +16,7 @@ import files_metadata.infrastructure.requests.MoveReqSchema
 import files_metadata.infrastructure.requests.RenameReqSchema
 import files_metadata.infrastructure.requests.ShareReqSchema
 import shared.infrastructure.CommonValidator
+import shared.infrastructure.StdoutLogger
 import ujson.Obj
 import upickle.default.read
 
@@ -52,13 +52,8 @@ class MetadataControllers {
         )
 
       case e: Exception =>
-        // Log the error
-        val currentDate = new Date()
-        println(
-          s"[${ currentDate.toString }] The following error was caught: $e"
-        )
+        StdoutLogger.logCaughtException( e )
 
-        // Send a response
         cask.Response(
           ujson.Obj(
             "error"   -> true,
@@ -121,19 +116,23 @@ class MetadataControllers {
           val isDirectory = fileMeta.archiveUuid.isEmpty
           if (isDirectory) {
             ujson.Obj(
-              "uuid"      -> fileMeta.uuid.toString,
-              "fileType"  -> "directory",
-              "name"      -> fileMeta.name,
-              "extension" -> ujson.Null,
-              "isShared"  -> fileMeta.isShared
+              "uuid"          -> fileMeta.uuid.toString,
+              "fileType"      -> "directory",
+              "fileName"      -> fileMeta.name,
+              "fileExtension" -> ujson.Null,
+              "fileSize"      -> 0,
+              "isShared"      -> fileMeta.isShared
             )
           } else {
             ujson.Obj(
-              "uuid"      -> fileMeta.uuid.toString,
-              "fileType"  -> "archive",
-              "name"      -> fileMeta.name,
-              "extension" -> parseNullableStringToJSON( fileMeta.extension ),
-              "isShared"  -> fileMeta.isShared
+              "uuid"     -> fileMeta.uuid.toString,
+              "fileType" -> "archive",
+              "fileName" -> fileMeta.name,
+              "fileExtension" -> parseNullableStringToJSON(
+                fileMeta.extension
+              ),
+              "fileSize" -> fileMeta.size,
+              "isShared" -> fileMeta.isShared
             )
           }
         } )
@@ -275,7 +274,6 @@ class MetadataControllers {
   }
 
   def CanReadFileController(
-      request: cask.Request,
       userUUID: String,
       fileUUID: String
   ): cask.Response[Obj] = {
@@ -314,7 +312,6 @@ class MetadataControllers {
   }
 
   def GetFileMetadataController(
-      request: cask.Request,
       fileUUID: String
   ): cask.Response[Obj] = {
     try {
@@ -430,7 +427,6 @@ class MetadataControllers {
   }
 
   def GetSharedWithMeController(
-      request: cask.Request,
       userUUID: String
   ): cask.Response[Obj] = {
     try {
@@ -453,17 +449,21 @@ class MetadataControllers {
         filesMeta.map( fileMeta => {
           if (fileMeta.archiveUuid.isEmpty) {
             ujson.Obj(
-              "uuid"      -> fileMeta.uuid.toString,
-              "fileType"  -> "directory",
-              "name"      -> fileMeta.name,
-              "extension" -> ujson.Null
+              "uuid"          -> fileMeta.uuid.toString,
+              "fileType"      -> "directory",
+              "fileName"      -> fileMeta.name,
+              "fileExtension" -> ujson.Null,
+              "fileSize"      -> 0
             )
           } else {
             ujson.Obj(
-              "uuid"      -> fileMeta.uuid.toString,
-              "fileType"  -> "archive",
-              "name"      -> fileMeta.name,
-              "extension" -> parseNullableStringToJSON( fileMeta.extension )
+              "uuid"     -> fileMeta.uuid.toString,
+              "fileType" -> "archive",
+              "fileName" -> fileMeta.name,
+              "fileExtension" -> parseNullableStringToJSON(
+                fileMeta.extension
+              ),
+              "fileSize" -> fileMeta.size
             )
           }
         } )
@@ -482,7 +482,6 @@ class MetadataControllers {
   }
 
   def GetSharedWithWhoController(
-      request: cask.Request,
       fileUUID: String
   ): cask.Response[Obj] = {
     try {

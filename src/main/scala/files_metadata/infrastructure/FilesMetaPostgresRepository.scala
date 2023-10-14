@@ -20,15 +20,15 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
     val connection: Connection = pool.getConnection()
 
     try {
-      val statemet = connection.prepareStatement(
+      val statement = connection.prepareStatement(
         "INSERT INTO files (owner_uuid, parent_uuid, name) VALUES (?, ?, ?) RETURNING uuid"
       )
 
-      statemet.setObject( 1, fileMeta.ownerUuid )
-      statemet.setObject( 2, fileMeta.parentUuid.orNull )
-      statemet.setString( 3, fileMeta.name )
+      statement.setObject( 1, fileMeta.ownerUuid )
+      statement.setObject( 2, fileMeta.parentUuid.orNull )
+      statement.setString( 3, fileMeta.name )
 
-      val result             = statemet.executeQuery()
+      val result             = statement.executeQuery()
       var insertedUUID: UUID = null
 
       if (result.next()) {
@@ -55,19 +55,19 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
     val connection: Connection = pool.getConnection()
 
     try {
-      // Start a transancion
+      // Start a transaction
       connection.setAutoCommit( false )
 
       // 1. Insert the archive
-      val archiveStatemet = connection.prepareStatement(
+      val archiveStatement = connection.prepareStatement(
         "INSERT INTO archives (extension, size, ready) VALUES (?, ?, ?) RETURNING uuid"
       )
 
-      archiveStatemet.setString( 1, archivesMeta.extension )
-      archiveStatemet.setLong( 2, archivesMeta.size )
-      archiveStatemet.setBoolean( 3, false )
+      archiveStatement.setString( 1, archivesMeta.extension )
+      archiveStatement.setLong( 2, archivesMeta.size )
+      archiveStatement.setBoolean( 3, false )
 
-      val archiveResult             = archiveStatemet.executeQuery()
+      val archiveResult             = archiveStatement.executeQuery()
       var archiveUUID: Option[UUID] = None
 
       if (archiveResult.next()) {
@@ -82,16 +82,16 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
       }
 
       // 2. Insert the file
-      val fileStatemet = connection.prepareStatement(
+      val fileStatement = connection.prepareStatement(
         "INSERT INTO files (owner_uuid, parent_uuid, archive_uuid, name) VALUES (?, ?, ?, ?) RETURNING uuid"
       )
 
-      fileStatemet.setObject( 1, fileMeta.ownerUuid )
-      fileStatemet.setObject( 2, fileMeta.parentUuid.orNull )
-      fileStatemet.setObject( 3, archiveUUID.get )
-      fileStatemet.setString( 4, fileMeta.name )
+      fileStatement.setObject( 1, fileMeta.ownerUuid )
+      fileStatement.setObject( 2, fileMeta.parentUuid.orNull )
+      fileStatement.setObject( 3, archiveUUID.get )
+      fileStatement.setString( 4, fileMeta.name )
 
-      val fileResult     = fileStatemet.executeQuery()
+      val fileResult     = fileStatement.executeQuery()
       var fileUUID: UUID = null
 
       if (fileResult.next()) {
@@ -130,7 +130,7 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
     }
   }
 
-  def getFilesInRoot(
+  private def getFilesInRoot(
       ownerUuid: UUID
   ): Seq[FileExtendedMeta] = {
     val connection: Connection = pool.getConnection()
@@ -171,7 +171,7 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
           volume = result.getString( "volume" ),
           name = result.getString( "name" ),
           extension = result.getString( "extension" ),
-          size = result.getLong( "size" ),
+          size = result.getInt( "size" ),
           isReady = true,
           isShared = result.getBoolean( "is_shared" )
         )
@@ -183,7 +183,7 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
     }
   }
 
-  def getFilesInParentDirectory(
+  private def getFilesInParentDirectory(
       directoryUuid: UUID
   ) = {
     val connection: Connection = pool.getConnection()
@@ -223,7 +223,7 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
           volume = result.getString( "volume" ),
           name = result.getString( "name" ),
           extension = result.getString( "extension" ),
-          size = result.getLong( "size" ),
+          size = result.getInt( "size" ),
           isReady = true,
           isShared = result.getBoolean( "is_shared" )
         )
@@ -294,7 +294,7 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
       ArchiveMeta(
         uuid = UUID.fromString( result.getString( "uuid" ) ),
         extension = result.getString( "extension" ),
-        size = result.getLong( "size" ),
+        size = result.getInt( "size" ),
         ready = result.getBoolean( "ready" )
       )
     } finally {
@@ -347,7 +347,7 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
           volume = result.getString( "volume" ),
           name = result.getString( "name" ),
           extension = result.getString( "extension" ),
-          size = result.getLong( "size" ),
+          size = result.getInt( "size" ),
           isReady = true,
           isShared = result.getBoolean( "is_shared" )
         )
