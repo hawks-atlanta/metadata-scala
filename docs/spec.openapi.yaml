@@ -38,7 +38,14 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/file"
+                  type: object
+                  allOf:
+                    - $ref: "#/components/schemas/file"
+                    - type: object
+                      properties:
+                        isShared:
+                          type: boolean
+                          example: false
         "403":
           description: Forbidden. The directory is not owned by the user.
           content:
