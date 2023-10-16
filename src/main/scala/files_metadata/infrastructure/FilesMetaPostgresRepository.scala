@@ -589,5 +589,35 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
     }
   }
 
-  override def deleteFileMeta( ownerUuid: UUID, uuid: UUID ): Unit = ???
+  override def deleteFileMeta( ownerUuid: UUID, uuid: UUID ): Unit = {
+    val connection: Connection = pool.getConnection()
+    connection.setAutoCommit(false)
+    try {
+      val getArchiveStatement = connection.prepareStatement(
+        "SELECT * FROM files WHERE owner_uuid = ? AND uuid = ?"
+      )
+      getArchiveStatement.setObject(1, ownerUuid)
+      getArchiveStatement.setObject(2, uuid)
+      val resultSet = getArchiveStatement.executeQuery()
+      if (resultSet.next()) {
+        val archiveUuid = resultSet.getObject("archive_uuid").asInstanceOf[UUID]
+        val deleteArchiveStatement = connection.prepareStatement(
+          "DELETE FROM archives WHERE uuid = ?"
+        )
+        deleteArchiveStatement.setObject(1, archiveUuid)
+        deleteArchiveStatement.executeUpdate()
+
+        val deleteFileStatement = connection.prepareStatement(
+          "DELETE FROM files WHERE owner_uuid = ? AND uuid = ?"
+        )
+        deleteFileStatement.setObject(1, ownerUuid)
+        deleteFileStatement.setObject(2, uuid)
+        deleteFileStatement.executeUpdate()
+      }
+
+      connection.commit()
+    } finally {
+      connection.close()
+    }
+  }
 }
