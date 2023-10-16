@@ -133,7 +133,7 @@ case class MetadataRoutes() extends cask.Routes {
   }
 
   private val unShareMetadataEndpoint =
-    s"$basePath/unShare/:ownerUUID/:fileUUID"
+    s"$basePath/unshare/:ownerUUID/:fileUUID"
 
   @cask.post(unShareMetadataEndpoint)
   def UnShareMetadataHandler(
