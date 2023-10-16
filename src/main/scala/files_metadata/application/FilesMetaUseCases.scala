@@ -228,4 +228,24 @@ class FilesMetaUseCases {
 
     repository.updateFileParent( fileUUID, newParentUUID )
   }
+
+  def deleteFile(
+      ownerUUID: UUID,
+      fileUUID: UUID,
+  ): Unit = {
+    val fileMeta = repository.getFileMeta(fileUUID)
+
+    if (fileMeta.ownerUuid != ownerUUID) {
+      throw DomainExceptions.FileNotOwnedException(
+        "The user does not own the file"
+      )
+    }
+    val isDirectory = fileMeta.archiveUuid.isEmpty
+    if (!isDirectory) {
+      repository.deleteFileMeta(ownerUUID, fileUUID)
+    }
+    else {
+      //If the "file" is a directory, recursively remove all the nested directories and files
+    }
+  }
 }
