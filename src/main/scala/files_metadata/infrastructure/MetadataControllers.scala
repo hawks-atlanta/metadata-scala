@@ -629,19 +629,27 @@ class MetadataControllers {
       fileUUID: String
   ): cask.Response[Obj] = {
     try {
-      val decoded: ShareReqSchema = read[ShareReqSchema](
+      val isOwnerUUIDValid = CommonValidator.validateUUID(ownerUUID)
+      val isFileUUIDValid = CommonValidator.validateUUID(fileUUID)
+      if (!isOwnerUUIDValid || !isFileUUIDValid) {
+        return cask.Response(
+          ujson.Obj(
+            "error" -> true,
+            "message" -> "Fields validation failed"
+          ),
+          statusCode = 400
+        )
+      }
+      val decoded: MoveReqSchema = read[MoveReqSchema](
         request.text()
       )
 
-      val isOwnerUUIDValid = CommonValidator.validateUUID(ownerUUID)
-      val isFileUUIDValid = CommonValidator.validateUUID(fileUUID)
-
-      val validationRule: Validator[ShareReqSchema] =
-        ShareReqSchema.shareSchemaValidator
-      val validationResult = validate[ShareReqSchema](decoded)(
+      val validationRule: Validator[MoveReqSchema] =
+        MoveReqSchema.schemaValidator
+      val validationResult = validate[MoveReqSchema](decoded)(
         validationRule
       )
-      if (!isOwnerUUIDValid || !isFileUUIDValid || validationResult.isFailure) {
+      if (validationResult.isFailure) {
         return cask.Response(
           ujson.Obj(
             "error" -> true,
