@@ -589,33 +589,72 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
     }
   }
 
-  override def deleteFileMeta( ownerUuid: UUID, uuid: UUID ): Unit = {
+  override def deleteFileMeta( uuid: UUID): Unit = {
     val connection: Connection = pool.getConnection()
     connection.setAutoCommit(false)
+    println("Conectado")
     try {
       val getArchiveStatement = connection.prepareStatement(
-        "SELECT * FROM files WHERE owner_uuid = ? AND uuid = ?"
+        "SELECT * FROM files WHERE uuid = ?"
       )
-      getArchiveStatement.setObject(1, ownerUuid)
-      getArchiveStatement.setObject(2, uuid)
+      getArchiveStatement.setObject(1, uuid)
       val resultSet = getArchiveStatement.executeQuery()
       if (resultSet.next()) {
-        val archiveUuid = resultSet.getObject("archive_uuid").asInstanceOf[UUID]
-        val deleteArchiveStatement = connection.prepareStatement(
-          "DELETE FROM archives WHERE uuid = ?"
+        val archive_uuid = resultSet.getObject("archive_uuid").asInstanceOf[UUID]
+        val deleteSharedFilesStatement = connection.prepareStatement(
+          "DELETE FROM shared_files WHERE file_uuid = ?"
         )
-        deleteArchiveStatement.setObject(1, archiveUuid)
-        deleteArchiveStatement.executeUpdate()
-
+        deleteSharedFilesStatement.setObject(1, uuid)
+        deleteSharedFilesStatement.executeUpdate()
         val deleteFileStatement = connection.prepareStatement(
-          "DELETE FROM files WHERE owner_uuid = ? AND uuid = ?"
+          "DELETE FROM files WHERE uuid = ?"
         )
-        deleteFileStatement.setObject(1, ownerUuid)
-        deleteFileStatement.setObject(2, uuid)
+        deleteFileStatement.setObject(1, uuid)
         deleteFileStatement.executeUpdate()
+        val deleteArchiveStatement = connection.prepareStatement(
+          "DELETE FROM archives WHERE  uuid = ?"
+        )
+        deleteArchiveStatement.setObject(1, archive_uuid)
+        deleteArchiveStatement.executeUpdate()
+        println(archive_uuid)
+      }
+      connection.commit()
+    } finally {
+      connection.close()
+    }
+  }
+
+  override def deleteDirectoryMeta( uuid: UUID): Unit = {
+    val connection: Connection = pool.getConnection()
+    connection.setAutoCommit(false)
+
+    try {
+      val statement = connection.prepareStatement(
+        """
+                SELECT uuid , archive_uuid
+                FROM files_view WHERE
+                parent_uuid = ?
+                """.stripMargin
+      )
+      statement.setObject(1, uuid)
+
+      val result = statement.executeQuery()
+
+      // Delete each file one by one
+      while (result.next()) {
+        val fileUuid = UUID.fromString(result.getString("uuid"))
+        val archiveUuid = result.getString("archive_uuid")
+
+        if(archiveUuid == null){
+          deleteDirectoryMeta( fileUuid)
+          deleteFileMeta(fileUuid)
+        }
+        else {
+
+        deleteFileMeta(fileUuid)
+        }
       }
 
-      connection.commit()
     } finally {
       connection.close()
     }
