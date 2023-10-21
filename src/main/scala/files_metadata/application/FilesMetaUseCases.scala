@@ -242,10 +242,10 @@ class FilesMetaUseCases {
     }
     val isDirectory = fileMeta.archiveUuid.isEmpty
     if (!isDirectory) {
-      repository.deleteFileMeta(ownerUUID, fileUUID)
+      repository.deleteFileMeta(fileUUID)
     }
-    else {
-      //If the "file" is a directory, recursively remove all the nested directories and files
+    else{
+      repository.deleteDirectoryMeta(fileUUID)
     }
   }
 }
