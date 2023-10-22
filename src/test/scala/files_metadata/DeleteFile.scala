@@ -10,7 +10,7 @@ import org.junit.Test
 import org.scalatestplus.junit.JUnitSuite
 
 object DeleteFileTestsData {
-  val API_PREFIX: String    = "/api/v1/files/delete"
+  val API_PREFIX: String    = "/api/v1/files"
   val OWNER_USER_UUID: UUID = UUID.randomUUID()
   val OTHER_USER_UUID: UUID = UUID.randomUUID()
 
