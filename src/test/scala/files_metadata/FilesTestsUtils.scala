@@ -208,5 +208,25 @@ object FilesTestsUtils {
         s"${ GetFileMetadataTestsData.API_PREFIX }/$fileUUID"
       )
   }
+  // -- delete files meta --
+  def DeleteFile(
+      ownerUUID: String,
+      fileUUID: String,
+      payload: util.HashMap[String, Any]
+  ): Response = {
+    `given`()
+      .port(8080)
+      .contentType("application/json")
+      .body(payload)
+      .when()
+      .delete(
+        s"${DeleteFileTestsData.API_PREFIX}/$ownerUUID/$fileUUID"
+      )
+  }
+
+  def generateDeleteFilePayload(): util.HashMap[String, Any] = {
+    val deleteFilePayload = new util.HashMap[String, Any]()
+    deleteFilePayload
+  }
 
 }
