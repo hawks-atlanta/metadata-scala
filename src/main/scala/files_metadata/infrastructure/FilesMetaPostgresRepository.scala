@@ -619,6 +619,58 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
       connection.close()
     }
   }
+  override def deleteFileMeta( uuid: UUID ): Unit = {
+    val connection: Connection = pool.getConnection()
+    try {
+      val getArchiveStatement = connection.prepareStatement(
+        "SELECT archive_uuid FROM files WHERE uuid = ?"
+      )
+      getArchiveStatement.setObject( 1, uuid )
+      val resultSet = getArchiveStatement.executeQuery()
+      if (resultSet.next()) {
+        val archive_uuid =
+          resultSet.getObject( "archive_uuid" ).asInstanceOf[UUID]
+        val deleteArchiveFilesStatement = connection.prepareStatement(
+          "DELETE FROM archives WHERE uuid = ?"
+        )
+        deleteArchiveFilesStatement.setObject( 1, archive_uuid )
+        deleteArchiveFilesStatement.executeUpdate()
+      }
+    } finally {
+      connection.close()
+    }
+  }
+  override def deleteDirectoryMeta( uuid: UUID ): Unit = {
+    val connection: Connection = pool.getConnection()
+    try {
+      val statement = connection.prepareStatement(
+        """
+                SELECT uuid , archive_uuid
+                FROM files_view WHERE
+                parent_uuid = ?
+                """.stripMargin
+      )
+      statement.setObject( 1, uuid )
 
-  override def deleteFileMeta( ownerUuid: UUID, uuid: UUID ): Unit = ???
+      val result = statement.executeQuery()
+
+      // Delete each file one by one
+      while (result.next()) {
+        val fileUuid    = UUID.fromString( result.getString( "uuid" ) )
+        val archiveUuid = result.getString( "archive_uuid" )
+        if (archiveUuid == null) {
+          deleteDirectoryMeta( fileUuid )
+        } else {
+          deleteFileMeta( fileUuid )
+        }
+      }
+      val deleteFilesStatement = connection.prepareStatement(
+        "DELETE FROM files WHERE uuid = ?"
+      )
+      deleteFilesStatement.setObject( 1, uuid )
+      deleteFilesStatement.executeUpdate()
+    } finally {
+      connection.close()
+    }
+  }
 }

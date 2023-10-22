@@ -47,5 +47,6 @@ trait FilesMetaRepository {
   def unShareFile( fileUUID: UUID, userUUID: UUID ): Unit
 
   // --- Delete ---
-  def deleteFileMeta( ownerUuid: UUID, uuid: UUID ): Unit
+  def deleteFileMeta( uuid: UUID ): Unit
+  def deleteDirectoryMeta( uuid: UUID ): Unit
 }

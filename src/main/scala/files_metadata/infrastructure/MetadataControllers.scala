@@ -665,4 +665,34 @@ class MetadataControllers {
       case e: Exception => _handleException( e )
     }
   }
+  def DeleteFileController(
+      request: cask.Request,
+      ownerUUID: String,
+      fileUUID: String
+  ): cask.Response[Obj] = {
+    try {
+      val isOwnerUUIDValid = CommonValidator.validateUUID( ownerUUID )
+      val isFileUUIDValid  = CommonValidator.validateUUID( fileUUID )
+      if (!isOwnerUUIDValid || !isFileUUIDValid) {
+        return cask.Response(
+          ujson.Obj(
+            "error"   -> true,
+            "message" -> "Fields validation failed"
+          ),
+          statusCode = 400
+        )
+      }
+      useCases.deleteFile(
+        ownerUUID = UUID.fromString( ownerUUID ),
+        fileUUID = UUID.fromString( fileUUID )
+      )
+
+      cask.Response(
+        None,
+        statusCode = 204
+      )
+    } catch {
+      case e: Exception => _handleException( e )
+    }
+  }
 }
