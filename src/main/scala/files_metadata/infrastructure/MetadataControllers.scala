@@ -116,19 +116,23 @@ class MetadataControllers {
           val isDirectory = fileMeta.archiveUuid.isEmpty
           if (isDirectory) {
             ujson.Obj(
-              "uuid"      -> fileMeta.uuid.toString,
-              "fileType"  -> "directory",
-              "name"      -> fileMeta.name,
-              "extension" -> ujson.Null,
-              "isShared"  -> fileMeta.isShared
+              "uuid"          -> fileMeta.uuid.toString,
+              "fileType"      -> "directory",
+              "fileName"      -> fileMeta.name,
+              "fileExtension" -> ujson.Null,
+              "fileSize"      -> 0,
+              "isShared"      -> fileMeta.isShared
             )
           } else {
             ujson.Obj(
-              "uuid"      -> fileMeta.uuid.toString,
-              "fileType"  -> "archive",
-              "name"      -> fileMeta.name,
-              "extension" -> parseNullableStringToJSON( fileMeta.extension ),
-              "isShared"  -> fileMeta.isShared
+              "uuid"     -> fileMeta.uuid.toString,
+              "fileType" -> "archive",
+              "fileName" -> fileMeta.name,
+              "fileExtension" -> parseNullableStringToJSON(
+                fileMeta.extension
+              ),
+              "fileSize" -> fileMeta.size,
+              "isShared" -> fileMeta.isShared
             )
           }
         } )
@@ -445,17 +449,21 @@ class MetadataControllers {
         filesMeta.map( fileMeta => {
           if (fileMeta.archiveUuid.isEmpty) {
             ujson.Obj(
-              "uuid"      -> fileMeta.uuid.toString,
-              "fileType"  -> "directory",
-              "name"      -> fileMeta.name,
-              "extension" -> ujson.Null
+              "uuid"          -> fileMeta.uuid.toString,
+              "fileType"      -> "directory",
+              "fileName"      -> fileMeta.name,
+              "fileExtension" -> ujson.Null,
+              "fileSize"      -> 0
             )
           } else {
             ujson.Obj(
-              "uuid"      -> fileMeta.uuid.toString,
-              "fileType"  -> "archive",
-              "name"      -> fileMeta.name,
-              "extension" -> parseNullableStringToJSON( fileMeta.extension )
+              "uuid"     -> fileMeta.uuid.toString,
+              "fileType" -> "archive",
+              "fileName" -> fileMeta.name,
+              "fileExtension" -> parseNullableStringToJSON(
+                fileMeta.extension
+              ),
+              "fileSize" -> fileMeta.size
             )
           }
         } )

@@ -1,0 +1,15 @@
+meta {
+  name: files-in-folder
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{BASE_URL}}/files/list/5c8e5e9d-7d82-450f-9fe3-43fc73aa5a39?parentUUID=034bc5d4-1334-4f15-b986-31ea14ee03d9
+  body: none
+  auth: none
+}
+
+query {
+  parentUUID: 034bc5d4-1334-4f15-b986-31ea14ee03d9
+}

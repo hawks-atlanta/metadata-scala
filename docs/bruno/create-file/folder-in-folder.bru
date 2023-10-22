@@ -1,0 +1,26 @@
+meta {
+  name: folder-in-folder
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{BASE_URL}}/files
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "userUUID": "5c8e5e9d-7d82-450f-9fe3-43fc73aa5a39",
+    "parentUUID": "034bc5d4-1334-4f15-b986-31ea14ee03d9", 
+    "fileType": "directory", 
+    "fileName": "nested",
+    "fileExtension": null,
+    "fileSize": 0
+  }
+}

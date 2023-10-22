@@ -6,14 +6,14 @@ import java.util.UUID
 case class ArchiveMeta(
     uuid: UUID,
     extension: String,
-    size: Long,
+    size: Int,
     ready: Boolean
 )
 
 object ArchiveMeta {
   def createNewArchive(
       extension: String,
-      size: Long
+      size: Int
   ): ArchiveMeta =
     new ArchiveMeta(
       uuid = null,

@@ -1,0 +1,21 @@
+meta {
+  name: mark-as-ready
+  type: http
+  seq: 2
+}
+
+put {
+  url: {{BASE_URL}}/files/ready/70bd47dc-13e2-4ab0-a16c-8f4871cdd980
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "volume": "1"
+  }
+}

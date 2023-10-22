@@ -1,3 +1,12 @@
+## [0.11.1](https://github.com/hawks-atlanta/metadata-scala/compare/v0.11.0...v0.11.1) (2023-10-14)
+
+
+### Bug Fixes
+
+* Include files size ([#86](https://github.com/hawks-atlanta/metadata-scala/issues/86)) ([8d46afa](https://github.com/hawks-atlanta/metadata-scala/commit/8d46afa5721c3ef0d021e504b5e8f8645b06b49a))
+
+
+
 # [0.11.0](https://github.com/hawks-atlanta/metadata-scala/compare/v0.10.4...v0.11.0) (2023-10-03)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * Ignore ready state validations for directories ([#73](https://github.com/hawks-atlanta/metadata-scala/issues/73)) ([fa5467f](https://github.com/hawks-atlanta/metadata-scala/commit/fa5467f86bda9312a6dad474bbdd3f5360a875c9))
-
-
-
-## [0.10.1](https://github.com/hawks-atlanta/metadata-scala/compare/v0.10.0...v0.10.1) (2023-09-26)
-
-
-### Bug Fixes
-
-* Update is_shared column when a file is shared ([#70](https://github.com/hawks-atlanta/metadata-scala/issues/70)) ([7f63347](https://github.com/hawks-atlanta/metadata-scala/commit/7f63347667d0095616e8d09641d264e888f44ffb))
 
 
 
