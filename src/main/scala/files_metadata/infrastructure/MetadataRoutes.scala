@@ -147,7 +147,7 @@ case class MetadataRoutes() extends cask.Routes {
     )
   }
   private val deleteMetadataEndpoint =
-    s"$basePath/:ownerUUID/:fileUUID"
+    s"$basePath/delete/:ownerUUID/:fileUUID"
   @cask.delete( deleteMetadataEndpoint )
   def deleteMetadataHandler(
       request: cask.Request,
