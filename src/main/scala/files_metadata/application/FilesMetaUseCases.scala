@@ -238,18 +238,18 @@ class FilesMetaUseCases {
 
     if (fileMeta.ownerUuid != ownerUUID) {
       throw DomainExceptions.FileNotOwnedException(
-        "The user does not own the file"
+        "You don't own the file"
       )
     }
     if (ownerUUID == otherUserUUID) {
       throw DomainExceptions.FileNotOwnedException(
-        "The user and the other user are the same"
+        "You cannot un-share a file with yourself"
       )
     }
 
     if (!repository.isFileDirectlySharedWithUser( fileUUID, otherUserUUID )) {
       throw DomainExceptions.FileAlreadySharedException(
-        "The file is already unshared with the user"
+        "The file is not shared with the given user"
       )
     }
 
