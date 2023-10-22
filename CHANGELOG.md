@@ -1,3 +1,12 @@
+# [0.12.0](https://github.com/hawks-atlanta/metadata-scala/compare/v0.11.1...v0.12.0) (2023-10-22)
+
+
+### Features
+
+* Unshare file ([#89](https://github.com/hawks-atlanta/metadata-scala/issues/89)) ([be58b4a](https://github.com/hawks-atlanta/metadata-scala/commit/be58b4ad112ebe141f88781e8ea7d04713f1bd7d))
+
+
+
 ## [0.11.1](https://github.com/hawks-atlanta/metadata-scala/compare/v0.11.0...v0.11.1) (2023-10-14)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * Parse null-able extension field ([#75](https://github.com/hawks-atlanta/metadata-scala/issues/75)) ([9ae4d0d](https://github.com/hawks-atlanta/metadata-scala/commit/9ae4d0da4f1fb0720de33715f89686286e6597ef))
-
-
-
-## [0.10.2](https://github.com/hawks-atlanta/metadata-scala/compare/v0.10.1...v0.10.2) (2023-09-29)
-
-
-### Bug Fixes
-
-* Ignore ready state validations for directories ([#73](https://github.com/hawks-atlanta/metadata-scala/issues/73)) ([fa5467f](https://github.com/hawks-atlanta/metadata-scala/commit/fa5467f86bda9312a6dad474bbdd3f5360a875c9))
 
 
 
