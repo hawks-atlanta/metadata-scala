@@ -644,17 +644,15 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
       while (result.next()) {
         val fileUuid = UUID.fromString(result.getString("uuid"))
         val archiveUuid = result.getString("archive_uuid")
-
         if(archiveUuid == null){
           deleteDirectoryMeta( fileUuid)
           deleteFileMeta(fileUuid)
         }
         else {
-
         deleteFileMeta(fileUuid)
         }
       }
-
+      deleteFileMeta(uuid)
     } finally {
       connection.close()
     }
