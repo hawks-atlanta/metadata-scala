@@ -108,12 +108,35 @@ object FilesTestsUtils {
       )
   }
 
+  def UnShareFile(
+      ownerUUID: String,
+      fileUUID: String,
+      payload: util.HashMap[String, Any]
+  ): Response = {
+    `given`()
+      .port( 8080 )
+      .contentType( "application/json" )
+      .body( payload )
+      .when()
+      .post(
+        s"${ UnShareFileTestsData.API_PREFIX }/$ownerUUID/$fileUUID"
+      )
+  }
+
   def generateShareFilePayload(
       otherUserUUID: UUID
   ): util.HashMap[String, Any] = {
     val shareFilePayload = new util.HashMap[String, Any]()
     shareFilePayload.put( "otherUserUUID", otherUserUUID.toString )
     shareFilePayload
+  }
+
+  def generateUnshareFilePayload(
+      otherUserUUID: UUID
+  ): util.HashMap[String, Any] = {
+    val unShareFilePayload = new util.HashMap[String, Any]()
+    unShareFilePayload.put( "otherUserUUID", otherUserUUID.toString )
+    unShareFilePayload
   }
 
   def GetSharedWithUser( userUUID: String ): Response = {

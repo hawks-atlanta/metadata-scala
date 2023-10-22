@@ -1,0 +1,17 @@
+meta {
+  name: unshare-file
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/files/unshare/5c8e5e9d-7d82-450f-9fe3-43fc73aa5a39/76c5a635-08c4-46c9-89ef-89c120e2e55f
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "otherUserUUID": "e1139bb6-d291-4170-8fb0-94dd787fa84b"
+  }
+}
