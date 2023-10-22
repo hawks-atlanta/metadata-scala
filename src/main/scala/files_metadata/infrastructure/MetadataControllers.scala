@@ -640,25 +640,6 @@ class MetadataControllers {
           statusCode = 400
         )
       }
-      val decoded: MoveReqSchema = read[MoveReqSchema](
-        request.text()
-      )
-
-      val validationRule: Validator[MoveReqSchema] =
-        MoveReqSchema.schemaValidator
-      val validationResult = validate[MoveReqSchema](decoded)(
-        validationRule
-      )
-      if (validationResult.isFailure) {
-        return cask.Response(
-          ujson.Obj(
-            "error" -> true,
-            "message" -> "Fields validation failed"
-          ),
-          statusCode = 400
-        )
-      }
-
       useCases.deleteFile(
         ownerUUID = UUID.fromString(ownerUUID),
         fileUUID = UUID.fromString(fileUUID)
