@@ -211,13 +211,11 @@ object FilesTestsUtils {
   // -- delete files meta --
   def DeleteFile(
       ownerUUID: String,
-      fileUUID: String,
-      payload: util.HashMap[String, Any]
+      fileUUID: String
   ): Response = {
     `given`()
       .port( 8080 )
       .contentType( "application/json" )
-      .body( payload )
       .when()
       .delete(
         s"${ DeleteFileTestsData.API_PREFIX }/$ownerUUID/$fileUUID"
