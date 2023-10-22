@@ -589,6 +589,37 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
     }
   }
 
+
+  override def unShareFile( fileUUID: UUID, userUUID: UUID ): Unit = {
+    val connection: Connection = pool.getConnection()
+    connection.setAutoCommit( false )
+
+    try {
+      val shareStatement = connection.prepareStatement(
+        "DELETE FROM shared_files WHERE file_uuid =? AND user_uuid =?"
+      )
+      shareStatement.setObject( 1, fileUUID )
+      shareStatement.setObject( 2, userUUID )
+      shareStatement.executeUpdate()
+
+      val checkSharedStatement = connection.prepareStatement(
+        "SELECT * FROM shared_files WHERE file_uuid = ?"
+      )
+      checkSharedStatement.setObject( 1, fileUUID )
+      val resultSet = checkSharedStatement.executeQuery()
+      if (!resultSet.next()) {
+        val updateStatement = connection.prepareStatement(
+          "UPDATE files SET is_shared = false WHERE uuid = ?"
+        )
+        updateStatement.setObject( 1, fileUUID )
+        updateStatement.executeUpdate()
+      }
+
+      connection.commit()
+    } finally {
+      connection.close()
+    }
+  }
   override def deleteFileMeta( uuid: UUID ): Unit = {
     val connection: Connection = pool.getConnection()
     try {
@@ -610,7 +641,6 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
       connection.close()
     }
   }
-
   override def deleteDirectoryMeta( uuid: UUID ): Unit = {
     val connection: Connection = pool.getConnection()
     try {

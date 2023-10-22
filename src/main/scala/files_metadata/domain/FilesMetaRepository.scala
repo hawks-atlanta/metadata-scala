@@ -44,6 +44,7 @@ trait FilesMetaRepository {
   def updateFileName( fileUUID: UUID, newName: String ): Unit
 
   def updateFileParent( fileUUID: UUID, parentUUID: Option[UUID] ): Unit
+  def unShareFile( fileUUID: UUID, userUUID: UUID ): Unit
 
   // --- Delete ---
   def deleteFileMeta( uuid: UUID ): Unit
