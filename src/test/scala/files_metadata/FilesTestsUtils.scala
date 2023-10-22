@@ -221,9 +221,4 @@ object FilesTestsUtils {
         s"${ DeleteFileTestsData.API_PREFIX }/$ownerUUID/$fileUUID"
       )
   }
-
-  def generateDeleteFilePayload(): util.HashMap[String, Any] = {
-    val deleteFilePayload = new util.HashMap[String, Any]()
-    deleteFilePayload
-  }
 }
