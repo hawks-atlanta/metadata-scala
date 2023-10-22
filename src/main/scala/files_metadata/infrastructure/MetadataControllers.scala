@@ -623,7 +623,6 @@ class MetadataControllers {
     }
   }
 
-
   def UnShareFileController(
       request: cask.Request,
       ownerUUID: String,
@@ -651,7 +650,6 @@ class MetadataControllers {
           statusCode = 400
         )
       }
-
 
       useCases.unShareFile(
         ownerUUID = UUID.fromString( ownerUUID ),

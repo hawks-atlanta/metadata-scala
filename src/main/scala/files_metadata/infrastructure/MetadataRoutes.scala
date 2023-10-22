@@ -131,7 +131,7 @@ case class MetadataRoutes() extends cask.Routes {
       controllers.MoveFileController( request, userUUID, fileUUID )
     )
   }
-  
+
   private val unShareMetadataEndpoint =
     s"$basePath/unshare/:ownerUUID/:fileUUID"
 
@@ -150,7 +150,7 @@ case class MetadataRoutes() extends cask.Routes {
     s"$basePath/delete/:ownerUUID/:fileUUID"
   @cask.delete( deleteMetadataEndpoint )
   def deleteMetadataHandler(
-    request: cask.Request,
+      request: cask.Request,
       ownerUUID: String,
       fileUUID: String
   ): cask.Response[Obj] = {

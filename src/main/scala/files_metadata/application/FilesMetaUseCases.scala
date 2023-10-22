@@ -229,7 +229,6 @@ class FilesMetaUseCases {
     repository.updateFileParent( fileUUID, newParentUUID )
   }
 
-
   def unShareFile(
       ownerUUID: UUID,
       fileUUID: UUID,

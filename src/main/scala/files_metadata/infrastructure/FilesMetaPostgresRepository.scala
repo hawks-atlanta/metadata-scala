@@ -589,7 +589,6 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
     }
   }
 
-
   override def unShareFile( fileUUID: UUID, userUUID: UUID ): Unit = {
     val connection: Connection = pool.getConnection()
     connection.setAutoCommit( false )
