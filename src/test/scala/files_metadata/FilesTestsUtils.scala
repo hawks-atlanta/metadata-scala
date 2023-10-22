@@ -215,12 +215,12 @@ object FilesTestsUtils {
       payload: util.HashMap[String, Any]
   ): Response = {
     `given`()
-      .port(8080)
-      .contentType("application/json")
-      .body(payload)
+      .port( 8080 )
+      .contentType( "application/json" )
+      .body( payload )
       .when()
       .delete(
-        s"${DeleteFileTestsData.API_PREFIX}/$ownerUUID/$fileUUID"
+        s"${ DeleteFileTestsData.API_PREFIX }/$ownerUUID/$fileUUID"
       )
   }
 

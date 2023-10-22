@@ -15,10 +15,10 @@ object DeleteFileTestsData {
   val OTHER_USER_UUID: UUID = UUID.randomUUID()
 
   private var deletePayload: java.util.HashMap[String, Any] = _
-  var savedDirectoryUUID: UUID                             = _
-  var savedFileUUID: UUID                                  = _
-  var sharedFileUUID: UUID                                 = _
-  var sharedDirectoryUUID: UUID                                 = _
+  var savedDirectoryUUID: UUID                              = _
+  var savedFileUUID: UUID                                   = _
+  var sharedFileUUID: UUID                                  = _
+  var sharedDirectoryUUID: UUID                             = _
 
   def getDeletePayload(): java.util.HashMap[String, Any] = {
     if (deletePayload == null) {
@@ -47,7 +47,7 @@ class deleteFileTests extends JUnitSuite {
     val saveDirectoryResponse =
       FilesTestsUtils.SaveFile( saveDirectoryPayload )
     DeleteFileTestsData.savedDirectoryUUID =
-      UUID.fromString( saveDirectoryResponse.jsonPath().get("uuid") )
+      UUID.fromString( saveDirectoryResponse.jsonPath().get( "uuid" ) )
 
     val ShareFilePayload = FilesTestsUtils.generateShareFilePayload(
       otherUserUUID = DeleteFileTestsData.OTHER_USER_UUID
@@ -80,16 +80,16 @@ class deleteFileTests extends JUnitSuite {
       fileUUID = DeleteFileTestsData.savedFileUUID.toString,
       payload = DeleteFileTestsData.getDeletePayload()
     )
-    assert(response2.statusCode() == 400)
-    assert(response2.jsonPath().getBoolean("error"))
+    assert( response2.statusCode() == 400 )
+    assert( response2.jsonPath().getBoolean( "error" ) )
     // 2. Bad fileUUID
     val response3 = FilesTestsUtils.DeleteFile(
       ownerUUID = DeleteFileTestsData.OWNER_USER_UUID.toString,
       fileUUID = "Not an UUID",
       payload = DeleteFileTestsData.getDeletePayload()
     )
-    assert(response3.statusCode() == 400)
-    assert(response3.jsonPath().getBoolean("error"))
+    assert( response3.statusCode() == 400 )
+    assert( response3.jsonPath().getBoolean( "error" ) )
   }
 
   @Test
@@ -100,7 +100,7 @@ class deleteFileTests extends JUnitSuite {
       fileUUID = DeleteFileTestsData.savedFileUUID.toString,
       payload = DeleteFileTestsData.getDeletePayload()
     )
-    assert(fileResponse.statusCode() == 403)
+    assert( fileResponse.statusCode() == 403 )
 
   }
   @Test
@@ -111,7 +111,7 @@ class deleteFileTests extends JUnitSuite {
       fileUUID = UUID.randomUUID().toString,
       payload = DeleteFileTestsData.getDeletePayload()
     )
-    assert(fileResponse.statusCode() == 404)
+    assert( fileResponse.statusCode() == 404 )
   }
 
   @Test
@@ -121,7 +121,7 @@ class deleteFileTests extends JUnitSuite {
       fileUUID = DeleteFileTestsData.savedFileUUID.toString,
       payload = DeleteFileTestsData.getDeletePayload()
     )
-    assert(fileResponse.statusCode() == 204)
+    assert( fileResponse.statusCode() == 204 )
 
     // Delete the directory
     val directoryResponse = FilesTestsUtils.DeleteFile(
@@ -129,6 +129,6 @@ class deleteFileTests extends JUnitSuite {
       fileUUID = DeleteFileTestsData.savedDirectoryUUID.toString,
       payload = DeleteFileTestsData.getDeletePayload()
     )
-    assert(directoryResponse.statusCode() == 204)
+    assert( directoryResponse.statusCode() == 204 )
   }
 }

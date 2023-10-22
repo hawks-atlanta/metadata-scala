@@ -231,9 +231,9 @@ class FilesMetaUseCases {
 
   def deleteFile(
       ownerUUID: UUID,
-      fileUUID: UUID,
+      fileUUID: UUID
   ): Unit = {
-    val fileMeta = repository.getFileMeta(fileUUID)
+    val fileMeta = repository.getFileMeta( fileUUID )
 
     if (fileMeta.ownerUuid != ownerUUID) {
       throw DomainExceptions.FileNotOwnedException(
@@ -242,10 +242,9 @@ class FilesMetaUseCases {
     }
     val isDirectory = fileMeta.archiveUuid.isEmpty
     if (!isDirectory) {
-      repository.deleteFileMeta(fileUUID)
-    }
-    else{
-      repository.deleteDirectoryMeta(fileUUID)
+      repository.deleteFileMeta( fileUUID )
+    } else {
+      repository.deleteDirectoryMeta( fileUUID )
     }
   }
 }
