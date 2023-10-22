@@ -1,3 +1,12 @@
+# [0.13.0](https://github.com/hawks-atlanta/metadata-scala/compare/v0.12.0...v0.13.0) (2023-10-22)
+
+
+### Features
+
+* Delete file ([#88](https://github.com/hawks-atlanta/metadata-scala/issues/88)) ([5e30ed6](https://github.com/hawks-atlanta/metadata-scala/commit/5e30ed607a08f892ddefaa3cc24dd752f6211c60))
+
+
+
 # [0.12.0](https://github.com/hawks-atlanta/metadata-scala/compare/v0.11.1...v0.12.0) (2023-10-22)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * Update controllers error handler ([#80](https://github.com/hawks-atlanta/metadata-scala/issues/80)) ([30dbcff](https://github.com/hawks-atlanta/metadata-scala/commit/30dbcff56fd1f4dca2005ee65521bd939d98bb87))
-
-
-
-## [0.10.3](https://github.com/hawks-atlanta/metadata-scala/compare/v0.10.2...v0.10.3) (2023-10-01)
-
-
-### Bug Fixes
-
-* Parse null-able extension field ([#75](https://github.com/hawks-atlanta/metadata-scala/issues/75)) ([9ae4d0d](https://github.com/hawks-atlanta/metadata-scala/commit/9ae4d0da4f1fb0720de33715f89686286e6597ef))
 
 
 
