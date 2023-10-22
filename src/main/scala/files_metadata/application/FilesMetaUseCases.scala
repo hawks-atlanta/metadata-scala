@@ -234,7 +234,7 @@ class FilesMetaUseCases {
       fileUUID: UUID,
       otherUserUUID: UUID
   ): Unit = {
-    val fileMeta = repository.getFileMeta(fileUUID)
+    val fileMeta = repository.getFileMeta( fileUUID )
 
     if (fileMeta.ownerUuid != ownerUUID) {
       throw DomainExceptions.FileNotOwnedException(
@@ -247,14 +247,12 @@ class FilesMetaUseCases {
       )
     }
 
-    if (
-      !repository.isFileDirectlySharedWithUser(fileUUID, otherUserUUID)
-    ) {
+    if (!repository.isFileDirectlySharedWithUser( fileUUID, otherUserUUID )) {
       throw DomainExceptions.FileAlreadySharedException(
         "The file is already unshared with the user"
       )
     }
 
-    repository.unShareFile(fileUUID, otherUserUUID)
+    repository.unShareFile( fileUUID, otherUserUUID )
   }
 }

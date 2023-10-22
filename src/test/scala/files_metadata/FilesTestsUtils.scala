@@ -114,12 +114,12 @@ object FilesTestsUtils {
       payload: util.HashMap[String, Any]
   ): Response = {
     `given`()
-      .port(8080)
-      .contentType("application/json")
-      .body(payload)
+      .port( 8080 )
+      .contentType( "application/json" )
+      .body( payload )
       .when()
       .post(
-        s"${UnShareFileTestsData.API_PREFIX}/$ownerUUID/$fileUUID"
+        s"${ UnShareFileTestsData.API_PREFIX }/$ownerUUID/$fileUUID"
       )
   }
 
@@ -135,7 +135,7 @@ object FilesTestsUtils {
       otherUserUUID: UUID
   ): util.HashMap[String, Any] = {
     val unShareFilePayload = new util.HashMap[String, Any]()
-    unShareFilePayload.put("otherUserUUID", otherUserUUID.toString)
+    unShareFilePayload.put( "otherUserUUID", otherUserUUID.toString )
     unShareFilePayload
   }
 

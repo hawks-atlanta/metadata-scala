@@ -15,10 +15,10 @@ object UnShareFileTestsData {
   val OTHER_USER_UUID: UUID = UUID.randomUUID()
 
   private var unsharePayload: java.util.HashMap[String, Any] = _
-  var savedDirectoryUUID: UUID                             = _
-  var savedFileUUID: UUID                                  = _
-  var sharedFileUUID: UUID                                 = _
-  var sharedDirectoryUUID: UUID                                 = _
+  var savedDirectoryUUID: UUID                               = _
+  var savedFileUUID: UUID                                    = _
+  var sharedFileUUID: UUID                                   = _
+  var sharedDirectoryUUID: UUID                              = _
 
   def getUnsharePayload(): java.util.HashMap[String, Any] = {
     if (unsharePayload == null) {
@@ -53,7 +53,7 @@ class UnShareFileTests extends JUnitSuite {
     val saveDirectoryResponse =
       FilesTestsUtils.SaveFile( saveDirectoryPayload )
     UnShareFileTestsData.savedDirectoryUUID =
-      UUID.fromString( saveDirectoryResponse.jsonPath().get("uuid") )
+      UUID.fromString( saveDirectoryResponse.jsonPath().get( "uuid" ) )
 
     val ShareFilePayload = FilesTestsUtils.generateShareFilePayload(
       otherUserUUID = UnShareFileTestsData.OTHER_USER_UUID
@@ -72,10 +72,7 @@ class UnShareFileTests extends JUnitSuite {
       payload = ShareDirectoryPayload
     )
 
-
   }
-
-
 
   @Before
   def startHttpServer(): Unit = {
@@ -86,7 +83,7 @@ class UnShareFileTests extends JUnitSuite {
     saveFilesAndShareToUnhare()
     // 1. Bad other user
     val requestBody = ShareFileTestsData.getSharePayload()
-    requestBody.put("otherUserUUID", "Not an UUID")
+    requestBody.put( "otherUserUUID", "Not an UUID" )
     val response = FilesTestsUtils.UnShareFile(
       ownerUUID = UnShareFileTestsData.OWNER_USER_UUID.toString,
       fileUUID = UnShareFileTestsData.savedFileUUID.toString,
@@ -100,33 +97,33 @@ class UnShareFileTests extends JUnitSuite {
       fileUUID = UnShareFileTestsData.savedFileUUID.toString,
       payload = UnShareFileTestsData.getUnsharePayload()
     )
-    assert(response2.statusCode() == 400)
-    assert(response2.jsonPath().getBoolean("error"))
+    assert( response2.statusCode() == 400 )
+    assert( response2.jsonPath().getBoolean( "error" ) )
     // 3. Bad fileUUID
     val response3 = FilesTestsUtils.UnShareFile(
       ownerUUID = UnShareFileTestsData.OWNER_USER_UUID.toString,
       fileUUID = "Not an UUID",
       payload = UnShareFileTestsData.getUnsharePayload()
     )
-    assert(response3.statusCode() == 400)
-    assert(response3.jsonPath().getBoolean("error"))
+    assert( response3.statusCode() == 400 )
+    assert( response3.jsonPath().getBoolean( "error" ) )
   }
   @Test
-  def T2_UnshareSuccess():Unit={
-    //Unshare the File
+  def T2_UnshareSuccess(): Unit = {
+    // Unshare the File
     val fileResponse = FilesTestsUtils.UnShareFile(
       ownerUUID = UnShareFileTestsData.OWNER_USER_UUID.toString,
       fileUUID = UnShareFileTestsData.savedFileUUID.toString,
       payload = UnShareFileTestsData.getUnsharePayload()
     )
-    assert(fileResponse.statusCode() == 204)
-    //Unshare the File
+    assert( fileResponse.statusCode() == 204 )
+    // Unshare the File
     val fileResponse2 = FilesTestsUtils.UnShareFile(
       ownerUUID = UnShareFileTestsData.OWNER_USER_UUID.toString,
       fileUUID = UnShareFileTestsData.savedDirectoryUUID.toString,
       payload = UnShareFileTestsData.getUnsharePayload()
     )
-    assert(fileResponse2.statusCode() == 204)
+    assert( fileResponse2.statusCode() == 204 )
   }
 
   @Test
@@ -136,8 +133,8 @@ class UnShareFileTests extends JUnitSuite {
       fileUUID = UUID.randomUUID().toString,
       payload = UnShareFileTestsData.getUnsharePayload()
     )
-    assert(response.statusCode() == 404)
-    assert(response.jsonPath().getBoolean("error"))
+    assert( response.statusCode() == 404 )
+    assert( response.jsonPath().getBoolean( "error" ) )
   }
 
   @Test
@@ -147,7 +144,7 @@ class UnShareFileTests extends JUnitSuite {
       fileUUID = UnShareFileTestsData.savedFileUUID.toString,
       payload = UnShareFileTestsData.getUnsharePayload()
     )
-    assert(response.statusCode() == 403)
-    assert(response.jsonPath().getBoolean("error"))
+    assert( response.statusCode() == 403 )
+    assert( response.jsonPath().getBoolean( "error" ) )
   }
 }

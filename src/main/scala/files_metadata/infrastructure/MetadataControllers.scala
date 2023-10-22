@@ -625,18 +625,18 @@ class MetadataControllers {
         request.text()
       )
 
-      val isOwnerUUIDValid = CommonValidator.validateUUID(ownerUUID)
-      val isFileUUIDValid = CommonValidator.validateUUID(fileUUID)
+      val isOwnerUUIDValid = CommonValidator.validateUUID( ownerUUID )
+      val isFileUUIDValid  = CommonValidator.validateUUID( fileUUID )
 
       val validationRule: Validator[ShareReqSchema] =
         ShareReqSchema.shareSchemaValidator
-      val validationResult = validate[ShareReqSchema](decoded)(
+      val validationResult = validate[ShareReqSchema]( decoded )(
         validationRule
       )
       if (!isOwnerUUIDValid || !isFileUUIDValid || validationResult.isFailure) {
         return cask.Response(
           ujson.Obj(
-            "error" -> true,
+            "error"   -> true,
             "message" -> "Fields validation failed"
           ),
           statusCode = 400
@@ -644,9 +644,9 @@ class MetadataControllers {
       }
 
       useCases.unShareFile(
-        ownerUUID = UUID.fromString(ownerUUID),
-        fileUUID = UUID.fromString(fileUUID),
-        otherUserUUID = UUID.fromString(decoded.otherUserUUID)
+        ownerUUID = UUID.fromString( ownerUUID ),
+        fileUUID = UUID.fromString( fileUUID ),
+        otherUserUUID = UUID.fromString( decoded.otherUserUUID )
       )
 
       cask.Response(
@@ -654,7 +654,7 @@ class MetadataControllers {
         statusCode = 204
       )
     } catch {
-      case e: Exception => _handleException(e)
+      case e: Exception => _handleException( e )
     }
   }
 }
