@@ -591,8 +591,6 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
 
   override def deleteFileMeta( uuid: UUID ): Unit = {
     val connection: Connection = pool.getConnection()
-    connection.setAutoCommit( false )
-
     try {
       val getArchiveStatement = connection.prepareStatement(
         "SELECT archive_uuid FROM files WHERE uuid = ?"
@@ -608,7 +606,6 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
         deleteArchiveFilesStatement.setObject( 1, archive_uuid )
         deleteArchiveFilesStatement.executeUpdate()
       }
-      connection.commit()
     } finally {
       connection.close()
     }
@@ -616,8 +613,6 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
 
   override def deleteDirectoryMeta( uuid: UUID ): Unit = {
     val connection: Connection = pool.getConnection()
-    connection.setAutoCommit( false )
-
     try {
       val statement = connection.prepareStatement(
         """
@@ -640,13 +635,11 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
           deleteFileMeta( fileUuid )
         }
       }
-      println( uuid )
       val deleteFilesStatement = connection.prepareStatement(
         "DELETE FROM files WHERE uuid = ?"
       )
       deleteFilesStatement.setObject( 1, uuid )
       deleteFilesStatement.executeUpdate()
-      connection.commit()
     } finally {
       connection.close()
     }
