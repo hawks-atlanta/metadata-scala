@@ -595,29 +595,18 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
 
     try {
       val getArchiveStatement = connection.prepareStatement(
-        "SELECT * FROM files WHERE uuid = ?"
+        "SELECT archive_uuid FROM files WHERE uuid = ?"
       )
       getArchiveStatement.setObject( 1, uuid )
       val resultSet = getArchiveStatement.executeQuery()
       if (resultSet.next()) {
         val archive_uuid =
           resultSet.getObject( "archive_uuid" ).asInstanceOf[UUID]
-        val deleteSharedFilesStatement = connection.prepareStatement(
-          "DELETE FROM shared_files WHERE file_uuid = ?"
+        val deleteArchiveFilesStatement = connection.prepareStatement(
+          "DELETE FROM archives WHERE uuid = ?"
         )
-        deleteSharedFilesStatement.setObject( 1, uuid )
-        deleteSharedFilesStatement.executeUpdate()
-        val deleteFileStatement = connection.prepareStatement(
-          "DELETE FROM files WHERE uuid = ?"
-        )
-        deleteFileStatement.setObject( 1, uuid )
-        deleteFileStatement.executeUpdate()
-        val deleteArchiveStatement = connection.prepareStatement(
-          "DELETE FROM archives WHERE  uuid = ?"
-        )
-        deleteArchiveStatement.setObject( 1, archive_uuid )
-        deleteArchiveStatement.executeUpdate()
-
+        deleteArchiveFilesStatement.setObject( 1, archive_uuid )
+        deleteArchiveFilesStatement.executeUpdate()
       }
       connection.commit()
     } finally {
@@ -647,12 +636,17 @@ class FilesMetaPostgresRepository extends FilesMetaRepository {
         val archiveUuid = result.getString( "archive_uuid" )
         if (archiveUuid == null) {
           deleteDirectoryMeta( fileUuid )
-          deleteFileMeta( fileUuid )
         } else {
           deleteFileMeta( fileUuid )
         }
       }
-      deleteFileMeta( uuid )
+      println( uuid )
+      val deleteFilesStatement = connection.prepareStatement(
+        "DELETE FROM files WHERE uuid = ?"
+      )
+      deleteFilesStatement.setObject( 1, uuid )
+      deleteFilesStatement.executeUpdate()
+      connection.commit()
     } finally {
       connection.close()
     }
