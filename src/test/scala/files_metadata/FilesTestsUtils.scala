@@ -231,5 +231,17 @@ object FilesTestsUtils {
         s"${ GetFileMetadataTestsData.API_PREFIX }/$fileUUID"
       )
   }
-
+  // -- delete files meta --
+  def DeleteFile(
+      ownerUUID: String,
+      fileUUID: String
+  ): Response = {
+    `given`()
+      .port( 8080 )
+      .contentType( "application/json" )
+      .when()
+      .delete(
+        s"${ DeleteFileTestsData.API_PREFIX }/$ownerUUID/$fileUUID"
+      )
+  }
 }

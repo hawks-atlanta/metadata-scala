@@ -255,4 +255,22 @@ class FilesMetaUseCases {
 
     repository.unShareFile( fileUUID, otherUserUUID )
   }
+  def deleteFile(
+      ownerUUID: UUID,
+      fileUUID: UUID
+  ): Unit = {
+    val fileMeta = repository.getFileMeta( fileUUID )
+
+    if (fileMeta.ownerUuid != ownerUUID) {
+      throw DomainExceptions.FileNotOwnedException(
+        "The user does not own the file"
+      )
+    }
+    val isDirectory = fileMeta.archiveUuid.isEmpty
+    if (!isDirectory) {
+      repository.deleteFileMeta( fileUUID )
+    } else {
+      repository.deleteDirectoryMeta( fileUUID )
+    }
+  }
 }
