@@ -208,7 +208,6 @@ object FilesTestsUtils {
         s"${ GetFileMetadataTestsData.API_PREFIX }/$fileUUID"
       )
   }
-<<<<<<< HEAD
   // -- delete files meta --
   def DeleteFile(
       ownerUUID: String,
@@ -229,7 +228,4 @@ object FilesTestsUtils {
     val deleteFilePayload = new util.HashMap[String, Any]()
     deleteFilePayload
   }
-=======
->>>>>>> parent of 7b6a822 (feat: add test utils delete an generate file)
-
 }
